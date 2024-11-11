@@ -1,0 +1,227 @@
+html,
+body {
+	height: 100%;
+}
+
+.wrap {
+	min-height: 100%;
+	height: auto;
+	margin: 0 auto -60px;
+	padding: 0 0 60px;
+}
+
+.wrap>.container {
+	padding: 70px 15px 20px;
+}
+
+.footer {
+	height: 60px;
+	background-color: #f5f5f5;
+	border-top: 1px solid #ddd;
+	padding-top: 20px;
+}
+
+.jumbotron {
+	text-align: center;
+	background-color: transparent;
+}
+
+.jumbotron .btn {
+	font-size: 21px;
+	padding: 14px 24px;
+}
+
+.not-set {
+	color: red;
+	font-style: italic;
+}
+
+/* add sorting icons to gridview sort links */
+a.asc:after,
+a.desc:after {
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	font-family: 'Glyphicons Halflings';
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	padding-left: 5px;
+}
+
+a.asc:after {
+	content: "\e151";
+}
+
+a.desc:after {
+	content: "\e152";
+}
+
+.sort-numerical a.asc:after {
+	content: "\e153";
+}
+
+.sort-numerical a.desc:after {
+	content: "\e154";
+}
+
+.sort-ordinal a.asc:after {
+	content: "\e155";
+}
+
+.sort-ordinal a.desc:after {
+	content: "\e156";
+}
+
+.grid-view td {
+	white-space: nowrap;
+}
+
+.grid-view .filters input,
+.grid-view .filters select {
+	min-width: 50px;
+}
+
+.hint-block {
+	display: block;
+	margin-top: 5px;
+	color: #999;
+}
+
+.error-summary {
+	color: red;
+	background: #fdf7f7;
+	border-left: 3px solid #eed3d7;
+	padding: 10px 20px;
+	margin: 0 0 15px 0;
+}
+
+/* align the logout "link" (button in form) of the navbar */
+.nav li>form>button.logout {
+	padding: 15px;
+	border: none;
+}
+
+@media (max-width: 767px) {
+	.nav li>form>button.logout {
+		display: block;
+		text-align: left;
+		width: 100%;
+		padding: 10px 15px;
+	}
+}
+
+.nav>li>form>button.logout:focus,
+.nav>li>form>button.logout:hover {
+	text-decoration: none;
+}
+
+.nav>li>form>button.logout:focus {
+	outline: none;
+}
+
+label {
+	color: #888;
+}
+
+body {
+	color: #222;
+}
+
+.form-control {
+	color: #222;
+}
+
+.errorlist {
+	color: red;
+	text-align: left;
+	padding-left: 15px;
+	padding-right: 0;
+}
+
+p.help-block.help-block-error {
+	color: red;
+}
+
+form div.required label.control-label:after {
+	content: " * ";
+	color: red;
+}
+
+.has-error .checkbox,
+.has-error .checkbox-inline,
+.has-error .control-label,
+.has-error .help-block,
+.has-error .radio,
+.has-error .radio-inline,
+.has-error.checkbox label,
+.has-error.checkbox-inline label,
+.has-error.radio label,
+.has-error.radio-inline label {
+	color: red !important;
+}
+
+.has-error .form-control {
+	border-color: red !important;
+}
+
+input[required="required"]::after {
+	content: " * ";
+	color: red;
+}
+
+.action-menu {
+	min-width: 110px;
+	z-index: 1035;
+	position: relative;
+}
+
+.container-fluid {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+.action-menu {
+	min-width: 110px;
+	z-index: 1035;
+	position: relative;
+}
+
+body .fixed-table-container tbody .selected td,
+body #container .table.dataTable tbody tr.selected {
+	background-color: #068ECE !important;
+	color: #fff !important;
+}
+
+switchery {
+	background-color: #068ECE !important;
+	border-color: #068ECE !important;
+}
+
+.label-tag {
+	display: inline-block;
+	/* width: 100%; */
+	min-width: 8ex;
+	font-size: 1em;
+	/* max-width: 100px; */
+	padding: 5px 10px !important;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	vertical-align: top;
+}
+
+.swal2-radio {
+	display: block !important;
+	text-align: left !important;
+}
+
+.swal2-radio label {
+	display: block;
+	margin: 5px 10px !important;
+	font-size: 16px !important;
+	font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.swal2-modal .swal2-radio label {
+	margin-left: 0px !important;
+}

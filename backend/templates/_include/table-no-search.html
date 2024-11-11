@@ -1,0 +1,21 @@
+<script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            resetFilter();
+        });
+        function resetFilter(){
+            var table = $('#{{table.attrs.id}}').DataTable();
+            table.search('').columns().search('').draw();
+            {% for column in table.columns %}
+                {% if column.attrs.search_filter == 'input-text'%}
+                    $("#search-input-text{{ forloop.counter0 }}").val('');
+                {% elif column.attrs.search_filter == 'input-select'%}
+                    $("#search-input-select{{ forloop.counter0 }}").select2('val', ['']);
+                {% elif column.attrs.search_filter == 'input-date'%}
+                    $("#search-input-date{{ forloop.counter0 }}").val('');
+                {% else %}
+
+                {% endif %}
+            {% endfor %}
+            // table.order({{table.attrs.default_order|safe}}).draw();
+        }
+</script>

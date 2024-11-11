@@ -1,0 +1,151 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{% url 'users_index' %}">{{ title }}</a></li>
+        <li class="active">Add</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                <label>
+                                  {{ form.first_name.label }}
+                                  <label style="color: red; margin-bottom: 0">
+                                    {% if form.first_name.field.required %} * {% endif %}
+                                  </label>
+                                </label>
+                                {{ form.first_name }}
+                                {{ form.first_name.errors }}
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                <label>
+                                  {{ form.middle_name.label }}
+                                  <label style="color: red; margin-bottom: 0">
+                                    {% if form.middle_name.field.required %} * {% endif %}
+                                  </label>
+                                </label>
+                                {{ form.middle_name }}
+                                {{ form.middle_name.errors }}
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                <label>
+                                  {{ form.last_name.label }}
+                                  <label style="color: red; margin-bottom: 0">
+                                    {% if form.last_name.field.required %} * {% endif %}
+                                  </label>
+                                </label>
+                                {{ form.last_name }}
+                                {{ form.last_name.errors }}
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>
+                                {{ form.organization_id.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.organization_id.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.organization_id }}
+                            {{ form.organization_id.errors }}
+                        </div>
+                        </div>
+                        <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>
+                                {{ form.role.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.role.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.role }}
+                            {{ form.role.errors }}
+                        </div>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.phone_number.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.phone_number.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.phone_number }}
+                            {{ form.phone_number.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.email.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.email.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.email }}
+                            {{ form.email.errors }}
+                        </div>
+                        <!-- <div class="form-group">
+                            <label>
+                                {{ form.password.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.password.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.password }}
+                            {{ form.password.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.repeat_password.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.repeat_password.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.repeat_password }}
+                            {{ form.repeat_password.errors }}
+                        </div> -->
+                        <br>
+                        <button type="submit" class="btn btn-lg btn-block btn-primary"> Submit
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("#search-input-select-role").select2({ placeholder: "--select--", allowClear: true });
+        $("#search-input-select-organization-id").select2({ placeholder: "--select--", allowClear: true });
+        $("#search-input-select-organization-id").change(function (e) {
+            $("select#search-input-select-sub-organization-id").html("<option value='0' selected>NONE</option>");
+            $("select#search-input-select-sub-organization-id").trigger("chosen:updated");
+            let organization_id = e.target.value
+            let url
+            url += "?organization_id=" + organization_id
+         
+        });
+    });
+</script>
+{% endblock %}

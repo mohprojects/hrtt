@@ -1,0 +1,401 @@
+{% extends '_include/base-index.html' %} {% load static %} {% block head %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %} {% block body %} {% load static %} {% load humanize %} {% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li class="active">
+      {{ title }}
+    </li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-6">
+              <label>Report Type</label>
+              <select data-placeholder="Choose a report" id="demo-chosen-select-report" style="width: 100%">
+                <option value="1">Table 1: Health budget summary statistics</option>
+                <option value="2">Table 1: Health expenditures summary statistics</option>
+                <option value="3" selected>Table 2: List of institutions that reported health budgets</option>
+                <option value="4">Table 2: List of institutions that reported health expenditures</option>
+                <option value="5">Table 3: List of activity purposes (Budget)</option>
+                <option value="6">Table 3: List of activity purposes (Expenditure)</option>
+                <option value="17">Table 4: Trends of THE by activity/purpose (Budgets)</option>
+                <option value="18">Table 4: Trends of THE by activity/purpose (Expenditures)</option>
+                <option value="19">Table 5: Trends of THE by health functions (Budgets)</option>
+                <option value="20">Table 5: Trends of THE by health functions (Expenditures)</option>
+                <option value="21">Table 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="22">Table 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="23">Table 7: Distribution of funding sources by domains of intervention 3 years (Budgets)</option>
+                <option value="24">Table 7: Distribution of funding sources by domains of intervention 3 years (Expenditures)</option>
+                <option value="25">Table 8: Health Budgets summary statistics ( 10 years)</option>
+                <option value="26">Table 8: Health Expenditures summary statistics ( 10 years)</option>
+                <option value="27">Table 9: Total Health Budgets by Organization types (RWF)</option>
+                <option value="28">Table 9: Total Health Expenditures by Organization types (RWF)</option>
+                <option value="7">Figure 1: Trends in Total Health Budgets (THE)</option>
+                <option value="8">Figure 1: Trends in Total Health Expenditures (THE)</option>
+                <option value="9">Figure 2: THE versus THE as a share of GDP (Budgets)</option>
+                <option value="10">Figure 2: THE versus THE as a share of GDP (Expenditures)</option>
+                <option value="11">Figure 3: Trends in domestic versus external sources for (Budgets)</option>
+                <option value="12">Figure 3: Trends in domestic versus external sources for (Expenditures)</option>
+                <option value="13">Figure 4: Trends in public, private and external resources (Budgets)</option>
+                <option value="14">Figure 4: Trends in public, private and external resources (Expenditures)</option>
+                <option value="15">Figure 5: OOP spending as a share of THE (Budgets)</option>
+                <option value="16">Figure 5: OOP spending as a share of THE (Expenditures)</option>
+                <option value="29">Figure 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="30">Figure 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="31">Figure 7: Distribution of funding sources by domains of intervention 5 years overview (Budgets)</option>
+                <option value="32">Figure 7: Distribution of funding sources by domains of intervention 5 years overview (Expenditures)</option>
+                <option value="33">Figure 8: Sources of funding by activity 5 years overview (Budgets)</option>
+                <option value="34">Figure 8: Sources of funding by activity 5 years overview(Expenditures)</option>
+               
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label>Fiscal Year</label>
+              <select data-placeholder="Choose a fiscal year" id="demo-chosen-select-year" style="width: 100%">
+                {{fiscal_year_choices | safe }}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="panel-control">
+              <button id= "demo-reload" class="btn btn-default btn-active-primary" onclick="javascript:update()"><i class="demo-psi-repeat-2"></i></button>
+              <div class="dropdown">
+                  <button class="dropdown-toggle btn btn-default btn-active-primary" data-toggle="dropdown"><i class="demo-psi-dot-vertical"></i></button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                      <li><a href="javascript:ExportToExcel('xlsx')">Export</a></li>
+                  </ul>
+              </div>
+          </div>
+          <h3 class="panel-title">Table 2: List of institutions that reported health budgets</h3>
+      </div>
+        <div class="panel-body">
+          <div class="table-responsive">
+            <table id="report-table" class="table table-bordered table-hover">
+              <thead style="background-color: #efefef">
+                <tr>
+                  <th>Code</th>
+                  <th>Organization type&nbsp;</th>
+                  <th>Number of Institutions that reported</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Private Health Facilities</td>
+                  <td id="count_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Central GOR institutions</td>
+                  <td id="count_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Administrative Districts</td>
+                  <td id="count_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Public Health Facilities</td>
+                  <td id="count_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>Health professionals Councils</td>
+                  <td id="count_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>International NGOs</td>
+                  <td id="count_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>7</td>
+                  <td>Local NGOs</td>
+                  <td id="count_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>Social Health Insurances</td>
+                  <td id="count_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>Private insurances</td>
+                  <td id="count_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>10</td>
+                  <td>Public Universities</td>
+                  <td id="count_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>11</td>
+                  <td>Private Universities</td>
+                  <td id="count_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>Private pharmacies</td>
+                  <td id="count_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>13</td>
+                  <td>Public supplier of pharmaceuticals and medical goods</td>
+                  <td id="count_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>14</td>
+                  <td>Private suppliers of pharmaceuticals and medical goods</td>
+                  <td id="count_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>15</td>
+                  <td>Bilateral agencies</td>
+                  <td id="count_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>16</td>
+                  <td>Multilateral agencies</td>
+                  <td id="count_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>16.1</td>
+                  <td>- UN Agencies</td>
+                  <td id="count_161">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>16.2</td>
+                  <td>- Non UN Agencies</td>
+                  <td id="count_162">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+$(document.body).on("change","#demo-chosen-select-report",function(){
+    let url = "{% url 'system_reports_index' pk='P1' %}"
+    url = url.replace('P1', this.value)
+    location.href = url;
+});
+$('#demo-reload').click(function() {
+  update()   
+});
+function update(){
+  let yearS = $("#demo-chosen-select-year").val()
+    let year = yearS.substring(5);
+    let year3 = (year-1)+'-'+(year-0);
+    $('#year_3').html(year3);
+    reload(year3);
+}
+$(document.body).on("change","#demo-chosen-select-year",function(){
+    update()
+});
+$(document).ready(function() {
+  $('#demo-chosen-select-report').select2({
+    placeholder: '',
+    allowClear: false
+  });
+  $('#demo-chosen-select-year').select2({
+    placeholder: '',
+    allowClear: false
+  });
+  let year = (new Date()).getFullYear();
+  let year3 = (year-1)+'-'+(year-0);
+  $('#year_3').html(year3);
+  $('#demo-chosen-select-year').val(year3).trigger('change');
+  // reload();
+});
+
+function reset(){
+  $('#count_1').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_2').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_3').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_4').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_5').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_6').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_7').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_8').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_9').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_10').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_11').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_12').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_13').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_14').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_15').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_16').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_161').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  $('#count_162').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+}
+
+function reload(year){
+  reset()
+  getCounts(year)
+}
+
+function getCounts(year) {
+  var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+  jQuery(function($) {
+    $.ajax({
+      type: "POST",
+      url: "{% url 'system_reports_get_table_2' %}",
+      data: {
+        csrfmiddlewaretoken: csrfmiddlewaretoken,
+        year: year,
+        type: 'budget',
+      },
+      success: function(result) {
+        bootbox.hideAll();
+        var data = JSON.parse(JSON.stringify(result));
+        console.log(data)
+        $('#count_1').html((data.count_1).toLocaleString())
+        $('#count_2').html((data.count_2).toLocaleString())
+        $('#count_3').html((data.count_3).toLocaleString())
+        $('#count_4').html((data.count_4).toLocaleString())
+        $('#count_5').html((data.count_5).toLocaleString())
+        $('#count_6').html((data.count_6).toLocaleString())
+        $('#count_7').html((data.count_7).toLocaleString())
+        $('#count_8').html((data.count_8).toLocaleString())
+        $('#count_9').html((data.count_9).toLocaleString())
+        $('#count_10').html((data.count_10).toLocaleString())
+        $('#count_11').html((data.count_11).toLocaleString())
+        $('#count_12').html((data.count_12).toLocaleString())
+        $('#count_13').html((data.count_13).toLocaleString())
+        $('#count_14').html((data.count_14).toLocaleString())
+        $('#count_15').html((data.count_15).toLocaleString())
+        $('#count_16').html((data.count_16).toLocaleString())
+        $('#count_161').html((data.count_161).toLocaleString())
+        $('#count_162').html((data.count_162).toLocaleString())
+      },
+      error: function(result) {
+        bootbox.hideAll();
+        console.log(result)
+        $('#count_1').html('-')
+        $('#count_2').html('-')
+        $('#count_3').html('-')
+        $('#count_4').html('-')
+        $('#count_5').html('-')
+        $('#count_6').html('-')
+        $('#count_7').html('-')
+        $('#count_8').html('-')
+        $('#count_9').html('-')
+        $('#count_10').html('-')
+        $('#count_11').html('-')
+        $('#count_12').html('-')
+        $('#count_13').html('-')
+        $('#count_14').html('-')
+        $('#count_15').html('-')
+        $('#count_16').html('-')
+        $('#count_161').html('-')
+        $('#count_162').html('-')
+      },
+    });
+    return;
+  });
+  return;
+}
+
+function ExportToExcel(type, fn, dl) {
+      var elt = document.getElementById('report-table');
+      var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+      XLSX.writeFile(wb, fn || ('HRTT Report List of institutions that reported health budgets' + (type ? '.' + type : '.xlsx')));
+}
+</script>
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

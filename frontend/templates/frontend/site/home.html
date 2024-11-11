@@ -1,0 +1,28 @@
+{% extends TEMPLATE_PATH_FRONTEND|add:'_include/base-index.html' %}{% block head %}{% load static %}<title>{{ APP_CONSTANT_APP_NAME }}</title>{% endblock %}
+{% block body %}{% load static %}
+<header class="page-header page-header-dark bg-img-cover overlay overlay-primary overlay-90" style='background-image: url("/static/images/banner.jpeg")'>
+    <div class="page-header-content py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-8 col-lg-10 text-center">
+                    <h1 class="page-header-title">HRTT</h1>
+                    <p class="mb-5">A collaborative tool for under the East African Community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="svg-border-rounded text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144.54 17.34" preserveAspectRatio="none" fill="currentColor"><path d="M144.54,17.34H0V0H144.54ZM0,0S32.36,17.34,72.27,17.34,144.54,0,144.54,0" /></svg>
+    </div>
+</header>
+<section class="bg-white py-10">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10" style="text-align: justify; text-justify: inter-word;">
+                <h2 class="mb-4">Welcome</h2>
+                <hr class="my-5" />
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

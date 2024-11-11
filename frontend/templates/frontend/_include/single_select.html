@@ -1,0 +1,157 @@
+<script type="text/javascript" charset="utf-8">
+    var singleSelect;
+    singleSelect = function singleSelect(url, action, id, go_back_url) {
+        var confirmMessage;
+        if (action === 'verify') {
+            confirmMessage = "Are you sure you want to verify this item?";
+        }
+        if (action === 'approve') {
+            confirmMessage = "Are you sure you want to approve this item?";
+        }
+        if (action === 'deny') {
+            confirmMessage = "Are you sure you want to deny this item?";
+        }
+        if (action === 'open') {
+            confirmMessage = "Are you sure you want to open this item?";
+        }
+        if (action === 'close') {
+            confirmMessage = "Are you sure you want to close this item?";
+        }
+        if (action === 'restrict') {
+            confirmMessage = "Are you sure you want to restrict this item?";
+        }
+        if (action === 'block') {
+            confirmMessage = "Are you sure you want to block this item?";
+        }
+        if (action === 'unblock') {
+            confirmMessage = "Are you sure you want to unblock this item?";
+        }
+        if (action === 'enter') {
+            confirmMessage = "Are you sure you want to enter this item?";
+        }
+        if (action === 'exit') {
+            confirmMessage = "Are you sure you want to exit this item?";
+        }
+        if (action === 'issue') {
+            confirmMessage = "Are you sure you want to issue this item?";
+        }
+        if (action === 'collect') {
+            confirmMessage = "Are you sure you want to collect this item?";
+        }
+        if (action === 'delete') {
+            confirmMessage = "Are you sure you want to delete this item?";
+        }
+        if (action === 'backup') {
+            confirmMessage = "Are you sure you want to take backup of the current system?";
+        }
+        if (action === 'download') {
+            confirmMessage = "Are you sure you want to download this item?";
+        }
+        if (action === 'reset-password') {
+            confirmMessage = "Are you sure you want to reset password of this item?";
+        }
+        if (action === 'step') {
+            confirmMessage = "Are you sure you want to do this action?";
+        }
+        if (action !== '') {
+            var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+            bootbox.confirm({
+                title: "Confirm?",
+                message: confirmMessage,
+                buttons: {
+                    cancel: {label: '<i class="fa fa-times"></i> Cancel'},
+                    confirm: {label: '<i class="fa fa-check"></i> Ok'}
+                },
+                callback: function (confirmed) {
+                    if (confirmed) {
+                        bootbox.dialog({
+                            closeButton: false,
+                            title: "Message",
+                            message: '' + '<p>Please wait while loading ...</p>' + '<div class="active progress progress-lg progress-striped"><div style="width: 100%;" class="progress-bar progress-bar-primary"></div></div>' + ''
+                        });
+                        jQuery(function ($) {
+
+                            if (action === 'download') {
+                                var f = $("<form method='POST' style='display:none;'></form>").attr({
+                                    action: url
+                                }).appendTo(document.body);
+
+                                $('<input type="hidden" />').attr({
+                                    name: 'csrfmiddlewaretoken',
+                                    value: csrfmiddlewaretoken
+                                }).appendTo(f);
+                                $('<input type="hidden" />').attr({
+                                    name: 'action',
+                                    value: action
+                                }).appendTo(f);
+                                $('<input type="hidden" />').attr({
+                                    name: 'id',
+                                    value: id
+                                }).appendTo(f);
+                                f.submit();
+                                f.remove();
+                            }
+
+                            $.ajax({
+                                type: 'POST',
+                                url: url,
+                                data: {
+                                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                                    action: action,
+                                    id: id,
+                                },
+                                success: function (result) {
+                                    bootbox.hideAll();
+                                    if (action === 'download') {
+                                        return;
+                                    }
+                                    if (result === 'signin') {
+                                        window.location.replace("{% url 'users_signout' %}");
+                                        return;
+                                    }
+
+                                    if (result === 'success') {
+                                        if(action !== 'step'){
+                                            if (go_back_url != null && go_back_url !== '') {
+                                                window.location.replace(go_back_url);
+                                            } else {
+                                                location.reload();
+                                            }
+                                        }else{
+                                            location.reload();
+                                        }
+                                        return;
+                                    }
+
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Something went wrong!!! Please try again.',
+                                        customClass: {
+                                            confirmButton: 'btn btn-danger',
+                                        },
+                                        buttonsStyling: false
+                                    });
+                                }
+                                ,
+                                error: function (result) {
+                                    bootbox.hideAll();
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Something went wrong!!! Please try again.',
+                                        customClass: {
+                                            confirmButton: 'btn btn-danger',
+                                        },
+                                        buttonsStyling: false
+                                    });
+                                }
+                            });
+                            return false;
+                        });
+                    }
+                }
+            });
+        }
+    }
+</script>

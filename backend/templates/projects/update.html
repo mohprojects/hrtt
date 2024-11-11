@@ -1,0 +1,220 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{% url 'projects_index' %}">{{ title }}</a></li>
+        <li><a href="{% url 'projects_view' pk=model.project_id %}">{{ model.project_id }}</a></li>
+        <li class="active">Update</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <form id="project_update_form" method="post" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>
+                                {{ form.name.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.name.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.name }}
+                            {{ form.name.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.financing_agent.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.financing_agent.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.financing_agent }}
+                            {{ form.financing_agent.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.implementer.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.implementer.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.implementer }}
+                            {{ form.implementer.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                {{ form.organization_id.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.organization_id.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.organization_id }}
+                            {{ form.organization_id.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{  form.start_time.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.start_time.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            <div id="demo-dp-component-1" class="input-group date form_date"
+                                data-link-field="dtp_input1" data-date-format="yyyy-mm-dd">
+                                {{ form.start_time }}
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-calendar"></span></span>
+                            </div>
+                            <input type="hidden" id="dtp_input1" value="" />
+                            {{ form.start_time.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                {{ form.deadline.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.deadline.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            <div id="demo-dp-component-1" class="input-group date form_date"
+                                data-link-field="dtp_input1" data-date-format="yyyy-mm-dd">
+                                {{ form.deadline }}
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-calendar"></span></span>
+                            </div>
+                            <input type="hidden" id="dtp_input1" value="" />
+                            {{ form.deadline.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                {{ form.assign_to.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.assign_to.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.assign_to }}
+                            {{ form.assign_to.errors }}
+                        </div>
+
+                        <div class="row">    
+                            <div class="col-sm-6">
+                            <button type="submit" class="btn btn-lg  btn-block btn-primary"> Submit </button>
+                            </div>
+                            <div class="col-sm-6">
+                            <a href="{% url 'projects_view' pk=model.project_id %}" type="button" class="btn btn-lg btn-block btn-danger">Cancel</a>
+                           </div>
+                        </div>
+
+                    </form>
+                   <!--  <br/>
+                    {% if  user.organization_id == model.organization_id or user.organization_id == 0 %}
+                    {% if model.project_status == model.STATUS_ASSIGNED and user.user_role == user.TYPE_ACTIVITY_MANAGER %}
+                    {% if ACCESS_PERMISSION_PROJECTS_ASSIGN in auth_permissions.values %}
+                    {% include './_assign.html' %}
+                    {% endif %}
+                    {% endif %}
+
+                    {% if  model.project_status ==  model.STATUS_ACTIVE and user.user_role == user.TYPE_ACTIVITY_MANAGER %}
+                    {% if ACCESS_PERMISSION_PROJECTS_ASSIGN in auth_permissions.values %}
+                    {% include './_assign.html' %}
+                    {% endif %}
+                    {% endif %}
+
+                    {% endif%} -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("select#id_financing_agent").select2({ placeholder: "--select--", allowClear: true });
+        $("select#search-input-select-organization-id").select2({ placeholder: "--select--", allowClear: true });
+        $("select#id_project_implementer").select2({ placeholder: "--select--", allowClear: true }); 
+        $("select#id_project_implementer").trigger("chosen:updated");
+        $("select#id_financing_agent").select2({ placeholder: "--select--", allowClear: true }); 
+        $("select#id_financing_agent").trigger("chosen:updated"); 
+     });
+</script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("#id_financing_agent").select2({ placeholder: "--select--", allowClear: true }); 
+        try {
+            var financings = "{{ form.financing_agent.value }}";
+            financings = financings.replaceAll("&#x27;", "'");
+            financings = financings.replace(/'/g, '"');
+            $("#id_financing_agent").val(
+                JSON.parse(financings)
+            );
+            $("#id_financing_agent").trigger("change");
+        } catch (e) {
+            
+        }
+    });
+</script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $('.form_date').datetimepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: true,
+            todayHighlight: true,
+            pickTime: false,
+            minView: 2,
+            startDate: '2020-01-01',
+            pickerPosition: "top-left",
+        });
+    });
+</script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("#id_project_funding_source").select2({ placeholder: "--select--", allowClear: true });
+        try {
+            var sources = "{{ form.funding_source.value }}";
+            sources = sources.replaceAll("&#x27;", "'");
+            sources = sources.replace(/'/g, '"');
+            $("#id_project_funding_source").val(
+                JSON.parse(sources)
+            );
+            $("#id_project_funding_source").trigger("change");
+        } catch (e) {
+            
+        }
+    });
+</script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("#id_project_implementer").select2({ placeholder: "--select--", allowClear: true });
+        try {
+            var sources = "{{ form.implementer.value }}";
+            sources = sources.replaceAll("&#x27;", "'");
+            sources = sources.replace(/'/g, '"');
+            $("#id_project_implementer").val(
+                JSON.parse(sources)
+            );
+            $("#id_project_implementer").trigger("change");
+        } catch (e) {
+            
+        }
+    });
+</script>
+{% include '_include/table.html' %}
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

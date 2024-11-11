@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include '_include/header.html' %}{% load static %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" type='text/css'>
+    <link rel="stylesheet" href="{% static 'templates/nifty/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/css/nifty.min.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'templates/nifty/css/themes/type-e/theme-ocean.min.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'templates/nifty/css/demo/nifty-demo-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/css/demo/nifty-demo.min.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/plugins/pace/pace.min.css' %}">
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/plugins/pace/pace.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'templates/nifty/plugins/switchery/switchery.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/plugins/select2/css/select2.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/plugins/bootstrap-timepicker/bootstrap-timepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/plugins/bootstrap-datepicker/bootstrap-datepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-multiselect/bootstrap-multiselect.css' %}">
+
+    <link rel="stylesheet" href="{% static 'plugins/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/app-site.css' %}">
+
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/js/nifty.min.js' %}"></script>
+    
+    <script type="text/javascript" charset="utf-8" src="{% static 'app/service-worker/service-worker-registration.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'plugins/scroll-passive/js/scroll-passive.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'plugins/bootbox/bootbox.min.js' %}"></script>
+
+    <script type="text/javascript" charset="utf-8" src="{% static 'plugins/sweetalert/sweetalert2@11.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/plugins/switchery/switchery.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/plugins/select2/js/select2.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/plugins/bootstrap-timepicker/bootstrap-timepicker.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'plugins/bootstrap-multiselect/bootstrap-multiselect.js' %}"></script>
+
+    <script type="text/javascript" charset="utf-8" src="{% static 'plugins/tinymce/tinymce.min.js' %}"></script>
+
+    <script type="text/javascript" charset="utf-8" src="{% static 'plugins/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-duallistbox/src/bootstrap-duallistbox.css' %}">
+
+    <script type="text/javascript" charset="utf-8" src="{% static 'app/js/app-site.js' %}"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<div id="container" class="effect aside-float aside-bright mainnav-lg">
+    {% include '_include/top-navigation.html' %}
+    <div class="boxed">
+        <div id="content-container">
+        {% include '_include/alert.html' %}
+        {% block body %}{% endblock %}
+        </div>
+        {% include '_include/left-navigation.html' %}
+    </div>
+    {% include '_include/footer.html' %}
+    <button class="scroll-top btn">
+        <i class="pci-chevron chevron-up"></i>
+    </button>
+</div>
+</body>
+</html>

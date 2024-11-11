@@ -1,0 +1,139 @@
+{% extends '_include/base-index.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% block head %}
+    <title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+    {% load static %}{% csrf_token %}
+    <script type="text/javascript" charset="utf-8">
+        let ajax_url_logs = {
+            "url": "{% url 'logs_datatable' %}",
+            "type": "GET",
+            "data": {
+                "csrfmiddlewaretoken": "{{ csrf_token }}"
+            },
+        };
+        let ajax_url_logs_email = {
+            "url": "{% url 'logs_email_datatable' %}",
+            "type": "GET",
+            "data": {
+                "csrfmiddlewaretoken": "{{ csrf_token }}"
+            },
+        };
+        let ajax_url_logs_sms = {
+            "url": "{% url 'logs_sms_datatable' %}",
+            "type": "GET",
+            "data": {
+                "csrfmiddlewaretoken": "{{ csrf_token }}"
+            },
+        };
+        let ajax_url_notifications = {
+            "url": "{% url 'notifications_datatable' %}",
+            "type": "GET",
+            "data": {
+                "csrfmiddlewaretoken": "{{ csrf_token }}"
+            },
+        };
+    </script>
+    <div id="page-head">
+        <div id="page-title">
+            <h1 class="page-header text-overflow">{{ title }}</h1>
+        </div>
+        <ul class="breadcrumb">
+            <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+            <li class="active">{{ title }}</li>
+        </ul>
+    </div>
+    <div id="page-content" style="padding-top:0px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tab-base">
+                    <!--Nav Tabs-->
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a data-toggle="tab" href="#demo-lft-tab-1">System Logs</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#demo-lft-tab-2">Email Logs</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#demo-lft-tab-3">SMS Logs</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#demo-lft-tab-4">Notifications</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="demo-lft-tab-1" class="tab-pane fade active in">
+                            <div>
+                                <div class="dt-buttons" style="margin-right:3px;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false">
+                                            Multiple Action &nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+                                        <ul class="dropdown-menu">
+                                            <div class="dt-button-collection">
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% render_table table_logs %}
+                            </div>
+                        </div>
+                        <div id="demo-lft-tab-2" class="tab-pane fade">
+                            <div>
+                                <div class="dt-buttons" style="margin-right:3px;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false">
+                                            Multiple Action &nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+                                        <ul class="dropdown-menu">
+                                            <div class="dt-button-collection">
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% render_table table_logs_email %}
+                            </div>
+                        </div>
+                        <div id="demo-lft-tab-3" class="tab-pane fade">
+                            <div>
+                                <div class="dt-buttons" style="margin-right:3px;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false">
+                                            Multiple Action &nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+                                        <ul class="dropdown-menu">
+                                            <div class="dt-button-collection">
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% render_table table_logs_sms %}
+                            </div>
+                        </div>
+                        <div id="demo-lft-tab-4" class="tab-pane fade">
+                            <div>
+                                <div class="dt-buttons" style="margin-right:3px;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false">
+                                            Multiple Action &nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+                                        <ul class="dropdown-menu">
+                                            <div class="dt-button-collection">
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% render_table table_notifications %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include '_include/single_select.html' %}
+    {% include '_include/multiple_select.html' %}
+{% endblock %}

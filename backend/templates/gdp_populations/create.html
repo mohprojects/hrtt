@@ -1,0 +1,120 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{% url 'gdp_populations_index' %}">{{ title }}</a></li>
+        <li class="active">Add</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>
+                                {{ form.fiscal_year.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.fiscal_year.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.fiscal_year }}
+                            {{ form.fiscal_year.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.population.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.population.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.population }}
+                            {{ form.population.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.budget.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.budget.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.budget }}
+                            {{ form.budget.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.expenditure.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.expenditure.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.expenditure }}
+                            {{ form.expenditure.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.gdp.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.gdp.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.gdp }}
+                            {{ form.gdp.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.payment_rate.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.payment_rate.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.payment_rate }}
+                            {{ form.payment_rate.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                {{ form.budget_health.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.budget_health.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.budget_health }}
+                            {{ form.budget_health.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.expenditure_health.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.expenditure_health.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.expenditure_health }}
+                            {{ form.expenditure_health.errors }}
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-lg btn-block btn-primary"> Submit
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("#id_fiscal-year").select2({ placeholder: "--select--", allowClear: false });
+    });
+</script>
+{% endblock %}

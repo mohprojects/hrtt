@@ -1,0 +1,140 @@
+# environment files
+.env
+
+# phpstorm project files
+.idea
+
+# vscode project files
+.vscode
+
+# netbeans project files
+nbproject
+
+# zend studio for eclipse project files
+.buildpath
+.project
+.settings
+
+# windows thumbnail cache
+Thumbs.db
+
+# Mac DS_Store Files
+.DS_Store
+
+# phpunit itself is not needed
+phpunit.phar
+# local phpunit config
+/phpunit.xml
+
+# vagrant runtime
+/.vagrant
+
+# venv dir
+/venv/
+
+# vendor dir
+/vendor/
+
+# server dir
+/server/
+
+# /files/
+/backups/
+/uploads/
+/downloads/
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Rope
+.ropeproject
+
+# Django stuff:
+*.log
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
+.DS_Store
+
+**node_modules
+*/node_modules/*
+/node_modules
+node_modules/
+
+/build
+build/
+
+tmp/
+temp/
+
+/.pnp
+.pnp.js
+
+# misc
+.env
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+yarn.lock
+package-lock.json
+
+.data/
+.temp/
+.exports/
+media/
+files/
+public/
+server/
+uploads/
+downloads/
+
+

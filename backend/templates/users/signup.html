@@ -1,0 +1,108 @@
+{% extends '_include/base-login.html' %}{% block head %}{% load static %}<title>{{ APP_CONSTANT_APP_NAME }}:
+    User SignUp</title>
+{% endblock %}{% block body %}{% load static %}
+    <div class="cls-content">
+        <div class="cls-content-sm panel" style="background-color: rgba(255, 255, 255, 1.0); width: 360px;">
+            <div class="panel-body">{% load static %}{% include '_include/alert.html' %}
+                <div class="mar-ver">
+                    <img src="{% static 'img/app/logo.png' %}" width="100"/>
+                    <h3 style="color: {{ COLOR_ACCENT }}">HRTT</h2>
+                    <p class="text-muted" style="color: #000; font-weight: bold;">User Registration</p>
+                </div>
+                <div style="width:100%; color:#023047; font-weight: bold; text-align: left; float: left;">
+                    <form method="post" action="">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                <label>
+                                  {{ form.first_name.label }}
+                                  <label style="color: red; margin-bottom: 0">
+                                    {% if form.first_name.field.required %} * {% endif %}
+                                  </label>
+                                </label>
+                                {{ form.first_name }}
+                                {{ form.first_name.errors }}
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                <label>
+                                  {{ form.middle_name.label }}
+                                  <label style="color: red; margin-bottom: 0">
+                                    {% if form.middle_name.field.required %} * {% endif %}
+                                  </label>
+                                </label>
+                                {{ form.middle_name }}
+                                {{ form.middle_name.errors }}
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                <label>
+                                  {{ form.last_name.label }}
+                                  <label style="color: red; margin-bottom: 0">
+                                    {% if form.last_name.field.required %} * {% endif %}
+                                  </label>
+                                </label>
+                                {{ form.last_name }}
+                                {{ form.last_name.errors }}
+                              </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #000; font-weight: bold;">
+                                {{ form.email.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.email.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.email }}{{ form.email.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #000; font-weight: bold;">
+                                {{ form.password.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.password.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.password }}{{ form.password.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #000; font-weight: bold;">
+                                {{ form.repeat_password.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.repeat_password.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.repeat_password }}
+                            {{ form.repeat_password.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #000; font-weight: bold;">
+                                {{ form.captcha.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.captcha.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.captcha }}{{ form.captcha.errors }}
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-block btn-primary"> Submit
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <div class="center-block">
+                    <a href="{% url 'users_signin' %}" class="btn-link" style="font-weight: bold;"> Already registered?</a>
+                </div>
+            </div>
+            <div class="pad-all">
+                <div class="pull-right">
+                    <a href="{{ APP_CONSTANT_COMPANY_WEBSITE_2 }}" class="btn-link" style="font-weight:bold" target="_blank" rel="noopener">{{ APP_CONSTANT_COMPANY_NAME_2 }}</a>
+                </div>
+                <div class="media-body text-left">
+                    <a href="{{ APP_CONSTANT_COMPANY_WEBSITE }}" class="btn-link" style="font-weight:bold" target="_blank" rel="noopener">{{ APP_CONSTANT_COMPANY_NAME }}</a>
+                </div>
+            </div>
+        </div>
+    </div>{% endblock %}

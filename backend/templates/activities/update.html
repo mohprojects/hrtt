@@ -1,0 +1,287 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{% url 'projects_index' %}">Projects</a></li>
+        <li><a href="{% url 'projects_view' pk=project.project_id %}">{{ project.project_name }}</a></li>
+        <li><a href="{% url 'activities_view' pk=model.activity_id %}">{{ model.activity_name }}</a></li>
+        <li class="active">Update</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.name.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.name.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.name }}
+                                    {{ form.name.errors }}
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.location.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.location.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.location }}
+                                    {{ form.location.errors }}
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.fiscal_year.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.fiscal_year.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.fiscal_year }}
+                                    {{ form.fiscal_year.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.domain.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.domain.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.domain }}
+                                    {{ form.domain.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">  
+                            <div id="sub_domain" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.sub_domain.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.sub_domain.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.sub_domain }}
+                                    {{ form.sub_domain.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="functions" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.functions.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.functions.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.functions }}
+                                    {{ form.functions.errors }}
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="row">
+                            <div id="sub_functions" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.sub_functions.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.sub_functions.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.sub_functions }}
+                                    {{ form.sub_functions.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">    
+                        <div class="col-sm-3">
+                        <button type="submit" class="btn btn-lg  btn-block btn-primary"> Save </button>
+                        </div>
+                        <div class="col-sm-3">
+                        <a href="{% url 'activities_view' pk=model.activity_id %}" type="button" class="btn btn-lg btn-block btn-danger">Cancel</a>
+                       </div>
+                    </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("select#id_activity_location").select2({ placeholder: "", allowClear: true });
+        $("select#id_fiscal_year").select2({ placeholder: "", allowClear: true });
+        $("select#id_activity_sub_domain").select2({ placeholder: "", allowClear: true });
+        $("select#id_activity_domain").select2({ placeholder: "", allowClear: true });
+        $("select#id_activity_functions").select2({ placeholder: "", allowClear: true });
+        $("select#id_activity_sub_functions").select2({ placeholder: "", allowClear: true });
+
+        // init
+        var domain_id = `{{form.domain.value}}`;
+        var sub_domain_id = `{{form.sub_domain.value}}`;
+       
+        if (domain_id) {
+            var sub_domain_text = $( "#id_activity_sub_domain option:selected" ).text();
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'sub-domain', level_parent: domain_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        var responses = response.replace("<option value='0' selected>--Select--</option>", `<option value=${sub_domain_id}  selected>${sub_domain_text}</option>`)
+                        var subTypeOptionsList = $('#id_activity_sub_domain');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(responses); 
+                    } 
+                },
+            });
+        }
+        // var sub_domain_id = `{{model.activity_sub_domain}}`;
+        var function_id = `{{form.functions.value}}`;
+        if (sub_domain_id) {
+            var function_text = $( "#id_activity_functions option:selected" ).text();
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'function', level_parent: sub_domain_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        // $('#functions').show()
+                        var responses = response.replace("<option value='0' selected>--Select--</option>", `<option value=${function_id}  selected>${function_text}</option>`)
+                        var subTypeOptionsList = $('#id_activity_functions');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(responses);
+                    } else { 
+                        // $('#functions').hide() 
+                    }
+                },
+            });
+        }
+
+        if (function_id) {
+            var sub_function_id = `{{form.sub_functions.value}}`;
+            var sub_function_text = $( "#id_activity_sub_functions option:selected" ).text();
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'sub-function', level_parent: function_id},
+                success: function (response) {
+                    if (response.length > 0) {
+                        // $('#functions').show()
+                        var responses = response.replace("<option value='0' selected>--Select--</option>", `<option value=${sub_function_id}  selected>${sub_function_text}</option>`)
+                        var subTypeOptionsList = $('#id_activity_sub_functions');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(responses);
+                    } else { 
+                        // $('#functions').hide() 
+                    }
+                },
+            });
+        }
+
+
+    });
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    // $('#sub_domain').hide()
+    $('#id_activity_domain').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'sub-domain', level_parent: level_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        // $('#sub_domain').show()
+                        var subTypeOptionsList = $('#id_activity_sub_domain');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(response);
+                    } else { 
+                        // $('#sub_domain').hide() 
+                    }
+                },
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    // $('#functions').hide()
+    $('#id_activity_sub_domain').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'function', level_parent: level_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        // $('#functions').show()
+                        var subTypeOptionsList = $('#id_activity_functions');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(response);
+                    } else { 
+                        // $('#functions').hide() 
+                    }
+                },
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    //$('#sub_functions').hide()
+    $('#id_activity_functions').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'sub-function', level_parent: level_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        //$('#sub_functions').show()
+                        var subTypeOptionsList = $('#id_activity_sub_functions');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(response);
+                    } else { 
+                       // $('#sub_functions').hide() 
+                    }
+                },
+            });
+        }
+    });
+</script>
+{% endblock %}

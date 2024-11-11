@@ -1,0 +1,145 @@
+{% extends '_include/base-general.html' %} {% block head %} {% load static %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %} {% block body %} {% load static %}{% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li><a href="{% url 'organizations_index' %}">
+        {{ title }}</a></li>
+    <li>
+      <a href="{% url 'organizations_view' pk=model.organization_id %}">
+        {{ model.organization_id }}</a>
+    </li>
+    <li class="active">Update Levels Type</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <div id="demo-jstree-3"></div>
+          <br />
+          <button type="buttom" class="btn btn-lg btn-block btn-primary" onClick="javascript:onSubmit();">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function() {
+    let url;
+    url =
+      "{% url 'dropdown_tree_edit' key='organization-type' model='oragnizations' model_id=model.organization_id  %}";
+    $.get(url, function(data) {
+      $('#demo-jstree-3').html(data);
+      $('#demo-jstree-3').jstree({
+        core: {
+          check_callback: true,
+        },
+        plugins: ['checkbox', 'types'],
+        types: {
+          default: {
+            icon: 'fa fa-file',
+          },
+        },
+      });
+      $('li[data-checkstate="checked"]').each(function() {
+        $('#demo-jstree-3').jstree('check_node', $(this));
+      });
+    });
+  });
+</script>
+<script type="text/javascript" charset="utf-8">
+  function onSubmit() {
+    var selectedElmsIds = [];
+    var selectedElms = $('#demo-jstree-3').jstree('get_selected', true);
+    $.each(selectedElms, function() {
+      selectedElmsIds.push(this.data.id);
+    });
+    console.log(selectedElmsIds);
+    Swal.fire({
+      title: 'Confirm?',
+      text: "Do you really want to update with selected items?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onUpdate(selectedElmsIds);
+      }
+    })
+  }
+
+  function onUpdate(selectedElmsIds) {
+    bootbox.dialog({
+      closeButton: false,
+      title: "Message",
+      message: "" +
+        "<p>Please wait while loading ...</p>" +
+        '<div class="active progress progress-lg progress-striped"><div style="width: 100%;" class="progress-bar progress-bar-primary"></div></div>' +
+        "",
+    });
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'organizations_update_levels_type_submit' pk=model.organization_id %}",
+        data: {
+          selected: JSON.stringify(selectedElmsIds),
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          if (result === "signin") {
+            window.location.replace("{% url 'users_signout' %}");
+            return;
+          }
+          if (result === "success") {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Selected items have been updated successfully.',
+              customClass: {
+                confirmButton: 'btn btn-success',
+              },
+              buttonsStyling: false
+            });
+            return;
+          }
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong!!! Please try again.',
+            customClass: {
+              confirmButton: 'btn btn-danger',
+            },
+            buttonsStyling: false
+          });
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong!!! Please try again.',
+            customClass: {
+              confirmButton: 'btn btn-danger',
+            },
+            buttonsStyling: false
+          });
+        },
+      });
+      return;
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,149 @@
+<!-- configure.html -->
+
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+<style>
+    .showPasswordToggle{
+        cursor: pointer;
+        transition: all;
+        }
+    .showPasswordToggle{
+        transform: scale(1,2);
+    }
+</style>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{%url 'settings_index'%}">Settings</a></li>
+        <!-- <li><a href="{% url 'gdp_populations_index' %}">{{ title }}</a></li> -->
+        <li class="active">Add</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="panel">
+                <div class="panel-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>
+                                {{ form.host.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.host.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.host }}
+                            {{ form.host.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.port.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.port.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.port }}
+                            {{ form.port.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                {{ form.sender.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.sender.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.sender }}
+                            {{ form.sender.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.subject.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.subject.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.subject }}
+                            {{ form.subject.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.username.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.username.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.username }}
+                            {{ form.username.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                {{ form.password.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.password.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.password }}
+                            {{ form.password.errors }}
+                            <small class="float-right py3 showPasswordToggle">SHOW</small>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.tls.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.tls.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.tls }}
+                            {{ form.tls.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                {{ form.ssl.label }}
+                                <label style="color: red; margin-bottom: 0;">
+                                    {% if form.ssl.field.required %} * {% endif %}
+                                </label>
+                            </label>
+                            {{ form.ssl }}
+                            {{ form.ssl.errors }}
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-lg btn-block btn-primary"> Save
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript code to toggle password visibility
+    document.addEventListener('DOMContentLoaded', function () {
+      const showPasswordToggle = document.querySelector('.showPasswordToggle');
+      
+      const passwordField = document.querySelector('#id_password');
+  
+      showPasswordToggle.addEventListener('click', function (e) {
+        //passwordField.type = this.checked ? 'text' : 'password';
+        if (showPasswordToggle.textContent === "SHOW"){
+            showPasswordToggle.textContent = "HIDE";
+            passwordField.type = 'text'
+        } else{
+            showPasswordToggle.textContent = "SHOW";
+            passwordField.type = 'password'
+        }
+      });
+    });
+  </script>
+{% endblock %}

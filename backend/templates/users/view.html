@@ -1,0 +1,288 @@
+{% extends '_include/base-index.html' %}
+{% block head %}
+{% load static %}
+{% load render_table from django_tables2 %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+    var ajax_url = {
+        "url": "{% url 'logs_datatable_view' %}",
+        "type": "GET",
+        "data": {
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+            "model": "users",
+            "modelId": "{{  model.user_id }}"
+        },
+    };
+</script>
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{{ index_url }}">{{ title }}</a></li>
+        <li class="active">{{ model.user_id }}</li>
+        <li class="active">Details</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tab-base">
+                <!--Nav Tabs-->
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#demo-lft-tab-1">Details</a>
+                    </li>
+                    <li class="">
+                        <a data-toggle="tab" href="#demo-lft-tab-2">Logs
+                            <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+                        </a>
+                    </li>
+                </ul>
+                <!--Tabs Content-->
+                <div class="tab-content">
+                    <div id="demo-lft-tab-1" class="tab-pane fade active in">
+                        <div>
+                            {% if ACCESS_PERMISSION_USER_UPDATE in auth_permissions.values %}
+                            {% if user.user_role == 'super-admin' %}
+                            <a href="{% url 'users_update' pk=model.user_id %}" class="btn btn-info">Update</a>
+                            <a href="{% url 'users_update_permissions_view' pk=model.user_id %}"
+                                class="btn btn-warning">Update Permissions</a>
+                            {% endif %}
+                            {% endif %}
+                            {% if user.user_type == 'super-admin' or user.user_id != model.user_id %}
+                            {% if ACCESS_PERMISSION_USER_UPDATE in auth_permissions.values %}
+                            {% if model.user_status == user.STATUS_UNVERIFIED %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'verify', '{{ model.user_id }}');"
+                                class="btn btn-warning">Verify</a>
+                            {% endif %}
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_USER_UPDATE in auth_permissions.values %}
+                            {% if model.user_status == user.STATUS_UNAPPROVED %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'approve', '{{ model.user_id }}');"
+                                class="btn btn-warning">Approve</a>
+                            {% endif %}
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_USER_UPDATE in auth_permissions.values %}
+                            <a href="{% url 'users_update_reset_password' pk=model.user_id %}"
+                                class="btn btn-danger">Reset Password</a>
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_USER_UPDATE in auth_permissions.values %}
+                            {% if model.user_status == user.STATUS_ACTIVE or model.user_status == user.STATUS_INACTIVE %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'block', '{{ model.user_id }}');"
+                                class="btn btn-danger">Disable</a>
+                            {% endif %}
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_USER_UPDATE in auth_permissions.values %}
+                            {% if model.user_status == user.STATUS_BLOCKED %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'unblock', '{{ model.user_id }}');"
+                                class="btn btn-warning">Enable</a>
+                            {% endif %}
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_USER_DELETE in auth_permissions.values %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'delete', '{{ model.user_id }}', '{{ index_url }}');"
+                                class="btn btn-danger">Delete</a>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr style="background-color: #efefef;">
+                                            <th style="width:30%;">Key</th>
+                                            <th style="width:70%;">Value</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.first_name.label }}</td>
+                                            <td>{{ form.first_name.value }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.middle_name.label }}</td>
+                                            <td>{{ form.middle_name.value }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.last_name.label }}</td>
+                                            <td>{{ form.last_name.value }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.email.label }}</td>
+                                            <td>{{ form.email.value }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.phone_number.label }}</td>
+                                            <td>{{ form.phone_number.value }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.organization_id.label }}</td>
+                                            <td>{{ form.organization_id.value }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.role.label }}</td>
+                                            <td>{{ form.role.value }}</td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="col-sm-6">
+                                <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr style="background-color: #efefef;">
+                                            <th style="width:20%;">Key</th>
+                                            <th style="width:80%;">Value</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Created At</td>
+                                            <td>{{ model.user_created_at }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Created By</td>
+                                            <td>{{ model.user_created_by }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Updated At</td>
+                                            <td>{{ model.user_updated_at }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Updated By</td>
+                                            <td>{{ model.user_updated_by }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Status</td>
+                                            <td>
+                                                {% if model.user_status == user.STATUS_ACTIVE %}
+                                                <div style="width:100px;">
+                                                    {{ user.HTML_TAG_STATUS_ACTIVE_COLOR | safe }}
+                                                </div>
+                                                {% endif %}
+                                                {% if model.user_status == user.STATUS_INACTIVE %}
+                                                <div style="width:100px;">
+                                                    {{ user.HTML_TAG_STATUS_INACTIVE_COLOR | safe }}
+                                                </div>
+                                                {% endif %}
+                                                {% if model.user_status == user.STATUS_BLOCKED %}
+                                                <div style="width:100px;">
+                                                    {{ user.HTML_TAG_STATUS_BLOCKED_COLOR | safe }}
+                                                </div>
+                                                {% endif %}
+                                                {% if model.user_status == user.STATUS_UNVERIFIED %}
+                                                <div style="width:100px;">
+                                                    {{ user.HTML_TAG_STATUS_UNVERIFIED_COLOR | safe }}
+                                                </div>
+                                                {% endif %}
+                                                {% if model.user_status == user.STATUS_UNAPPROVED %}
+                                                <div style="width:100px;">
+                                                    {{ user.HTML_TAG_STATUS_UNAPPROVED_COLOR | safe }}
+                                                </div>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <script type="text/javascript" charset="utf-8">
+                            $(document).ready(function () {
+                                $("#search-input-select-role").select2({ placeholder: "--select--", allowClear: true });
+                                $("#search-input-select-organization-id").select2({ placeholder: "--select--", allowClear: true });
+                                // $("#search-input-select-division-id").select2({ placeholder: "--select--", allowClear: true, data: [] });
+                                $("#search-input-select-organization-id").change(function (e) {
+                                    $("select#search-input-select-sub-organization-id").html("<option value='0' selected>NONE</option>");
+                                    $("select#search-input-select-sub-organization-id").trigger("chosen:updated");
+                                    let organization_id = e.target.value
+                                   
+                                });
+                                let organization_id = $("#search-input-select-organization-id").val();
+                            });
+                        </script>
+                    </div>
+                    <div id="demo-lft-tab-2" class="tab-pane fade">
+                        <!-- {% if ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values %} -->
+                        <div id="id_logs_list"></div>
+                        <!-- {% endif %} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    var logs = [];
+    var drawLogs = 1;
+    var startLogs = 0;
+    var lengthLogs = 10;
+    function fetchLogs(draw, start, length) {
+        var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        jQuery(function ($) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'logs_datatable_view' %}",
+                data: {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    model: "users",
+                    model_id: "{{ model.user_id }}",
+                    draw: draw,
+                    start: start,
+                    length: length,
+                },
+                success: function (result) {
+                    bootbox.hideAll();
+                    var items = JSON.parse(JSON.stringify(result)).data;
+                    var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+                    if (start == 0) {
+                        logs.length = 0;
+                    }
+                    items.forEach(function (item) {
+                        logs.push(item);
+                    });
+                    var showMore = null;
+                    if (recordsTotal > logs.length) {
+                        drawLogs = drawLogs++;
+                        startLogs = logs.length;
+                        showMore = '<button class="btn btn-xs btn-default mar-top" onClick="javascript:fetchLogs(' + drawLogs + ', ' + startLogs + ', ' + lengthLogs + ');">Show more</button>'
+                    }
+                    updateUiLogs(showMore);
+                },
+                error: function (result) {
+                    bootbox.hideAll();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong!!! Please try again.',
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    });
+                },
+            });
+            return;
+        });
+        return;
+    }
+    function updateUiLogs(showMore) {
+        div_logs = '';
+        logs.forEach(function (log) {
+            div_logs += '<div class="comment-content media"><div class="media-body"><div class="comment-header"><span class="text-main text-semibold">' + log.log_message + '</span><br><small class="text-muted"> - ' + log.log_updated_at + ' by ' + log.log_updated_by + '</small></div>';
+        });
+        if (showMore != null) {
+            div_logs += showMore;
+        }
+        if (div_logs) {
+            document.getElementById("id_logs_list").innerHTML = div_logs;
+        }
+    }
+    fetchLogs(drawLogs, startLogs, lengthLogs);
+</script>
+{% include '_include/single_select.html' %}
+{% endblock %}

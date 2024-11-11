@@ -1,0 +1,184 @@
+{% extends '_include/base-general-with-dual-listbox.html' %}
+{% block head %}
+    {% load static %}
+    <title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+    <style>
+        .bootstrap-duallistbox-container .buttons {
+            margin-bottom: 5px;
+            border: 1px solid #efefef;
+            box-shadow: none;
+        }
+
+        select[multiple] {
+            border: 1px solid #efefef;
+            box-shadow: none;
+        }
+
+        .bootstrap-duallistbox-container .move,
+        .bootstrap-duallistbox-container .remove {
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .bootstrap-duallistbox-container .moveall,
+        .bootstrap-duallistbox-container .removeall {
+            width: 50%;
+            box-sizing: border-box;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% load static %}{% csrf_token %}
+    <div id="page-head">
+        <div id="page-title">
+            <h1 class="page-header text-overflow">{{ title }}</h1>
+        </div>
+        <ul class="breadcrumb">
+            <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+            <li><a href="{% url 'users_index' %}">{{ title }}</a></li>
+            <li><a href="{% url 'users_view' pk=model.user_id %}">{{ model.user_id }}</a></li>
+            <li class="active">Update</li>
+        </ul>
+    </div>
+    <div id="page-content" style="padding-top:0px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        <form id="update-form" method="post" action="">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>
+                                    {{ form.email.label }}
+                                    <label style="color: red; margin-bottom: 0;">
+                                        {% if form.email.field.required %} * {% endif %}
+                                    </label>
+                                </label>
+                                {{ form.email }}
+                                {{ form.email.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    {{ form.name.label }}
+                                    <label style="color: red; margin-bottom: 0;">
+                                        {% if form.name.field.required %} * {% endif %}
+                                    </label>
+                                </label>
+                                {{ form.name }}
+                                {{ form.name.errors }}
+                            </div>
+                            <select id="dual-listbox" multiple="multiple" size="10" name="duallistbox[]" title="duallistbox[]">
+                                {% for auth_permission in all_auth_permissions.values %}
+                                    {% if auth_permission in user_auth_permissions.values %}
+                                        <option value="{{ auth_permission }}" selected="selected">{{ auth_permission }}</option>
+                                    {% else %}
+                                        <option value="{{ auth_permission }}">{{ auth_permission }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <button type="submit" class="btn btn-lg btn-block btn-primary"> Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" charset="utf-8">
+        $('select[name="duallistbox[]"]').bootstrapDualListbox({
+            bootstrap2Compatible: false,
+            filterTextClear: 'show all',
+            filterPlaceHolder: 'Filter',
+            moveSelectedLabel: 'Move selected',
+            moveAllLabel: 'Move all',
+            removeSelectedLabel: 'Remove selected',
+            removeAllLabel: 'Remove all',
+            moveOnSelect: false,
+            preserveSelectionOnMove: false,
+            selectedListLabel: 'Given access permissions',
+            nonSelectedListLabel: 'Access permissions',
+            selectorMinimalHeight: 100,
+            showFilterInputs: true,
+            nonSelectedFilter: '',
+            selectedFilter: '',
+            infoText: 'Showing all {0}',
+            infoTextFiltered: '<span class="label label-warning">Filtered</span> {0} from {1}',
+            infoTextEmpty: 'Empty list',
+            filterOnValues: false,
+        });
+        $("#update-form").submit(function () {
+            updatePermissions('{{ model.user_id }}', $('[name="duallistbox[]"]').val());
+            return false;
+        });
+    </script>
+    <script type="text/javascript" charset="utf-8">
+        var updatePermissions;
+        updatePermissions = function updatePermissions(id, permissions) {
+            var confirmMessage;
+            confirmMessage = "Are you sure you want to update access permissions of this item?";
+            var url = "{% url 'users_update_permissions_action' %}";
+            var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+            bootbox.confirm({
+                title: "Confirm?",
+                message: confirmMessage,
+                buttons: {
+                    cancel: {label: '<i class="fa fa-times"></i> Cancel'},
+                    confirm: {label: '<i class="fa fa-check"></i> Ok'}
+                },
+                callback: function (confirmed) {
+                    if (confirmed) {
+                        bootbox.dialog({
+                            closeButton: false,
+                            title: "Message",
+                            message: '' + '<p>Please wait while loading ...</p>' + '<div class="active progress progress-lg progress-striped"><div style="width: 100%;" class="progress-bar progress-bar-primary"></div></div>' + ''
+                        });
+                        jQuery(function ($) {
+                            $.ajax({
+                                type: 'POST',
+                                url: url,
+                                data: {
+                                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                                    permissions: String(permissions),
+                                    id: id
+                                },
+                                success: function (result) {
+                                    bootbox.hideAll();
+                                    if (result === 'signin') {
+                                        window.location.replace("{% url 'users_signout' %}");
+                                    } else if (result === 'success') {
+                                        location.reload();
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: 'Something went wrong!!! Please try again.',
+                                            customClass: {
+                                                confirmButton: 'btn btn-danger',
+                                            },
+                                            buttonsStyling: false
+                                        });
+                                    }
+                                },
+                                error: function (result) {
+                                    bootbox.hideAll();
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Something went wrong!!! Please try again.',
+                                        customClass: {
+                                            confirmButton: 'btn btn-danger',
+                                        },
+                                        buttonsStyling: false
+                                    });
+                                }
+                            });
+                            return false;
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

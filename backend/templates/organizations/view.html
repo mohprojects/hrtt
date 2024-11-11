@@ -1,0 +1,424 @@
+{% extends '_include/base-index.html' %} 
+{% block head %} 
+{% load static %} 
+{% load render_table from django_tables2 %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+<style>
+  .jstree-checkbox {
+    display: none !important;
+  }
+</style>
+{% endblock %} {% block body %} {% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+  var ajax_url = {
+    url: "{% url 'logs_datatable_view' %}",
+    type: 'GET',
+    data: {
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+      model: 'organizations',
+      modelId: '{{ model.organization_id }}',
+    },
+  };
+</script>
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">{{ title }}</h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home </a></li>
+    
+    {% if user.user_role != 'activity-manager' %}
+    <li><a href="{{ index_url }}"> {{ title }}</a></li>
+    {% endif %}
+    <li class="active">{{ model.organization_id }}</li>
+    <li class="active">Details</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="tab-base">
+        <!--Nav Tabs-->
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a data-toggle="tab" href="#demo-lft-tab-1">Details</a>
+          </li>
+          <!-- <li class="">
+            <a data-toggle="tab" href="#demo-lft-tab-2">Divisions</a>
+          </li> -->
+          <li class="">
+            <a data-toggle="tab" href="#demo-lft-tab-3">Logs
+              <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+            </a>
+          </li>
+        </ul>
+        <!--Tabs Content-->
+        <div class="tab-content">
+          <div id="demo-lft-tab-1" class="tab-pane fade active in">
+              <div>
+                {% if ACCESS_PERMISSION_ORGANIZATIONS_UPDATE in auth_permissions.values %}
+                <a
+                  href="{% url 'organizations_update' pk=model.organization_id %}"
+                  class="btn btn-info"
+                  >Update</a>
+                {% endif %} 
+                
+                {% if ACCESS_PERMISSION_ORGANIZATIONS_UPDATE in auth_permissions.values  and user.user_role == "super-admin"%}
+                {% if model.organization_status == model.STATUS_ACTIVE %}
+                <a
+                  href="#"
+                  onclick="singleSelect('{{ select_single_url }}', 'block', '{{ model.organization_id }}');"
+                  class="btn btn-danger"
+                  >Deactivate</a>
+                {% endif %} 
+        
+                {% if model.organization_status == model.STATUS_INNACTIVE %}
+                <a
+                  href="#"
+                  onclick="singleSelect('{{ select_single_url }}', 'unblock', '{{ model.organization_id }}');"
+                  class="btn btn-warning"
+                  >Activate</a>
+                {% endif %} 
+                {% endif %} 
+                
+
+                {% if ACCESS_PERMISSION_ORGANIZATIONS_DELETE in auth_permissions.values %}
+                <a
+                  href="#"
+                  onclick="singleSelect('{{ select_single_url }}', 'delete', '{{ model.organization_id }}', '{{ index_url }}');"
+                  class="btn btn-danger"
+                  >Delete</a>
+                {% endif %}
+              </div>
+                <br />
+              <div class="row">
+                <div class="col-sm-12">
+                  <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                    <thead>
+                      <tr style="background-color: #efefef">
+                        <th style="width: 30%">Key</th>
+                        <th style="width: 70%">Value</th>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.name.label }}</td>
+                        <td>{{ form.name.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.email.label }}</td>
+                        <td>{{ form.email.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.phone_number.label }}</td>
+                        <td>{{ form.phone_number.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.type.label }}</td>
+                        <td>{{ form.type.value }}</td>
+                      </tr>
+                      <tr>
+                        <tr>
+                          <td class="text-bold">{{ form.sub_type.label }}</td>
+                          <td>{{ form.sub_type.value }}</td>
+                        </tr>
+                        <tr>
+                        <td class="text-bold">{{ form.category.label }}</td>
+                        <td>{{ form.category.value }}</td>
+                      </tr>
+
+                      <tr>
+                        <td class="text-bold">{{ form.financial_agent_class.label }}</td>
+                        <td>{{ form.financial_agent_class.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.financial_agent_sub_class.label }}</td>
+                        <td>{{ form.financial_agent_sub_class.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.financial_schemes_name.label }}</td>
+                        <td>{{ form.financial_schemes_name.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.financial_schemes_class.label }}</td>
+                        <td>{{ form.financial_schemes_class.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">{{ form.financial_schemes_sub_class.label }}</td>
+                        <td>{{ form.financial_schemes_sub_class.value }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">Tagged In</td>
+                        <td>
+                          <ol>
+                          {% for project in  tags_in_Projects %}
+                            <li ><a href="{% url 'projects_view' pk=project.project_id%}" style="text-decoration:underline; color:#1B82DC;">{{project.project_name}}</a></li>
+                          {%endfor%}  
+
+                        </ol>
+                        </td>
+                      </tr>
+                      <!--<tr>
+                        <td class="text-bold">{{ form.financial_sources_sub_class.label }}</td>
+                        <td>{{ form.financial_sources_sub_class.value }}</td>
+                      </tr> -->
+
+                      <tr>
+                        <td class="text-bold">Financing Sources</td>
+                        <td>
+                            <div class="panel-body">
+                                <div id="demo-jstree-1"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                      <tr>
+                        <td class="text-bold">Created At</td>
+                        <td>{{ model.organization_created_at }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">Created By</td>
+                        <td>{{ model.organization_created_by }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">Updated At</td>
+                        <td>{{ model.organization_updated_at }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">Updated By</td>
+                        <td>{{ model.organization_updated_by }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-bold">Status</td>
+                        <td>
+                          {% if model.organization_status == model.STATUS_ACTIVE %}
+                          <div style="width: 100px">
+                            {{ model.HTML_TAG_STATUS_ACTIVE_COLOR | safe }}
+                          </div>
+                          {% endif %} {% if model.organization_status == model.STATUS_INNACTIVE %}
+                          <div style="width: 100px">
+                            {{  model.HTML_TAG_STATUS_INNACTIVE_COLOR | safe }}
+                          </div>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    </thead>
+                  </table>
+                  <!-- <div class="panel panel-bordered panel-info">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Organization Type</h3>
+                    </div>
+                    <div class="panel-body">
+                      <div id="demo-jstree-1"></div>
+                    </div> -->
+                  </div>
+                  {% if user.user_role == 'activity-manager' %}
+                  <div class="panel panel-bordered panel-info">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Organization Status</h3>
+                    </div>
+                    <div class="panel-body">
+                      <div id="demo-jstree-2"></div>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+           
+          <div id="demo-lft-tab-3" class="tab-pane fade">
+            <!-- {% if ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values %} -->
+            <div id="id_logs_list"></div>
+            <!-- {% endif %} -->
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function () {
+    $('#search-input-select-category').select2({
+      placeholder: '--select--',
+      allowClear: true,
+    });
+  });
+</script>
+<script type="text/javascript" charset="utf-8">
+  var logs = [];
+  var drawLogs = 1;
+  var startLogs = 0;
+  var lengthLogs = 10;
+
+  function fetchLogs(draw, start, length) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'GET',
+        url: "{% url 'logs_datatable_view' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          model: 'organizations',
+          model_id: '{{ model.organization_id }}',
+          draw: draw,
+          start: start,
+          length: length,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var items = JSON.parse(JSON.stringify(result)).data;
+          var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+          if (start == 0) {
+            logs.length = 0;
+          }
+          items.forEach(function (item) {
+            logs.push(item);
+          });
+          var showMore = null;
+          if (recordsTotal > logs.length) {
+            drawLogs = drawLogs++;
+            startLogs = logs.length;
+            showMore =
+              '<button class="btn btn-xs btn-default mar-top" onClick="javascript:fetchLogs(' +
+              drawLogs +
+              ', ' +
+              startLogs +
+              ', ' +
+              lengthLogs +
+              ');">Show more</button>';
+          }
+          updateUiLogs(showMore);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong!!! Please try again.',
+            customClass: {
+              confirmButton: 'btn btn-danger',
+            },
+            buttonsStyling: false,
+          });
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function updateUiLogs(showMore) {
+    div_logs = '';
+    logs.forEach(function (log) {
+      div_logs +=
+        '<div class="comment-content media"><div class="media-body"><div class="comment-header"><span class="text-main text-semibold">' +
+        log.log_message +
+        '</span><br><small class="text-muted"> - ' +
+        log.log_updated_at +
+        ' by ' +
+        log.log_updated_by +
+        '</small></div>';
+    });
+    if (showMore != null) {
+      div_logs += showMore;
+    }
+    if (div_logs) {
+      document.getElementById('id_logs_list').innerHTML = div_logs;
+    }
+  }
+  fetchLogs(drawLogs, startLogs, lengthLogs);
+</script>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function () {
+    let url;
+    url =
+      "{% url 'dropdown_tree_view' key='financing-source-type' model='organizations' model_id=model.organization_id  %}";
+    $.get(url, function (data) {
+      $('#demo-jstree-1').html(data);
+      $('#demo-jstree-1').jstree({
+        core: {
+          check_callback: true,
+        },
+        plugins: ['checkbox', 'types'],
+        types: {
+          default: {
+            icon: 'fa fa-file',
+          },
+        },
+      });
+      $('li[data-checkstate="checked"]').each(function () {
+        $('#demo-jstree-1').jstree('check_node', $(this));
+      });
+      var selectedNodes = $('#demo-jstree-1').jstree('get_selected', false);
+      var selectedAndUndetermined = [];
+      for (i = 0; i < selectedNodes.length; i++) {
+        selectedAndUndetermined = selectedAndUndetermined.concat(
+          $('#demo-jstree-1').jstree('get_path', selectedNodes[i], false, true),
+        );
+      }
+      selectedAndUndetermined = Array.from(new Set(selectedAndUndetermined));
+      $('#demo-jstree-1')
+        .jstree('get_json', '#', {
+          flat: true,
+        })
+        .forEach(function (node) {
+          if (node.data.checkstate == 'hidden') {
+            $('#demo-jstree-1').jstree('get_node', node).state.hidden = true;
+          }
+          if (!selectedAndUndetermined.includes(node.id)) {
+            $('#demo-jstree-1').jstree('get_node', node).state.hidden = true;
+          }
+        });
+      $('#demo-jstree-1').jstree('redraw', true);
+      $('#demo-jstree-1 li').each( function() {
+          $("#demo-jstree-1").jstree().disable_node(this.id);
+      })
+    });
+  });
+</script>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function () {
+    let url;
+    url =
+      "{% url 'dropdown_tree_view' key='organization-status' model='oragnizations' model_id=model.organization_id  %}";
+    $.get(url, function (data) {
+      $('#demo-jstree-2').html(data);
+      var tree2 = $('#demo-jstree-2').jstree({
+        core: {
+          check_callback: true,
+        },
+        plugins: ['checkbox', 'types'],
+        types: {
+          default: {
+            icon: 'fa fa-file',
+          },
+        },
+      });
+      $('li[data-checkstate="checked"]').each(function () {
+        $('#demo-jstree-2').jstree('check_node', $(this));
+      });
+      var selectedNodes = $('#demo-jstree-2').jstree('get_selected', false);
+      var selectedAndUndetermined = [];
+      for (i = 0; i < selectedNodes.length; i++) {
+        selectedAndUndetermined = selectedAndUndetermined.concat(
+          $('#demo-jstree-2').jstree('get_path', selectedNodes[i], false, true),
+        );
+      }
+      selectedAndUndetermined = Array.from(new Set(selectedAndUndetermined));
+      $('#demo-jstree-2')
+        .jstree('get_json', '#', {
+          flat: true,
+        })
+        .forEach(function (node) {
+          if (node.data.checkstate == 'hidden') {
+            $('#demo-jstree-2').jstree('get_node', node).state.hidden = true;
+          }
+          if (!selectedAndUndetermined.includes(node.id)) {
+            $('#demo-jstree-2').jstree('get_node', node).state.hidden = true;
+          }
+        });
+      $('#demo-jstree-2').jstree('redraw', true);
+      $('#demo-jstree-2 li').each( function() {
+          $("#demo-jstree-2").jstree().disable_node(this.id);
+      })
+    });
+  });
+</script>
+{% include '_include/table.html' %} {% include '_include/single_select.html' %} {% include '_include/multiple_select.html' %} {% endblock %}

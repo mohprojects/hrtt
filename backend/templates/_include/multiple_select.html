@@ -1,0 +1,121 @@
+<script type="text/javascript" charset="utf-8">
+    var multipleSelect;
+    multipleSelect = function multipleSelect(url, action) {
+        var confirmMessage;
+        if (action === 'verify') {
+            confirmMessage = "Are you sure you want to verify selected items?";
+        }
+        if (action === 'approve') {
+            confirmMessage = "Are you sure you want to approve selected items?";
+        }
+        if (action === 'deny') {
+            confirmMessage = "Are you sure you want to deny selected items?";
+        }
+        if (action === 'open') {
+            confirmMessage = "Are you sure you want to open selected items?";
+        }
+        if (action === 'close') {
+            confirmMessage = "Are you sure you want to close selected items?";
+        }
+        if (action === 'restrict') {
+            confirmMessage = "Are you sure you want to restrict selected items?";
+        }
+        if (action === 'block') {
+            confirmMessage = "Are you sure you want to block selected items?";
+        }
+        if (action === 'unblock') {
+            confirmMessage = "Are you sure you want to unblock selected items?";
+        }
+        if (action === 'enter') {
+            confirmMessage = "Are you sure you want to enter selected items?";
+        }
+        if (action === 'exit') {
+            confirmMessage = "Are you sure you want to exit selected items?";
+        }
+        if (action === 'delete') {
+            confirmMessage = "Are you sure you want to delete selected items?";
+        }
+        if (action.trim() === 'double_count_yes') {
+            confirmMessage = "Are you sure you want to turn selected inputs into double count Yes?";
+        }
+        if (action.trim() === 'double_count_no') {
+            confirmMessage = "Are you sure you want to turn selected inputs into double count No?";
+        }
+        
+        if (action !== '') {
+            var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+
+            var tableId = "{{table.attrs.id}}";
+            var table = $("#" + tableId).DataTable();
+            var data = table.rows({selected: true}).data();
+            var data_array = [];
+            for (var i = 0; i < data.length; i++) {
+                if(data[i][0] != null){
+                    var dom = jQuery.parseHTML("<div>" + data[i][0] + "</div>");
+                }else{
+                    var dom = jQuery.parseHTML("<div>" + data[i]['row_number'] + "</div>");
+                }
+                var id = $(dom).find("[href]").attr("href");
+                data_array.push(id);
+            }
+            var ids = data_array.join();
+            if (ids !== '') {
+                bootbox.confirm({
+                    title: "Confirm?",
+                    message: confirmMessage,
+                    buttons: {
+                        cancel: {label: '<i class="fa fa-times"></i> Cancel'},
+                        confirm: {label: '<i class="fa fa-check"></i> Ok'}
+                    },
+                    callback: function (confirmed) {
+                        if (confirmed) {
+                            bootbox.dialog({
+                                closeButton: false,
+                                title: "Message",
+                                message: '' + '<p>Please wait while loading ...</p>' + '<div class="active progress progress-lg progress-striped"><div style="width: 100%;" class="progress-bar progress-bar-primary"></div></div>' + ''
+                            });
+                            jQuery(function ($) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: url,
+                                    data: {csrfmiddlewaretoken: csrfmiddlewaretoken, action: action, ids: ids},
+                                    success: function (result) {
+                                        bootbox.hideAll();
+                                        if (result === 'signin') {
+                                            window.location.replace("/backend/users/signout");
+                                        } else if (result === 'success') {
+                                             location.reload();
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error',
+                                                text: 'Something went wrong!!! Please try again.',
+                                                customClass: {
+                                                    confirmButton: 'btn btn-danger',
+                                                },
+                                                buttonsStyling: false
+                                            });
+                                        }
+                                    },
+                                    error: function (result) {
+                                        bootbox.hideAll();
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: 'Something went wrong!!! Please try again.',
+                                            customClass: {
+                                                confirmButton: 'btn btn-danger',
+                                            },
+                                            buttonsStyling: false
+                                        });
+                                    }
+                                });
+                                return false;
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    }
+</script>

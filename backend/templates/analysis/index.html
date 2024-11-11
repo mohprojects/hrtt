@@ -1,0 +1,98 @@
+{% extends '_include/base-analysis.html' %} {% load static %} {% block head %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+<style>
+  /* Custom CSS to change the color of selected options to black */
+  .chosen-container .chosen-choices .search-choice {
+    color: black !important;
+  }
+</style>
+{% endblock %} {% block body %} {% load static %} {% load humanize %} {% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li class="active">
+      {{ title }}
+    </li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-8">
+              <label>Fiscal Year</label>
+              <select data-placeholder="Choose a fiscal year" id="demo-chosen-select-year" style="width: 100%" multiple>
+                {{fiscal_year_choices | safe }}
+              </select>
+            </div>
+                <div class="col-sm-4">
+                <button id="submit-chosen-select-year" type="submit" class="btn btn-primary" style="margin-top: 20px;">Submit</button>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="panel-control">
+              <button class="btn btn-default btn-active-primary" onclick="javascript:update()"><i class="demo-psi-repeat-2"></i></button>
+          </div>
+      </div>
+        <div class="panel-body">
+          <div class="table-responsive">
+            <div id="output" style="margin: 30px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script type="text/javascript" charset="utf-8">
+    $('#demo-chosen-select-year').chosen();
+    $(document).ready(function() {
+      $('#submit-chosen-select-year').click(function(event) {
+        event.preventDefault();
+        var selectedYears = $('#demo-chosen-select-year').val();
+        let html = '';
+          html += '<div style="display: flex; justify-content: center; align-items: center; height: 100%;">';
+          html += '  <div class="load1">';
+          html += '    <div class="loader" style=""></div>';
+          html += '  </div>';
+          html += '</div>';
+          console.log(html)
+          $('#output').html(html)
+
+        $.ajax({
+          url: "{% url 'analysis_get_data' %}",
+          method: 'GET',
+          data: { years: selectedYears },
+          success: function(response) {
+                    // Check if the request was successful and contains data
+                    if (response.success) {
+                    // Render the PivotUI component with the received data
+                    $("#output").pivotUI(response.data, {
+                        // Add PivotUI configuration options here if needed
+                    });
+                }  
+              },
+          error: function(xhr, status, error) {
+            console.log("Error fetching data:", error);
+            $('#output').html("")
+          }
+        });
+
+      });
+    });
+  </script>
+{% endblock %}

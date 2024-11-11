@@ -1,0 +1,287 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{% url 'projects_index' %}">Projects</a></li>
+        <li><a href="{% url 'projects_view' pk=project.project_id %}">{{ project.project_name }}</a></li>
+        <li class="active">{{ title }}</li>
+        <li class="active">Add</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <div id="report_create_form_alert" class="alert alert-danger mar-top">
+                        <div id="report_create_form_error"></div>
+                      </div>
+                    <form id="report_create_form" method="post" action="">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.asset_name.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.asset_name.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.asset_name }}
+                                    {{ form.asset_name.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.capital_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.capital_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.capital_class }}
+                                    {{ form.capital_class.errors }}
+                                </div>
+                            </div>
+                            <div id="capital_sub_class" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.capital_sub_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.capital_sub_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.capital_sub_class }}
+                                    {{ form.capital_sub_class.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.purchase_value.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.purchase_value.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.purchase_value }}
+                                    {{ form.purchase_value.errors }}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.purchase_currency.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.purchase_currency.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.purchase_currency }}
+                                    {{ form.purchase_currency.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.book_value.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.book_value.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.book_value }}
+                                    {{ form.book_value.errors }}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.book_currency.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.book_currency.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.book_currency }}
+                                    {{ form.book_currency.errors }}
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row">
+                             <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.year_purchased.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.year_purchased.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.year_purchased }}
+                                    {{ form.year_purchased.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                        <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.funding_source.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.funding_source.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.funding_source }}
+                                    {{ form.funding_source.errors }}
+                             </div>
+                            </div>
+                        </div> 
+                        <p>
+                            <label>
+                                Funds Transfer 
+                                <label style="color: red; margin-bottom: 0;">
+                                     * 
+                                </label>
+                            </label>
+                        </p>
+                        <div id="id_funds_transfer_class"></div>
+                        <br>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    {{ form.fiscal_year.label }}
+                                    <label style="color: red; margin-bottom: 0;">
+                                        {% if form.fiscal_year.field.required %} * {% endif %}
+                                    </label>
+                                </label>
+                                {{ form.fiscal_year }}
+                                {{ form.fiscal_year.errors }}
+                            </div>
+                        </div>
+                        <br />
+                        <button type="submit" class="btn btn-lg btn-block btn-primary" onClick="javascript:onSubmit(event);"> Save
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    $('#id_report_funding_source').select2({ placeholder: "--select--", allowClear: true }); 
+    $('#id_capital_class').select2({ placeholder: "--select--", allowClear: true });
+</script>
+<script type="text/javascript" charset="utf-8">
+    $('#capital_sub_class').hide()
+    $('#id_capital_class').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'capital-formation', level_parent: level_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $('#capital_sub_class').show()
+                        var subTypeOptionsList = $('#id_capital_sub_class');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(response);
+                    } else { $('#capital_sub_class').hide() }
+                },
+            });
+        }
+    });
+</script>
+<script>
+    $(document).ready(function() {
+    let url;
+    url =
+      "{% url 'dropdown_tree_create' key='financing-source-type' model='reports' %}";
+    $.get(url, function(data) {
+      $('#id_funds_transfer_class').html(data);
+      $('#id_funds_transfer_class').jstree({
+        core: {
+          check_callback: true,
+        },
+        plugins: ['checkbox', 'types'],
+        types: {
+          default: {
+            icon: 'fa fa-file',
+          },
+        },
+      });
+      $('li[data-checkstate="checked"]').each(function() {
+        $('#id_funds_transfer_class').jstree('check_node', $(this));
+      });
+    });
+  });
+</script>
+<script>
+$('#report_create_form_alert').hide();
+function onSubmit(event) {
+    event.preventDefault()
+    var selectedElmsIds = [];
+    var formData = new FormData(document.querySelector('[id="report_create_form"]'));
+    var selectedElms = $('#id_funds_transfer_class').jstree('get_selected', true);
+    $.each(selectedElms, function() {
+      selectedElmsIds.push(this.data.id);
+    });
+    formData.append("funds_transfer", JSON.stringify(selectedElmsIds));
+    ajaxUrl = "{% url 'reports_create' project_id=project.project_id %}"
+    jQuery(function($) {
+        $.ajax({
+          type: 'POST',
+          url: ajaxUrl,
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false,
+          timeout: 0,
+          enctype: 'multipart/form-data',
+          success: function(result) {
+            bootbox.hideAll();
+            
+            if (result !== '') {
+            if (result.message == 'success') {
+                reloadUrl = "{% url 'reports_view' pk='P1' %}";
+                reloadUrl = reloadUrl.replace('P1', result.report_id);
+                location.href = reloadUrl 
+                return
+            }
+            $('#report_create_form_alert').show();
+            $('#report_create_form_error').html(result.error);
+            return 
+            }
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Something went wrong!!! Please try again.',
+              customClass: {
+                confirmButton: 'btn btn-danger',
+              },
+              buttonsStyling: false,
+            });
+          },
+        });
+        return;
+      })
+  }  
+</script>
+{% endblock %}
+
+

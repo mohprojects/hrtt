@@ -1,0 +1,541 @@
+{% extends '_include/base-general.html' %} {% block head %} {% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %} {% block body %} {% load static %}{% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">{{ title }}</h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    {% if user.user_role != 'activity-manager' %}
+    <li><a href="{% url 'organizations_index' %}">{{ title }}</a></li>
+    {% endif %}
+    <li>
+      <a href="{% url 'organizations_view' pk=model.organization_id %}"
+        >{{ model.organization_name }}</a
+      >
+    </li>
+    <li class="active">Update</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <form id="organization_update_form" method="post" action="">
+            {% csrf_token %}
+            <div class="form-group">
+              <label>
+                {{ form.name.label }}
+                <label style="color: red; margin-bottom: 0">
+                  {% if form.name.field.required %} * {% endif %}
+                </label>
+              </label>
+              {{ form.name }} {{ form.name.errors }}
+            </div>
+            <div class="form-group">
+              <label>
+                {{ form.email.label }}
+                <label style="color: red; margin-bottom: 0">
+                  {% if form.email.field.required %} * {% endif %}
+                </label>
+              </label>
+              {{ form.email }} {{ form.email.errors }}
+            </div>
+            <div class="form-group">
+              <label>
+                {{ form.phone_number.label }}
+                <label style="color: red; margin-bottom: 0">
+                  {% if form.phone_number.field.required %} * {% endif %}
+                </label>
+              </label>
+              {{ form.phone_number }} {{ form.phone_number.errors }}
+            </div>
+            <div id="organization_type">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.type.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.type.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.type }} {{ form.type.errors }}
+                </div>
+              </div>
+              <div id ="sub_type" class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.sub_type.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.sub_type.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.sub_type }} {{ form.sub_type.errors }}
+                </div>
+              </div>
+            </div>
+            <div id ="sub_type" class="col-sm-12">
+            <div class="form-group">
+              <label>
+                {{ form.category.label }}
+                <label style="color: red; margin-bottom: 0">
+                  {% if form.category.field.required %} * {% endif %}
+                </label>
+              </label>
+              {{ form.category }} {{ form.category.errors }}
+            </div>
+          </div>
+            <br />
+            <div id="financing" class="col-sm-12">
+                <h5 style="color: black; margin-bottom: 20;">Financing Agent</h5>
+              <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.financial_agent_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.financial_agent_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.financial_agent_class }} {{ form.financial_agent_class.errors }}
+                </div>
+              </div>
+              <div id ="sub_agent" class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.financial_agent_sub_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.financial_agent_sub_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.financial_agent_sub_class }} {{ form.financial_agent_sub_class.errors }}
+                </div>
+              </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <label>
+                      {{ form.financial_schemes_name.label }}
+                      <label style="color: red; margin-bottom: 0">
+                        {% if form.financial_schemes_name.field.required %} * {% endif %}
+                      </label>
+                    </label>
+                    {{ form.financial_schemes_name }} {{ form.financial_schemes_name.errors }}
+                  </div>
+                </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label>
+                    {{ form.financial_schemes_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.financial_schemes_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.financial_schemes_class }} {{ form.financial_schemes_class.errors }}
+                </div>
+              </div>
+              <div id ="sub_scheme" class="col-sm-4">
+                <div class="form-group">
+                  <label>
+                    {{ form.financial_schemes_sub_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.financial_schemes_sub_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.financial_schemes_sub_class }} {{ form.financial_schemes_sub_class.errors}}
+                </div>
+              </div>
+              </div>
+              <!-- <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.financial_sources_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.financial_sources_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.financial_sources_class }} {{ form.financial_sources_class.errors }}
+                </div>
+              </div>
+              <div id ="sub_source" class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.financial_sources_sub_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.financial_sources_sub_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.financial_sources_sub_class }} {{ form.financial_sources_sub_class.errors}}
+                </div>
+              </div>
+              </div> -->
+              <p>
+                <label>
+                    Financing Sources
+                    <label style="color: red; margin-bottom: 0;">
+                         * 
+                    </label>
+                </label>
+            </p>
+              <div id = "id_financial_sources"></div>
+              </div>
+            <br />
+            <br />
+
+            <div id="healthcare" class="row">
+                <h5 style="color: black; margin-bottom: 20;">Healthcare Provider</h5>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.healthcare_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.healthcare_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.healthcare_class }} {{ form.healthcare_class.errors }}
+                </div>
+              </div>
+              <div id = "sub_health" class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.healthcare_sub_class.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.healthcare_sub_class.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.healthcare_sub_class }} {{ form.healthcare_sub_class.errors }}
+                </div>
+              </div>
+            </div>
+            <br />
+            <br />
+            <div class="row">    
+              <div class="col-sm-6">
+                <button type="submit" class="btn btn-lg btn-block btn-primary" onClick="javascript:onSubmit(event);">Submit</button>
+              </div>
+              <div class="col-sm-6">
+              <a href="{% url 'organizations_view' pk=model.organization_id %}" type="button" class="btn btn-lg btn-block btn-danger">Cancel</a>
+             </div>
+          </div>
+          </form>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function () {
+    $('#search-input-select-category').select2({ placeholder: '--select--', allowClear: true });
+    $('select#id_orginization_type').select2({ placeholder: '--select--', allowClear: true });
+    $('select#orginization_sub_type').select2({ placeholder: '--select--', allowClear: true });
+
+     // init
+     var type_id = `{{form.type.value}}`;
+      var sub_type_id = `{{form.sub_type.value}}`;
+        if (type_id) {
+            var sub_type_text = $( "#orginization_sub_type option:selected" ).text();
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'organization-type', level_parent: type_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        var responses = response.replace("<option value='0' selected>--Select--</option>", `<option value=${sub_type_id}  selected>${sub_type_text}</option>`)
+                        var subTypeOptionsList = $('#orginization_sub_type');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(responses); 
+                    } 
+                },
+            });
+        }
+
+      var financing_agent_id = `{{form.financial_agent_class.value}}`;
+        if (financing_agent_id) {
+            var sub_financing_agent_id = `{{form.financial_agent_sub_class.value}}`;
+            var sub_financing_agent_text = $( "#search-input-select-status-class option:selected" ).text();
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'financing-agent-type', level_parent: financing_agent_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        var responses = response.replace("<option value='0' selected>--Select--</option>", `<option value=${sub_financing_agent_id}  selected>${sub_financing_agent_text}</option>`)
+                        var subTypeOptionsList = $('#search-input-select-status-class');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(responses); 
+                    } 
+                },
+            });
+        }
+
+      var financing_scheme_id = `{{form.financial_schemes_class.value}}`;
+        if (financing_scheme_id) {
+            var sub_financing_scheme_id = `{{form.financial_schemes_sub_class.value}}`;
+            var sub_financing_agent_text = $( "#financial_schemes_sub_class option:selected" ).text();
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'financing-scheme-type', level_parent: financing_scheme_id},
+                success: function (response) {
+                    if (response.length > 0) {
+                        var responses = response.replace("<option value='0' selected>--Select--</option>", `<option value=${sub_financing_scheme_id }  selected>${sub_financing_agent_text}</option>`)
+                        var subTypeOptionsList = $('#financial_schemes_sub_class');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(responses); 
+                    } 
+                },
+            });
+        }
+
+      var healthcare_id = `{{form.healthcare_sources_class.value}}`;
+        if (healthcare_id) {
+            var sub_healthcare_id = `{{form.healthcare_sub_class.value}}`;
+            var sub_healthcare_text = $( "#healthcare_sub_class option:selected" ).text();
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'health-provider-type', level_parent: healthcare_id},
+                success: function (response) {
+                    if (response.length > 0) {
+                        var responses = response.replace("<option value='0' selected>--Select--</option>", `<option value=${sub_healthcare_id }  selected>${sub_healthcare_text}</option>`)
+                        var subTypeOptionsList = $('##healthcare_sub_class');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(responses); 
+                    } 
+                },
+            });
+        }
+  });
+</script>
+<script type="text/javascript" charset="utf-8">
+  $('#id_orginization_type').on('change', function () {
+    var type_id = $(this).val();
+    if (type_id) {
+      ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+      $.ajax({
+        url: ajaxUrl,
+        data: { level_key: 'organization-type', level_parent: type_id },
+        success: function (response) {
+          if (response.length > 46){
+          $('#sub_type').show()
+          var subTypeOptionsList = $('#orginization_sub_type');
+          subTypeOptionsList.empty();
+          subTypeOptionsList.append(response);
+          }else{$('#sub_type').hide()}
+        },
+      });
+    }
+  });
+</script>
+<script type="text/javascript" charset="utf-8">
+  $('#financing').hide();
+  $('#healthcare').hide();
+  // $('#funding').hide();
+
+  initializeSelection();
+  $('#id_category').on('change', function () {
+    var selectedStatus = $('input[name=category]:checked')
+      .map(function () {
+        return $(this).val();
+      }).get();
+      if (selectedStatus.length == 0){
+        $('#financing').hide();
+        $('#healthcare').hide();
+        // $('#funding').hide();
+      }
+    selectedStatus.forEach((id_status) => {
+      level_id = id_status.split('_')[0];
+      level_name = id_status.toLowerCase();
+      if (selectedStatus.includes('financing_agent')) {
+        $('#financing').show();
+        financing();
+      } else{ $('#financing').hide();}
+
+      if (selectedStatus.includes("healthcare_provider")){
+        $('#healthcare').show();
+        healthcareProviding();
+      } else{$('#healthcare').hide()}
+
+    });
+  });
+
+  function financing() {
+    $('#search-input-select-financial-status-classification').on('change', function () {
+      var level_id = $(this).val();
+      if (level_id) {
+        ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+        $.ajax({
+          url: ajaxUrl,
+          data: { level_key: 'financing-agent-type', level_parent: level_id },
+          success: function (response) {
+            if (response.length > 0){
+              //$('#sub_agent').show()
+              var subTypeOptionsList = $('#search-input-select-status-class');
+              subTypeOptionsList.empty();
+              subTypeOptionsList.append(response);
+            }
+            else {
+              var subTypeOptionsList = $('#search-input-select-status-class');
+              subTypeOptionsList.empty();
+            }
+           
+          },
+        });
+      }
+    });
+
+    $('#financial_schemes_class').on('change', function () {
+      var level_id = $(this).val();
+      if (level_id) {
+        ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+        $.ajax({
+          url: ajaxUrl,
+          data: { level_key: 'financing-scheme-type', level_parent: level_id },
+          success: function (response) {
+            if (response.length > 0){
+              //$('#sub_scheme').show()
+              var subTypeOptionsList = $('#financial_schemes_sub_class');
+              subTypeOptionsList.empty();
+              subTypeOptionsList.append(response);
+            }
+            else{
+              var subTypeOptionsList = $('#financial_schemes_sub_class');
+              subTypeOptionsList.empty();
+              //$('#sub_scheme').hide()
+
+            } 
+          },
+        });
+      }
+    });
+  }
+
+  function healthcareProviding() {
+    $('#healthcare_sources_class').on('change', function () {
+      var level_id = $(this).val();
+      if (level_id) {
+        ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+        $.ajax({
+          url: ajaxUrl,
+          data: { level_key: 'health-provider-type', level_parent: level_id },
+          success: function (response) {
+            if (response.length > 0){
+              //$('#sub_health').show()
+              var subTypeOptionsList = $('#healthcare_sub_class');
+              subTypeOptionsList.empty();
+              subTypeOptionsList.append(response);
+            } 
+            else {
+              var subTypeOptionsList = $('#healthcare_sub_class');
+              subTypeOptionsList.empty();
+            }
+          },
+        });
+      }
+    });
+  }
+
+  function initializeSelection() {
+      var previousSelections = "{{ form.category.value }}";
+      previousSelections= previousSelections.replaceAll("&#x27;", "'");
+      previousSelections = previousSelections.replace(/'/g, '"');
+
+      if (previousSelections.includes('financing_agent')) {
+        $('input[type="checkbox"][value="' + 'financing_agent' + '"]').prop('checked', true);
+        $('#financing').show();
+        financing();
+      };
+      if (previousSelections.includes('healthcare_provider')) {
+        $('input[type="checkbox"][value="' + 'healthcare_provider' + '"]').prop('checked', true);
+        $('#healthcare').show();
+        healthcareProviding();
+      }; 
+      if (previousSelections.includes('funding_source')) {
+        $('input[type="checkbox"][value="' + 'funding_source' + '"]').prop('checked', true);
+      //  $('#funding').show();
+      };
+      if (previousSelections.includes('implementer')) {
+        $('input[type="checkbox"][value="' + 'implementer' + '"]').prop('checked', true);
+      };
+      
+      return previousSelections
+}
+</script>
+
+<script>
+  $(document).ready(function() {
+  let url;
+  url = "{% url 'dropdown_tree_edit' key='financing-source-type' model='organizations' model_id=model.organization_id  %}";
+  $.get(url, function(data) {
+    $('#id_financial_sources').html(data);
+    $('#id_financial_sources').jstree({
+      core: {
+        check_callback: true,
+      },
+      plugins: ['checkbox', 'types'],
+      types: {
+        default: {
+          icon: 'fa fa-file',
+        },
+      },
+    });
+    $('li[data-checkstate="checked"]').each(function() {
+      $('#id_financial_sources').jstree('check_node', $(this));
+    });
+  });
+});
+</script>
+<script>
+function onSubmit(event) {
+  event.preventDefault()
+  var selectedElmsIds = [];
+  var formData = new FormData(document.querySelector('[id="organization_update_form"]'));
+  var selectedElms = $('#id_financial_sources').jstree('get_selected', true);
+  $.each(selectedElms, function() {
+    selectedElmsIds.push(this.data.id);
+  });
+  formData.append("financing_source", JSON.stringify(selectedElmsIds));
+  ajaxUrl = "{% url 'organizations_update' pk=model.organization_id %}"
+  jQuery(function($) {
+      $.ajax({
+        type: 'POST',
+        url: ajaxUrl,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        timeout: 0,
+        enctype: 'multipart/form-data',
+        success: function(result) {
+          if (result.message == 'success') {
+                reloadUrl = "{% url 'organizations_view' pk='P1' %}";
+                reloadUrl = reloadUrl.replace('P1', result.organization_id);
+                location.href = reloadUrl;
+                return
+            } else {
+              console.log()
+            }
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong!!! Please try again.',
+            customClass: {
+              confirmButton: 'btn btn-danger',
+            },
+            buttonsStyling: false,
+          });
+        },
+      });
+      return;
+    })
+}
+</script>
+{% endblock %}

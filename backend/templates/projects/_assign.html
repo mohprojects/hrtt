@@ -1,0 +1,40 @@
+{% load static %}
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr style="background-color: #efefef">
+          <th style="width: 100%">
+            Assign to A Data Reporter
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <td>
+          <form id="id_form_comments_assign">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  {{ form_comments_assign.assign_to }} {{ form_comments_assign.assign_to.errors }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <button id="" type="button" class="btn btn-block btn-warning"
+                  onClick="javascript:onUpdateStatus('assign');">Submit</button>
+                  
+              </div>
+            </div>
+          </form>
+        </td>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function () {
+      $("#search-input-select-assign-to").select2({ placeholder: "--select--", allowClear: true });
+  });
+</script>

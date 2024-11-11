@@ -1,0 +1,269 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{% url 'activities_view' pk=activity.activity_id %}">{{activity.activity_name }}</a></li>
+        <li class="active">{{ title }}</li>
+        <li class="active">Add</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <!-- <div id="activity_input_create_form_alert" class="alert alert-danger mar-top">
+                        <div id="activity_input_create_form_error"></div>
+                      </div> -->
+                    <form id="activity_input_create_form" method="post" action="">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.input_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.input_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.input_class }}
+                                    {{ form.input_class.errors }}
+                                </div>
+                            </div>
+                            <div id ="sub_inputs" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.input_sub_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.input_sub_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.input_sub_class }}
+                                    {{ form.input_sub_class.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        
+                        {% if organization.organization_type == "Social Health Insurances" or organization.organization_type == "Private insurances"%}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.scheme_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.scheme_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.scheme_class }}
+                                    {{ form.scheme_class.errors }}
+                                </div>
+                            </div>
+                            <div id ="sub_scheme" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.scheme_sub_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.scheme_sub_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.scheme_sub_class }}
+                                    {{ form.scheme_sub_class.errors }}
+                                </div>
+                            </div> 
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div id="sub_programs" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.funder.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.funder.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.funder }}
+                                    {{ form.funder.errors }}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.transfer_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.transfer_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.transfer_class }}
+                                    {{ form.transfer_class.errors }}
+                                </div>
+                            </div>
+                            <div id="sub_transfer_class" class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.sub_transfer_class.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.sub_transfer_class.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.sub_transfer_class }}
+                                    {{ form.sub_transfer_class.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.implementer.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.implementer.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.implementer }}
+                                    {{ form.implementer.errors }}
+                                </div>
+                            </div>
+                            <div  class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.division.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.sub_division.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.division }}
+                                    {{ form.division.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.budget.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.budget.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.budget }}
+                                    {{ form.budget.errors }}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        {{ form.budget_currency.label }}
+                                        <label style="color: red; margin-bottom: 0;">
+                                            {% if form.budget_currency.field.required %} * {% endif %}
+                                        </label>
+                                    </label>
+                                    {{ form.budget_currency }}
+                                    {{ form.budget_currency.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                            
+                        <button type="submit" class="btn btn-lg btn-block btn-primary"> Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $("#id_activity_input_class").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_sub_class").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_scheme").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_sub_scheme").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_transfer_class").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_transfer_sub_class").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_funder").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_implementer").select2({ placeholder: "--select--", allowClear: true });
+        $("#id_activity_input_budget_currency").select2({ placeholder: "--select--", allowClear: true });
+    });
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    $('#sub_inputs').hide()
+    $('#id_activity_input_class').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'inputs', level_parent: level_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $('#sub_inputs').show()
+                        var subTypeOptionsList = $('#id_activity_input_sub_class');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(response);
+                    } else { $('#sub_inputs').hide() }
+                },
+            });
+        }
+    });
+</script>
+<script type="text/javascript" charset="utf-8">
+    $('#sub_scheme').hide()
+    $('#id_activity_input_scheme').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'financing-scheme-type', level_parent: level_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $('#sub_scheme').show()
+                        var subTypeOptionsList = $('#id_activity_input_sub_scheme');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(response);
+                    } else { $('#sub_scheme').hide() }
+                },
+            });
+        }
+    });
+</script>
+<script type="text/javascript" charset="utf-8">
+    $('#sub_transfer_class').hide()
+    $('#id_activity_input_transfer_class').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+            $.ajax({
+                url: ajaxUrl,
+                data: { level_key: 'financing-source-type', level_parent: level_id },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $('#sub_transfer_class').show()
+                        var subTypeOptionsList = $('#id_activity_input_transfer_sub_class');
+                        subTypeOptionsList.empty();
+                        subTypeOptionsList.append(response);
+                    } else { $('#sub_transfer_class').hide() }
+                },
+            });
+        }
+    });
+</script>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,114 @@
+{% extends '_include/base-general.html' %} {% block head %} {% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %} {% block body %} {% load static %}{% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">{{ title }}</h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li><a href="{% url 'organizations_index' %}">{{ title }}</a></li>
+    <li class="active">Add</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <form method="post" action="">
+            {% csrf_token %}
+            <div class="form-group">
+              <label>
+                {{ form.name.label }}
+                <label style="color: red; margin-bottom: 0">
+                  {% if form.name.field.required %} * {% endif %}
+                </label>
+              </label>
+              {{ form.name }} {{ form.name.errors }}
+            </div>
+            <div class="form-group">
+              <label>
+                {{ form.email.label }}
+                <label style="color: red; margin-bottom: 0">
+                  {% if form.email.field.required %} * {% endif %}
+                </label>
+              </label>
+              {{ form.email }} {{ form.email.errors }}
+            </div>
+            <div class="form-group">
+                <label>
+                  {{ form.phone_number.label }}
+                  <label style="color: red; margin-bottom: 0">
+                    {% if form.phone_number.field.required %} * {% endif %}
+                  </label>
+                </label>
+                {{ form.phone_number }} {{ form.phone_number.errors }}
+              </div>
+             <div id="organization_type">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.type.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.type.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.type }} {{ form.type.errors }}
+                </div>
+              </div>
+              <div id ="sub_type" class="col-sm-6">
+                <div class="form-group">
+                  <label>
+                    {{ form.sub_type.label }}
+                    <label style="color: red; margin-bottom: 0">
+                      {% if form.sub_type.field.required %} * {% endif %}
+                    </label>
+                  </label>
+                  {{ form.sub_type }} {{ form.sub_type.errors }}
+                </div>
+              </div>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-lg btn-block btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function () {
+    $('select#id_orginization_type').select2({ placeholder: '--select--', allowClear: true });
+    $('select#orginization_sub_type').select2({ placeholder: '--select--', allowClear: true });
+  });
+</script>
+<script type="text/javascript" charset="utf-8">
+  $('#sub_type').hide()
+  $('#id_orginization_type').on('change', function () {
+    var type_id = $(this).val();
+    if (type_id) {
+      ajaxUrl = `{% url 'type_status_dropdown_levels'%}`;
+      $.ajax({
+        url: ajaxUrl,
+        data: { level_key: 'organization-type', level_parent: type_id },
+        success: function (response) {
+          if (response.length > 46){
+            $('#sub_type').show()
+            var subTypeOptionsList = $('#orginization_sub_type');
+            subTypeOptionsList.empty();
+            subTypeOptionsList.append(response);
+          }
+          else{
+            $('#sub_type').hide()
+
+          }
+        
+        },
+      });
+    }
+  });
+</script>
+
+
+{% endblock %}

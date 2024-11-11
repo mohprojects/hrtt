@@ -1,0 +1,49 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+    {% load static %}
+    <title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+
+{% block body %}
+    {% load static %}{% csrf_token %}
+    <div id="page-head">
+        <div id="page-title">
+            <h1 class="page-header text-overflow">{{ title }}</h1>
+        </div>
+        <ul class="breadcrumb">
+            <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+            <li class="active">{{ title }}</li>
+        </ul>
+    </div>
+   <div id="page-content" style="padding-top:0px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        <form method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form">
+                                        <div class="form-group mb-4 pt-0">
+                                            <label class="custom-label">
+                                                {{ form.excel_file.label }}
+                                                {% if form.excel_file.field.required %}
+                                                    <b style="color: red;">*</b>{% endif %}
+                                            </label>
+                                            {{ form.excel_file }}
+                                        </div>
+                                        {{ form.excel_file.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-lg btn-block btn-primary"> Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

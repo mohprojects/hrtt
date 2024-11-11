@@ -1,0 +1,41 @@
+{% extends '_include/base-index.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% block head %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+
+<script type="text/javascript" charset="utf-8">
+    var ajax_url = {
+        "url": "{% url 'activities_datatable' %}",
+        "type": "GET",
+        "data": {
+            "csrfmiddlewaretoken": "{{ csrf_token }}"
+        },
+    };
+</script>
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li class="active">{{ title }}</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    {% render_table table %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

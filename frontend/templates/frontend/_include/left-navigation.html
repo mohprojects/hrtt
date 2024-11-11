@@ -1,0 +1,146 @@
+{% load static %}
+<nav id="mainnav-container">
+    <div id="mainnav">
+        <div id="mainnav-menu-wrap">
+            <div class="nano no-print">
+                <div class="nano-content">
+                    <div id="mainnav-profile" class="mainnav-profile">
+                        <div class="profile-wrap text-center">
+                            <div class="pad-btm">
+                                <img class="img-circle img-md" src="{% static 'img/profile-photos/1.png' %}" alt="">
+                            </div>
+                            <a href="#profile-nav" class="box-block" data-toggle="collapse" aria-expanded="false">
+                                <span class="pull-right dropdown-toggle">
+                                    <i class="dropdown-caret"></i>
+                                </span>
+                                <p class="mnp-name">{{ user.user_name }}</p>
+                                <span class="mnp-desc">{{ user.user_username }}</span>
+                            </a>
+                        </div>
+                        <div id="profile-nav" class="collapse list-group bg-trans">
+                            <a href="{% url 'users_profile_view' %}" class="list-group-item">
+                                <i class="demo-pli-male icon-lg icon-fw"></i> View Profile
+                            </a>
+                            <a href="{% url 'settings_index' %}" class="list-group-item">
+                                <i class="demo-pli-gear icon-lg icon-fw"></i> Settings
+                            </a>
+                            <a href="#!" class="list-group-item">
+                                <i class="demo-pli-information icon-lg icon-fw"></i> Help
+                            </a>
+                            <a href="{% url 'users_signout' %}" class="list-group-item">
+                                <i class="demo-pli-unlock icon-lg icon-fw"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="mainnav-shortcut">
+                        <ul class="list-unstyled">
+                            <li class="col-xs-3" data-content="My Profile">
+                                <a class="shortcut-grid" href="{% url 'users_profile_view' %}">
+                                    <i class="fa fa-user"></i>
+                                </a>
+                            </li>
+                            <li class="col-xs-3" data-content="Messages">
+                                <a class="shortcut-grid" href="#!">
+                                    <i class="fa fa-comments"></i>
+                                </a>
+                            </li>
+                            <li class="col-xs-3" data-content="Settings">
+                                <a class="shortcut-grid" href="{% url 'settings_index' %}">
+                                    <i class="fa fa-cog"></i>
+                                </a>
+                            </li>
+                            <li class="col-xs-3" data-content="Help">
+                                <a class="shortcut-grid" href="#!">
+                                    <i class="fa fa-info-circle"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul id="mainnav-menu" class="list-group">
+                        <li class="list-divider"></li>
+
+                        {% if ACCESS_PERMISSION_DASHBOARD_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_DASHBOARD %}
+                        <li class="active-link">
+                            <a href="{% url 'users_dashboard' %}">
+                                <i class="glyphicon glyphicon-home"></i>
+                                <span class="menu-title"><b>Home</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'users_dashboard' %}">
+                                <i class="glyphicon glyphicon-home"></i>
+                                <span class="menu-title"><b>Home</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+
+                        <li class="list-divider"></li>
+
+                        <li class="list-divider"></li>
+                        <li class="list-header">COMPONENTS</li>
+                        {% if ACCESS_PERMISSION_CATEGORIES_VIEW in auth_permissions.values %}
+                            {% if section == BACKEND_SECTION_CATEGORIES %}
+                            <li class="active-link">
+                                <a href="{% url 'categories_index' %}">
+                                    <i class="fa fa-tags"></i>
+                                    <span class="menu-title"><b>{{ MODEL_CATEGORIES_PLURAL_TITLE }}</b> </span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a href="{% url 'categories_index' %}">
+                                    <i class="fa fa-tags"></i>
+                                    <span class="menu-title"><b>{{ MODEL_CATEGORIES_PLURAL_TITLE }}</b> </span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                        
+                        <li class="list-divider"></li>
+                        <li class="list-header">SYSTEM ADMIN</li>
+
+                        {% if ACCESS_PERMISSION_USER_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_USERS %}
+                        <li class="active-link">
+                            <a href="{% url 'users_index' %}">
+                                <i class="fa fa-user"></i>
+                                <span class="menu-title"><b>{{ MODEL_USERS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'users_index' %}">
+                                <i class="fa fa-user"></i>
+                                <span class="menu-title"><b>{{ MODEL_USERS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_LOGS %}
+                        <li class="active-link">
+                            <a href="{% url 'logs_index' %}">
+                                <i class="fa fa-history"></i>
+                                <span class="menu-title"><b>{{ MODEL_LOGS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'logs_index' %}">
+                                <i class="fa fa-history"></i>
+                                <span class="menu-title"><b>{{ MODEL_LOGS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,51 @@
+{% load static %}
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr style="background-color: #efefef">
+          <th style="width: 100%">
+           Notify Activity Manager and Data Reporter
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <td>
+            <form id="id_notify" method="POST" action="{% url 'notifications_create' project_id=model.project_id %}">
+                {% csrf_token %}
+                <!-- <div class="row"> -->
+                    <!-- <div class="col-sm-12">
+                      <div class="form-group">
+                        <label>
+                            {{ form_notifications.project_id.label }}
+                            <label style="color: red; margin-bottom: 0;">
+                                {% if form_notifications.project_id.field.required %} * {% endif %}
+                            </label>
+                        </label>
+                        {{ form_notifications.project_id}} {{ form_notifications.project_id.errors }}
+                      </div>
+                    </div> -->
+                <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>
+                            {{ form_notifications.notification.label }}
+                            <label style="color: red; margin-bottom: 0;">
+                                {% if form_notifications.notification.field.required %} * {% endif %}
+                            </label>
+                        </label>
+                        {{ form_notifications.notification}} {{ form_notifications.notification.errors }}
+                    </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-sm-12">
+                    <button id="id_notification_submition" type="submit" class="btn btn-block btn-warning">Submit</button>
+                </div>
+                </div>
+            </form>
+        </td>
+    </tbody>
+  </table>
+</div>
+</div>

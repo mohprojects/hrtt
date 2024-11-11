@@ -1,0 +1,207 @@
+{% load static %}
+<nav id="mainnav-container">
+    <div id="mainnav">
+        <div id="mainnav-menu-wrap">
+            <div class="nano no-print">
+                <div class="nano-content">
+                    <div id="mainnav-profile" class="mainnav-profile">
+                        <div class="profile-wrap text-center">
+                            <div class="pad-btm">
+                                <img class="img-circle img-md" src="{% static 'img/profile-photos/1.png' %}" alt="">
+                            </div>
+                            <a href="#profile-nav" class="box-block" data-toggle="collapse" aria-expanded="false">
+                                <span class="pull-right dropdown-toggle">
+                                    <i class="dropdown-caret"></i>
+                                </span>
+                                <p class="mnp-name">{{ user.user_name }}</p>
+                                <span class="mnp-desc">{{ user.user_username }}</span>
+                            </a>
+                        </div>
+                        <div id="profile-nav" class="collapse list-group bg-trans">
+                            <a href="{% url 'users_profile_view' %}" class="list-group-item">
+                                <i class="demo-pli-male icon-lg icon-fw"></i> Profile
+                            </a>
+                            <a href="{% url 'settings_index' %}" class="list-group-item">
+                                <i class="demo-pli-gear icon-lg icon-fw"></i> Settings
+                            </a>
+                            <a href="{% url 'users_signout' %}" class="list-group-item">
+                                <i class="demo-pli-unlock icon-lg icon-fw"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <ul id="mainnav-menu" class="list-group">
+                        <li class="list-divider"></li>
+                        {% if ACCESS_PERMISSION_DASHBOARD_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_DASHBOARD %}
+                        <li class="active-link">
+                            <a href="{% url 'users_dashboard' %}">
+                                <i class="glyphicon glyphicon-stats"></i>
+                                <span class="menu-title"><b>Dashboard</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'users_dashboard' %}">
+                                <i class="glyphicon glyphicon-stats"></i>
+                                <span class="menu-title"><b>Dashboard</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if ACCESS_PERMISSION_ORGANIZATIONS_VIEW in auth_permissions.values or ACCESS_PERMISSION_PROJECTS_VIEW in auth_permissions.values or ACCESS_PERMISSION_ACTIVITIES_VIEW in auth_permissions.values %}
+                        <li class="list-divider"></li>
+                        <li class="list-header">MAIN </li>
+
+                        {% if ACCESS_PERMISSION_ORGANIZATIONS_VIEW in auth_permissions.values %}
+                        {% if user.user_role == 'activity-manager' %}
+                        {% if section == BACKEND_SECTION_ORGANIZATION %}
+                            <li class="active-link">
+                                <a href="{% url 'organizations_view' pk=user.organization_id %}">
+                                    <i class="fa fa-university"></i>
+                                    <span class="menu-title"><b>{{ MODEL_ORGANIZATIONS_SINGULAR_TITLE }}</b> </span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="">
+                                <a href="{% url 'organizations_view' pk=user.organization_id %}">
+                                    <i class="fa fa-university"></i>
+                                    <span class="menu-title"><b>{{ MODEL_ORGANIZATIONS_SINGULAR_TITLE }}</b> </span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% endif %}
+                        {% if user.user_role == 'super-admin' %}
+                        {% if section == BACKEND_SECTION_ORGANIZATIONS %}
+                            <li class="active-link">
+                                <a href="{% url 'organizations_index' %}">
+                                    <i class="fa fa-university"></i>
+                                    <span class="menu-title"><b>{{ MODEL_ORGANIZATIONS_PLURAL_TITLE }}</b> </span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a href="{% url 'organizations_index' %}">
+                                    <i class="fa fa-university"></i>
+                                    <span class="menu-title"><b>{{ MODEL_ORGANIZATIONS_PLURAL_TITLE }}</b> </span>
+                                </a>
+                            </li> 
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+
+                        {% if ACCESS_PERMISSION_PROJECTS_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_PROJECTS %}
+                        <li class="active-link">
+                            <a href="{% url 'projects_index' %}">
+                                <i class="fa fa-cube"></i>
+                                <span class="menu-title"><b>{{ MODEL_PROJECTS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'projects_index' %}">
+                                <i class="fa fa-cube"></i>
+                                <span class="menu-title"><b>{{ MODEL_PROJECTS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+
+
+
+                        {% if ACCESS_PERMISSION_ACTIVITIES_VIEW in auth_permissions.values  %}
+                        {% if section ==  BACKEND_SECTION_ACTIVITIES %}
+                        <li class="active-link">
+                            <a href="{% url 'activities_table' %}">
+                                <i class="fa fa-cubes"></i>
+                                <span class="menu-title"><b>{{MODEL_ACTIVITIES_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'activities_table' %}">
+                                <i class="fa fa-cubes"></i>
+                                <span class="menu-title"><b>{{ MODEL_ACTIVITIES_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+
+
+
+                        {% if ACCESS_PERMISSION_SYSTEM_REPORTS_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_SYSTEM_REPORTS %}
+                        <li class="active-link">
+                            <a href="{% url 'system_reports_index' pk='1' %}">
+                                <i class="fa fa fa-chart-bar"></i>
+                                <span class="menu-title"><b>{{ MODEL_SYSTEM_REPORTS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'system_reports_index' pk='1' %}">
+                                <i class="fa fa fa-chart-bar"></i>
+                                <span class="menu-title"><b>{{ MODEL_SYSTEM_REPORTS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if ACCESS_PERMISSION_SYSTEM_REPORTS_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_ANALYSIS %}
+                            <li class="active-link">
+                                <a href="{% url 'analysis_index' %}">
+                                    <i class="fa fa-chart-area"></i>
+                                    <span class="menu-title"><b>Analysis</b> </span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a href="{% url 'analysis_index' %}">
+                                    <i class="fa fa-chart-area"></i>
+                                    <span class="menu-title"><b>Analysis</b> </span>
+                                </a>
+                            </li> 
+                        {% endif %}
+                        {% endif %}
+
+                        {% endif %}
+                        
+                        
+
+                        {% if ACCESS_PERMISSION_USER_VIEW in auth_permissions.values or ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values in auth_permissions.values %}
+                        <li class="list-divider"></li>
+                        <li class="list-header">SYSTEM ADMIN </li>
+
+                        
+
+                        {% if ACCESS_PERMISSION_USER_VIEW in auth_permissions.values %}
+                        {% if section == BACKEND_SECTION_USERS %}
+                        <li class="active-link">
+                            <a href="{% url 'users_index' %}">
+                                <i class="fa fa-user"></i>
+                                <span class="menu-title"><b>{{ MODEL_USERS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'users_index' %}">
+                                <i class="fa fa-user"></i>
+                                <span class="menu-title"><b>{{ MODEL_USERS_PLURAL_TITLE }}</b> </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+
+                        {% endif %}
+
+                        <li class="list-divider"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

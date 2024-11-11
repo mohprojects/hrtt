@@ -1,0 +1,97 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+    {% load static %}
+    <title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+
+{% block body %}
+    {% load static %}{% csrf_token %}
+    <div id="page-head">
+        <div id="page-title">
+            <h1 class="page-header text-overflow">{{ title }}</h1>
+        </div>
+        <ul class="breadcrumb">
+            <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+            <li><a href="{% url 'users_profile_view' %}">Profile</a></li>
+            <li class="active">Update</li>
+        </ul>
+    </div>
+   <div id="page-content" style="padding-top:0px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>
+                                    {{ form.email.label }}
+                                    <label style="color: red; margin-bottom: 0;">
+                                        {% if form.email.field.required %} * {% endif %}
+                                    </label>
+                                </label>
+                                {{ form.email }}
+                                {{ form.email.errors }}
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                  <div class="form-group">
+                                    <label>
+                                      {{ form.first_name.label }}
+                                      <label style="color: red; margin-bottom: 0">
+                                        {% if form.first_name.field.required %} * {% endif %}
+                                      </label>
+                                    </label>
+                                    {{ form.first_name }}
+                                    {{ form.first_name.errors }}
+                                  </div>
+                                </div>
+                                <div class="col-sm-4">
+                                  <div class="form-group">
+                                    <label>
+                                      {{ form.middle_name.label }}
+                                      <label style="color: red; margin-bottom: 0">
+                                        {% if form.middle_name.field.required %} * {% endif %}
+                                      </label>
+                                    </label>
+                                    {{ form.middle_name }}
+                                    {{ form.middle_name.errors }}
+                                  </div>
+                                </div>
+                                <div class="col-sm-4">
+                                  <div class="form-group">
+                                    <label>
+                                      {{ form.last_name.label }}
+                                      <label style="color: red; margin-bottom: 0">
+                                        {% if form.last_name.field.required %} * {% endif %}
+                                      </label>
+                                    </label>
+                                    {{ form.last_name }}
+                                    {{ form.last_name.errors }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.phone_number.label }}
+                                            <label style="color: red; margin-bottom: 0;">
+                                                {% if form.phone_number.field.required %} * {% endif %}
+                                            </label>
+                                        </label>
+                                        {{ form.phone_number }}
+                                        {{ form.phone_number.errors }}
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-lg btn-block btn-primary"> Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends '_include/base-general.html' %}
+{% block head %}
+{% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+<style>
+    .switch-primary {
+        background-color: #068ECE !important;
+        border-color: #068ECE !important;
+    }
+</style>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li class="active">Profile</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tab-base">
+                <!--Nav Tabs-->
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#demo-lft-tab-1">Profile</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="demo-lft-tab-1" class="tab-pane fade active in">
+                        <div>
+                            <a href="{% url 'users_profile_update' %}" class="btn btn-info">Update</a>
+                            <a href="{% url 'users_profile_change_password' %}" class="btn btn-warning">Change
+                                Password</a>
+                        </div>
+                        <br>
+                        <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                            <thead>
+                                <tr style="background-color: #efefef">
+                                    <th style="width:20%;">Key</th>
+                                    <th style="width:80%;">Value</th>
+                                </tr>
+                                <tr>
+                                    <td>User Id</td>
+                                    <td>{{ model.user_id }}</td>
+                                </tr>
+                                <tr>
+                                    <td>First Name</td>
+                                    <td>{{ model.user_first_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Middle Name</td>
+                                    <td>{{ model.user_middle_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Last Name</td>
+                                    <td>{{ model.user_last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Role</td>
+                                    <td>{{ model.user_role }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>{{ model.user_username }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Phone</td>
+                                    <td>{{ model.user_contact_phone_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Created At</td>
+                                    <td>{{ model.user_created_at }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Created By</td>
+                                    <td>{{ model.user_created_by }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Updated At</td>
+                                    <td>{{ model.user_updated_at }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Updated By</td>
+                                    <td>{{ model.user_updated_by }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td>
+                                        {% if model.user_status == model.STATUS_ACTIVE %}
+                                        <div style="width:100px;">{{ model.HTML_TAG_STATUS_ACTIVE_COLOR | safe }}</div>
+                                        {% endif %}
+                                        {% if model.user_status == model.STATUS_INACTIVE %}
+                                        <div style="width:100px;">{{ model.HTML_TAG_STATUS_INACTIVE_COLOR | safe }}
+                                        </div>
+                                        {% endif %}
+                                        {% if model.user_status == model.STATUS_BLOCKED %}
+                                        <div style="width:100px;">{{ model.HTML_TAG_STATUS_BLOCKED_COLOR | safe }}</div>
+                                        {% endif %}
+                                        {% if model.user_status == model.STATUS_UNVERIFIED %}
+                                        <div style="width:100px;">{{ model.HTML_TAG_STATUS_UNVERIFIED_COLOR | safe }}
+                                        </div>
+                                        {% endif %}
+                                        {% if model.user_status == model.STATUS_UNAPPROVED %}
+                                        <div style="width:100px;">{{ model.HTML_TAG_STATUS_UNAPPROVED_COLOR | safe }}
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include '_include/single_select.html' %}
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+
+    });
+</script>
+{% endblock %}

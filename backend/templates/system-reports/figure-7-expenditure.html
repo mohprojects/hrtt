@@ -1,0 +1,1125 @@
+{% extends '_include/base-index.html' %} {% load static %} {% block head %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %} {% block body %} {% load static %} {% load humanize %} {% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li class="active">
+      {{ title }}
+    </li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-6">
+              <label>Report Type</label>
+              <select data-placeholder="Choose a report" id="demo-chosen-select-report" style="width: 100%">
+                <option value="1">Table 1: Health budget summary statistics</option>
+                <option value="2">Table 1: Health expenditures summary statistics</option>
+                <option value="3">Table 2: List of institutions that reported health budgets</option>
+                <option value="4">Table 2: List of institutions that reported health expenditures</option>
+                <option value="5">Table 3: List of activity purposes (Budget)</option>
+                <option value="6">Table 3: List of activity purposes (Expenditure)</option>
+                <option value="17">Table 4: Trends of THE by activity/purpose (Budgets)</option>
+                <option value="18">Table 4: Trends of THE by activity/purpose (Expenditures)</option>
+                <option value="19">Table 5: Trends of THE by health functions (Budgets)</option>
+                <option value="20">Table 5: Trends of THE by health functions (Expenditures)</option>
+                <option value="21">Table 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="22">Table 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="23">Table 7: Distribution of funding sources by domains of intervention 3 years (Budgets)</option>
+                <option value="24" >Table 7: Distribution of funding sources by domains of intervention 3 years (Expenditures)</option>
+                <option value="25">Table 8: Health Budgets summary statistics ( 10 years)</option>
+                <option value="26">Table 8: Health Expenditures summary statistics ( 10 years)</option>
+                <option value="27">Table 9: Total Health Budgets by Organization types (RWF)</option>
+                <option value="28">Table 9: Total Health Expenditures by Organization types (RWF)</option>
+                <option value="7">Figure 1: Trends in Total Health Budgets (THE)</option>
+                <option value="8">Figure 1: Trends in Total Health Expenditures (THE)</option>
+                <option value="9">Figure 2: THE versus THE as a share of GDP (Budgets)</option>
+                <option value="10">Figure 2: THE versus THE as a share of GDP (Expenditures)</option>
+                <option value="11">Figure 3: Trends in domestic versus external sources for (Budgets)</option>
+                <option value="12">Figure 3: Trends in domestic versus external sources for (Expenditures)</option>
+                <option value="13">Figure 4: Trends in public, private and external resources (Budgets)</option>
+                <option value="14">Figure 4: Trends in public, private and external resources (Expenditures)</option>
+                <option value="15">Figure 5: OOP spending as a share of THE (Budgets)</option>
+                <option value="16">Figure 5: OOP spending as a share of THE (Expenditures)</option>
+                <option value="29">Figure 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="30">Figure 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="31">Figure 7: Distribution of funding sources by domains of intervention 5 years overview (Budgets)</option>
+                <option value="32" selected>Figure 7: Distribution of funding sources by domains of intervention 5 years overview(Expenditures)</option>
+                <option value="33">Figure 8: Sources of funding by activity 5 years overview (Budgets)</option>
+                <option value="34">Figure 8: Sources of funding by activity 5 years overview (Expenditures)</option>
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label>Fiscal Year</label>
+              <select data-placeholder="Choose a fiscal year" id="demo-chosen-select-year" style="width: 100%">
+                {{fiscal_year_choices | safe }}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="panel-control">
+              <button id="demo-reload" class="btn btn-default btn-active-primary" onclick="javascript:update()"><i class="demo-psi-repeat-2"></i></button>
+              <div class="dropdown">
+                  <button class="dropdown-toggle btn btn-default btn-active-primary" data-toggle="dropdown"><i class="demo-psi-dot-vertical"></i></button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                      <li><a href="javascript:ExportToExcel('xlsx')">Export</a></li>
+                  </ul>
+              </div>
+          </div>
+          <h3 class="panel-title">Figure 7: Distribution of funding sources by domains of intervention 5 years (Expenditures)</h3>
+      </div>
+        <div class="panel-body">
+          <div class="table-responsive">
+            <table id="report-table" class="table table-bordered table-hover">
+              <thead style="background-color: #efefef">
+                <tr>
+                  <th colspan="2">Fiscal Years/ Funding sources&nbsp;</th>
+                  <th id="year_1_C" style="width: 240px;">-</th>
+                  <th id="year_2_C" style="width: 240px;">-</th>
+                  <th id="year_3_C" style="width: 240px;">-</th>
+                  <th id="year_4_C" style="width: 240px;">-</th>
+                  <th id="year_5_C" style="width: 240px;">-</th>
+                </tr>
+                <tr>
+                  <th>#</th>
+                  <th>Domain of intervention&nbsp;</th>
+                  <th  style="width: 240px;">Domestic,Private,External</th>
+                  <th  style="width: 240px;">Domestic,Private,External</th>
+                  <th  style="width: 240px;">Domestic,Private,External</th>
+                  <th  style="width: 240px;">Domestic,Private,External</th>
+                  <th  style="width: 240px;">Domestic,Private,External</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>D.1</td>
+                  <td>Infectious Diseases Prevention And Control</td>
+                  <td id="year_1_1_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_1_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_1_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_1_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_1_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.2</td>
+                  <td>Maternal, Child And Adolescent Health</td>
+                  <td id="year_1_2_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_2_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_2_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_2_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_2_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.3</td>
+                  <td>Non-Communicable Diseases And Mental Health Prevention And Control</td>
+                  <td id="year_1_3_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_3_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_3_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_3_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_3_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.5</td>
+                  <td>Administrative And Support Services</td>
+                  <td id="year_1_4_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_4_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_4_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_4_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_4_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.6.1 + HC.7</td>
+                  <td>Policy development & health service regulation</td>
+                  <td id="year_1_5_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_5_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_5_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_5_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_5_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.7</td>
+                  <td>Health Human Resources</td>
+                  <td id="year_1_6_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_6_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_6_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_6_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_6_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.8</td>
+                  <td>Health Sector Planning, Monitoring And Evaluation</td>
+                  <td id="year_1_7_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_7_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_7_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_7_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_7_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.9</td>
+                  <td>Health Service Delivery And Quality Improvement</td>
+                  <td id="year_1_8_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_8_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_8_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_8_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_8_C">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  let statistics = {}
+  $(document.body).on("change","#demo-chosen-select-report",function(){
+      let url = "{% url 'system_reports_index' pk='P1' %}"
+      url = url.replace('P1', this.value)
+      location.href = url;
+  });
+  function update(){
+    let yearS = $("#demo-chosen-select-year").val()
+      let year = yearS.substring(5);
+      let year5 = (year-1)+'-'+(year-0);
+      let year4 = (year-2)+'-'+(year-1);
+      let year3 = (year-3)+'-'+(year-2);
+      let year2 = (year-4)+'-'+(year-3);
+      let year1 = (year-5)+'-'+(year-4);
+
+      $('#year_1').html(year1);
+      $('#year_2').html(year2);
+      $('#year_3').html(year3);
+      $('#year_4').html(year4);
+      $('#year_5').html(year5);
+      reload(year1, year2, year3,year4,year5);
+  }
+  $('#demo-reload').click(function() {
+        update()   
+    });
+  $(document.body).on("change","#demo-chosen-select-year",function(){
+      update()
+  });
+  $(document).ready(function() {
+    $('#demo-chosen-select-report').select2({
+      placeholder: '',
+      allowClear: false
+    });
+    $('#demo-chosen-select-year').select2({
+      placeholder: '',
+      allowClear: false
+    });
+
+    let year = (new Date()).getFullYear();
+    let year5 = (year-1)+'-'+(year-0);
+    let year4 = (year-2)+'-'+(year-1);
+    let year3 = (year-3)+'-'+(year-2);
+    let year2 = (year-4)+'-'+(year-3);
+    let year1 = (year-5)+'-'+(year-4);
+
+    $('#year_1_C').html(year1);
+    $('#year_2_C').html(year2);
+    $('#year_3_C').html(year3);
+    $('#year_4_C').html(year4);
+    $('#year_5_C').html(year5);
+    $('#demo-chosen-select-year').val(year5).trigger('change')
+  });
+
+  function reset(year_id){
+    
+    $('#' + year_id + '1_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '2_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '3_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '4_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '5_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '6_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '7_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '8_C').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  }
+
+  function reload(year1, year2, year3, year4, year5){
+
+    reset("year_1_")
+    reset("year_2_")
+    reset("year_3_")
+    reset("year_4_")
+    reset("year_5_")
+
+    statistics[year1] = {}
+    statistics[year2] = {}
+    statistics[year3] = {}
+    statistics[year4] = {}
+    statistics[year5] = {}
+
+    getTable6("year_1_", year1);
+    getTable6("year_2_", year2);
+    getTable6("year_3_", year3);
+    getTable6("year_4_", year4);
+    getTable6("year_5_", year5);
+
+    setTimeout(function() {
+      let html, per1, per2, per3;
+      let num1, num2,num3, total;
+      num1 = Number(statistics[year1]['#year_1_1_1'])
+      num2 = Number(statistics[year1]['#year_1_2_1'])
+      num3 = Number(statistics[year1]['#year_1_3_1'])
+      total = num1 + num2 + num3
+  
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_1_C').html(html)
+     
+      num1 = Number(statistics[year1]['#year_1_1_2'])
+      num2 = Number(statistics[year1]['#year_1_2_2'])
+      num3 = Number(statistics[year1]['#year_1_3_2'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_2_C').html(html)
+    
+      num1 = Number(statistics[year1]['#year_1_1_3'])
+      num2 = Number(statistics[year1]['#year_1_2_3'])
+      num3 = Number(statistics[year1]['#year_1_3_3'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_3_C').html(html)
+     
+      num1 = Number(statistics[year1]['#year_1_1_4'])
+      num2 = Number(statistics[year1]['#year_1_2_4'])
+      num3 = Number(statistics[year1]['#year_1_3_4'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_4_C').html(html)
+     
+      num1 = Number(statistics[year1]['#year_1_1_5'])
+      num2 = Number(statistics[year1]['#year_1_2_5'])
+      num3 = Number(statistics[year1]['#year_1_3_5'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_5_C').html(html)
+    
+      num1 = Number(statistics[year1]['#year_1_1_6'])
+      num2 = Number(statistics[year1]['#year_1_2_6'])
+      num3 = Number(statistics[year1]['#year_1_3_6'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_6_C').html(html)
+    
+      num1 = Number(statistics[year1]['#year_1_1_7'])
+      num2 = Number(statistics[year1]['#year_1_2_7'])
+      num3 = Number(statistics[year1]['#year_1_3_7'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_7_C').html(html)
+     
+      num1 = Number(statistics[year1]['#year_1_1_8'])
+      num2 = Number(statistics[year1]['#year_1_2_8'])
+      num3 = Number(statistics[year1]['#year_1_3_8'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_1_8_C').html(html)
+
+     //-------------------------------------------------------------------------
+      num1 = Number(statistics[year2]['#year_2_1_1'])
+      num2 = Number(statistics[year2]['#year_2_2_1'])
+      num3 = Number(statistics[year2]['#year_2_3_1'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_1_C').html(html)
+     
+      num1 = Number(statistics[year2]['#year_2_1_2'])
+      num2 = Number(statistics[year2]['#year_2_2_2'])
+      num3 = Number(statistics[year2]['#year_2_3_2'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_2_C').html(html)
+      
+      num1 = Number(statistics[year2]['#year_2_1_3'])
+      num2 = Number(statistics[year2]['#year_2_2_3'])
+      num3 = Number(statistics[year2]['#year_2_3_3'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_3_C').html(html)
+     
+      num1 = Number(statistics[year2]['#year_2_1_4'])
+      num2 = Number(statistics[year2]['#year_2_2_4'])
+      num3 = Number(statistics[year2]['#year_2_3_4'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_4_C').html(html)
+     
+      num1 = Number(statistics[year2]['#year_2_1_5'])
+      num2 = Number(statistics[year2]['#year_2_2_5'])
+      num3 = Number(statistics[year2]['#year_2_3_5'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_5_C').html(html)
+      
+      num1 = Number(statistics[year2]['#year_2_1_6'])
+      num2 = Number(statistics[year2]['#year_2_2_6'])
+      num3 = Number(statistics[year2]['#year_2_3_6'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_6_C').html(html)
+      
+      num1 = Number(statistics[year2]['#year_2_1_7'])
+      num2 = Number(statistics[year2]['#year_2_2_7'])
+      num3 = Number(statistics[year2]['#year_2_3_7'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_7_C').html(html)
+      
+      num1 = Number(statistics[year2]['#year_2_1_8'])
+      num2 = Number(statistics[year2]['#year_2_2_8'])
+      num3 = Number(statistics[year2]['#year_2_3_8'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_2_8_C').html(html)
+      // ------------------------------------------------------------------
+      num1 = Number(statistics[year3]['#year_3_1_1'])
+      num2 = Number(statistics[year3]['#year_3_2_1'])
+      num3 = Number(statistics[year3]['#year_3_3_1'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_1_C').html(html)
+   
+      num1 = Number(statistics[year3]['#year_3_1_2'])
+      num2 = Number(statistics[year3]['#year_3_2_2'])
+      num3 = Number(statistics[year3]['#year_3_3_2'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_2_C').html(html)
+     
+      num1 = Number(statistics[year3]['#year_3_1_3'])
+      num2 = Number(statistics[year3]['#year_3_2_3'])
+      num3 = Number(statistics[year3]['#year_3_3_3'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_3_C').html(html)
+     
+      num1 = Number(statistics[year3]['#year_3_1_4'])
+      num2 = Number(statistics[year3]['#year_3_2_4'])
+      num3 = Number(statistics[year3]['#year_3_3_4'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_4_C').html(html)
+  
+      num1 = Number(statistics[year3]['#year_3_1_5'])
+      num2 = Number(statistics[year3]['#year_3_2_5'])
+      num3 = Number(statistics[year3]['#year_3_3_5'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_5_C').html(html)
+      num1 = Number(statistics[year3]['#year_3_1_6'])
+      num2 = Number(statistics[year3]['#year_3_2_6'])
+      num3 = Number(statistics[year3]['#year_3_3_6'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_6_C').html(html)
+
+      num1 = Number(statistics[year3]['#year_3_1_7'])
+      num2 = Number(statistics[year3]['#year_3_2_7'])
+      num3 = Number(statistics[year3]['#year_3_3_7'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_7_C').html(html)
+    
+      num1 = Number(statistics[year3]['#year_3_1_8'])
+      num2 = Number(statistics[year3]['#year_3_2_8'])
+      num3 = Number(statistics[year3]['#year_3_3_8'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_3_8_C').html(html)
+      //---------------------------------------------------------------------
+      num1 = Number(statistics[year4]['#year_4_1_1'])
+      num2 = Number(statistics[year4]['#year_4_2_1'])
+      num3 = Number(statistics[year4]['#year_4_3_1'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_1_C').html(html)
+   
+      num1 = Number(statistics[year4]['#year_4_1_2'])
+      num2 = Number(statistics[year4]['#year_4_2_2'])
+      num3 = Number(statistics[year4]['#year_4_3_2'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_2_C').html(html)
+     
+      num1 = Number(statistics[year4]['#year_4_1_3'])
+      num2 = Number(statistics[year4]['#year_4_2_3'])
+      num3 = Number(statistics[year4]['#year_4_3_3'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_3_C').html(html)
+     
+      num1 = Number(statistics[year4]['#year_4_1_4'])
+      num2 = Number(statistics[year4]['#year_4_2_4'])
+      num3 = Number(statistics[year4]['#year_4_3_4'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_4_C').html(html)
+  
+      num1 = Number(statistics[year4]['#year_4_1_5'])
+      num2 = Number(statistics[year4]['#year_4_2_5'])
+      num3 = Number(statistics[year4]['#year_4_3_5'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_5_C').html(html)
+      num1 = Number(statistics[year4]['#year_4_1_6'])
+      num2 = Number(statistics[year4]['#year_4_2_6'])
+      num3 = Number(statistics[year4]['#year_4_3_6'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_6_C').html(html)
+
+      num1 = Number(statistics[year4]['#year_4_1_7'])
+      num2 = Number(statistics[year4]['#year_4_2_7'])
+      num3 = Number(statistics[year4]['#year_4_3_7'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_7_C').html(html)
+    
+      num1 = Number(statistics[year4]['#year_4_1_8'])
+      num2 = Number(statistics[year4]['#year_4_2_8'])
+      num3 = Number(statistics[year4]['#year_4_3_8'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_4_8_C').html(html)
+      //-------------------------------------------------------
+
+      num1 = Number(statistics[year5]['#year_5_1_1'])
+      num2 = Number(statistics[year5]['#year_5_2_1'])
+      num3 = Number(statistics[year5]['#year_5_3_1'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_1_C').html(html)
+   
+      num1 = Number(statistics[year5]['#year_5_1_2'])
+      num2 = Number(statistics[year5]['#year_5_2_2'])
+      num3 = Number(statistics[year5]['#year_5_3_2'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_2_C').html(html)
+     
+      num1 = Number(statistics[year5]['#year_5_1_3'])
+      num2 = Number(statistics[year5]['#year_5_2_3'])
+      num3 = Number(statistics[year5]['#year_5_3_3'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_3_C').html(html)
+     
+      num1 = Number(statistics[year5]['#year_5_1_4'])
+      num2 = Number(statistics[year5]['#year_5_2_4'])
+      num3 = Number(statistics[year5]['#year_5_3_4'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_4_C').html(html)
+  
+      num1 = Number(statistics[year5]['#year_5_1_5'])
+      num2 = Number(statistics[year5]['#year_5_2_5'])
+      num3 = Number(statistics[year5]['#year_5_3_5'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_5_C').html(html)
+      num1 = Number(statistics[year5]['#year_5_1_6'])
+      num2 = Number(statistics[year5]['#year_5_2_6'])
+      num3 = Number(statistics[year5]['#year_5_3_6'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_6_C').html(html)
+
+      num1 = Number(statistics[year5]['#year_5_1_7'])
+      num2 = Number(statistics[year5]['#year_5_2_7'])
+      num3 = Number(statistics[year5]['#year_5_3_7'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_7_C').html(html)
+    
+      num1 = Number(statistics[year5]['#year_5_1_8'])
+      num2 = Number(statistics[year5]['#year_5_2_8'])
+      num3 = Number(statistics[year5]['#year_5_3_8'])
+      total = num1 + num2 + num3
+      per1 = ((num1/total)*100).toFixed(2)
+      per2 = ((num2/total)*100).toFixed(2)
+      per3 = ((num3/total)*100).toFixed(2)
+      html = '<div class="progress progress-lg">'
+      html += '<div style="width: '+per1+'%" class="progress-bar progress-bar-info progress-bar-striped">'+per1+'%</div>'
+      html += '<div style="width: '+per2+'%" class="progress-bar progress-bar-warning progress-bar-striped">'+per2+'%</div>'
+      html += '<div style="width: '+per3+'%" class="progress-bar progress-bar-purple progress-bar-striped">'+per3+'%</div>'
+      html += '</div>'
+      $('#year_5_8_C').html(html)
+    }, 6000);
+
+  }
+
+  function getTable6(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_6_public' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          $('#' + year_id + '1_1').html((Number(data.amount_1)).toLocaleString())
+          $('#' + year_id + '1_2').html((Number(data.amount_2)).toLocaleString())
+          $('#' + year_id + '1_3').html((Number(data.amount_3)).toLocaleString())
+          $('#' + year_id + '1_4').html((Number(data.amount_4)).toLocaleString())
+          $('#' + year_id + '1_5').html((Number(data.amount_5)).toLocaleString())
+          $('#' + year_id + '1_6').html((Number(data.amount_6)).toLocaleString())
+          $('#' + year_id + '1_7').html((Number(data.amount_7)).toLocaleString())
+          $('#' + year_id + '1_8').html((Number(data.amount_8)).toLocaleString())
+
+          statistics[year]['#' + year_id + '1_1']=data.amount_1
+          statistics[year]['#' + year_id + '1_2']=data.amount_2
+          statistics[year]['#' + year_id + '1_3']=data.amount_3
+          statistics[year]['#' + year_id + '1_4']=data.amount_4
+          statistics[year]['#' + year_id + '1_5']=data.amount_5
+          statistics[year]['#' + year_id + '1_6']=data.amount_6
+          statistics[year]['#' + year_id + '1_7']=data.amount_7
+          statistics[year]['#' + year_id + '1_8']=data.amount_8
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          $('#' + year_id + '1_1').html('-')
+          $('#' + year_id + '1_2').html('-')
+          $('#' + year_id + '1_3').html('-')
+          $('#' + year_id + '1_4').html('-')
+          $('#' + year_id + '1_5').html('-')
+          $('#' + year_id + '1_6').html('-')
+          $('#' + year_id + '1_7').html('-')
+          $('#' + year_id + '1_8').html('-')
+        },
+      });
+      return;
+    });
+    
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_6_private' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '2_1']=data.amount_1
+          statistics[year]['#' + year_id + '2_2']=data.amount_2
+          statistics[year]['#' + year_id + '2_3']=data.amount_3
+          statistics[year]['#' + year_id + '2_4']=data.amount_4
+          statistics[year]['#' + year_id + '2_5']=data.amount_5
+          statistics[year]['#' + year_id + '2_6']=data.amount_6
+          statistics[year]['#' + year_id + '2_7']=data.amount_7
+          statistics[year]['#' + year_id + '2_8']=data.amount_8
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+        },
+      });
+      return;
+    });
+    
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_6_external' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '3_1']=data.amount_1
+          statistics[year]['#' + year_id + '3_2']=data.amount_2
+          statistics[year]['#' + year_id + '3_3']=data.amount_3
+          statistics[year]['#' + year_id + '3_4']=data.amount_4
+          statistics[year]['#' + year_id + '3_5']=data.amount_5
+          statistics[year]['#' + year_id + '3_6']=data.amount_6
+          statistics[year]['#' + year_id + '3_7']=data.amount_7
+          statistics[year]['#' + year_id + '3_8']=data.amount_8
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+        },
+      });
+      return;
+    });
+    
+    return;
+  }
+</script>
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

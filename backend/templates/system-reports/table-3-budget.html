@@ -1,0 +1,175 @@
+{% extends '_include/base-index.html' %} {% load static %} {% block head %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %} {% block body %} {% load static %} {% load humanize %} {% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li class="active">
+      {{ title }}
+    </li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-12">
+              <label>Report Type</label>
+              <select data-placeholder="Choose a report" id="demo-chosen-select-report" style="width: 100%">
+                <option value="1">Table 1: Health budget summary statistics</option>
+                <option value="2">Table 1: Health expenditures summary statistics</option>
+                <option value="3">Table 2: List of institutions that reported health budgets</option>
+                <option value="4">Table 2: List of institutions that reported health expenditures</option>
+                <option value="5" selected>Table 3: List of activity purposes (Budget)</option>
+                <option value="6">Table 3: List of activity purposes (Expenditure)</option>
+                <option value="17">Table 4: Trends of THE by activity/purpose (Budgets)</option>
+                <option value="18">Table 4: Trends of THE by activity/purpose (Expenditures)</option>
+                <option value="19">Table 5: Trends of THE by health functions (Budgets)</option>
+                <option value="20">Table 5: Trends of THE by health functions (Expenditures)</option>
+                <option value="21">Table 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="22">Table 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="23">Table 7: Distribution of funding sources by domains of intervention 3 years (Budgets)</option>
+                <option value="24">Table 7: Distribution of funding sources by domains of intervention 3 years (Expenditures)</option>
+                <option value="25">Table 8: Health Budgets summary statistics ( 10 years)</option>
+                <option value="26">Table 8: Health Expenditures summary statistics ( 10 years)</option>
+                <option value="27">Table 9: Total Health Budgets by Organization types (RWF)</option>
+                <option value="28">Table 9: Total Health Expenditures by Organization types (RWF)</option>
+                <option value="7">Figure 1: Trends in Total Health Budgets (THE)</option>
+                <option value="8">Figure 1: Trends in Total Health Expenditures (THE)</option>
+                <option value="9">Figure 2: THE versus THE as a share of GDP (Budgets)</option>
+                <option value="10">Figure 2: THE versus THE as a share of GDP (Expenditures)</option>
+                <option value="11">Figure 3: Trends in domestic versus external sources for (Budgets)</option>
+                <option value="12">Figure 3: Trends in domestic versus external sources for (Expenditures)</option>
+                <option value="13">Figure 4: Trends in public, private and external resources (Budgets)</option>
+                <option value="14">Figure 4: Trends in public, private and external resources (Expenditures)</option>
+                <option value="15">Figure 5: OOP spending as a share of THE (Budgets)</option>
+                <option value="16">Figure 5: OOP spending as a share of THE (Expenditures)</option> 
+                <option value="29">Figure 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="30">Figure 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="31">Figure 7: Distribution of funding sources by domains of intervention 5 years overview (Budgets)</option>
+                <option value="32">Figure 7: Distribution of funding sources by domains of intervention 5 years overview (Expenditures)</option>
+                <option value="33">Figure 8: Sources of funding by activity 5 years overview (Budgets)</option>
+                <option value="34">Figure 8: Sources of funding by activity 5 years overview(Expenditures)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="panel-control">
+              <button class="btn btn-default btn-active-primary" onclick="javascript:update()"><i class="demo-psi-repeat-2"></i></button>
+              <div class="dropdown">
+                  <button class="dropdown-toggle btn btn-default btn-active-primary" data-toggle="dropdown"><i class="demo-psi-dot-vertical"></i></button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                      <li><a href="javascript:ExportToExcel('xlsx')">Export</a></li>
+                  </ul>
+              </div>
+          </div>
+          <h3 class="panel-title">Table 3: List of activity purposes (Budget)</h3>
+      </div>
+        <div class="panel-body">
+          <div class="table-responsive">
+            <table id="report-table" class="table table-bordered table-hover">
+              <thead style="background-color: #efefef">
+                <tr>
+                  <th>Code</th>
+                  <th>Domain&nbsp;</th>
+                  <th>Sub-domain</th>
+                </tr>
+              </thead>
+              <tbody id="id_body">
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  $(document.body).on("change","#demo-chosen-select-report",function(){
+      let url = "{% url 'system_reports_index' pk='P1' %}"
+      url = url.replace('P1', this.value)
+      location.href = url;
+  });
+  $(document).ready(function() {
+    $('#demo-chosen-select-report').select2({
+      placeholder: '',
+      allowClear: false
+    });
+    reload()
+  });
+
+  function reset(){
+    let html = '';
+    html += '<tr><td colspan="3" style="text-align:center"><div class="load1"><div class="loader" style=""></div></div></td></tr>'
+    $('#id_body').html(html)
+  }
+
+  function reload(){
+    reset()
+    getData()
+  }
+
+  function getData() {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_3' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: '0',
+          type: 'budget',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          console.log(data)
+          let items = data.items
+          let html = '';
+          for(let i=0;i<items.length;i++) {
+            let item = items[i];
+            if(item.type=='domain'){
+              html += '<tr><td>'+item.code+'</td><td>'+item.name+'</td><td></td></tr>'
+            }else{
+              html += '<tr><td>'+item.code+'</td><td></td><td>'+item.name+'</td></tr>'
+            }
+          }
+          $('#id_body').html(html)
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          let html = '';
+          html += "<tr><td colspan='3' style='text-align:center'>Data not available.</td></tr>"
+          $('#id_body').html(html)
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function ExportToExcel(type, fn, dl) {
+       var elt = document.getElementById('report-table');
+       var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+       XLSX.writeFile(wb, fn || ('HRTT Report List of activity purposes (Budget)' + (type ? '.' + type : '.xlsx')));
+  }
+</script>
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

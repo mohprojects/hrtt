@@ -1,0 +1,2479 @@
+{% extends '_include/base-index.html' %} {% load static %} {% block head %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %} {% block body %} {% load static %} {% load humanize %} {% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li class="active">
+      {{ title }}
+    </li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-6">
+              <label>Report Type</label>
+              <select data-placeholder="Choose a report" id="demo-chosen-select-report" style="width: 100%">
+                <option value="1">Table 1: Health budget summary statistics</option>
+                <option value="2">Table 1: Health expenditures summary statistics</option>
+                <option value="3">Table 2: List of institutions that reported health budgets</option>
+                <option value="4">Table 2: List of institutions that reported health expenditures</option>
+                <option value="5">Table 3: List of activity purposes (Budget)</option>
+                <option value="6">Table 3: List of activity purposes (Expenditure)</option>
+                <option value="17">Table 4: Trends of THE by activity/purpose (Budgets)</option>
+                <option value="18">Table 4: Trends of THE by activity/purpose (Expenditures)</option>
+                <option value="19">Table 5: Trends of THE by health functions (Budgets)</option>
+                <option value="20">Table 5: Trends of THE by health functions (Expenditures)</option>
+                <option value="21">Table 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="22">Table 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="23">Table 7: Distribution of funding sources by domains of intervention 3 years (Budgets)</option>
+                <option value="24">Table 7: Distribution of funding sources by domains of intervention 3 years (Expenditures)</option>
+                <option value="25">Table 8: Health Budgets summary statistics ( 10 years)</option>
+                <option value="26" selected>Table 8: Health Expenditures summary statistics ( 10 years)</option>
+                <option value="27">Table 9: Total Health Budgets by Organization types (RWF)</option>
+                <option value="28">Table 9: Total Health Expenditures by Organization types (RWF)</option>
+                <option value="7">Figure 1: Trends in Total Health Budgets (THE)</option>
+                <option value="8">Figure 1: Trends in Total Health Expenditures (THE)</option>
+                <option value="9">Figure 2: THE versus THE as a share of GDP (Budgets)</option>
+                <option value="10">Figure 2: THE versus THE as a share of GDP (Expenditures)</option>
+                <option value="11">Figure 3: Trends in domestic versus external sources for (Budgets)</option>
+                <option value="12">Figure 3: Trends in domestic versus external sources for (Expenditures)</option>
+                <option value="13">Figure 4: Trends in public, private and external resources (Budgets)</option>
+                <option value="14">Figure 4: Trends in public, private and external resources (Expenditures)</option>
+                <option value="15">Figure 5: OOP spending as a share of THE (Budgets)</option>
+                <option value="16">Figure 5: OOP spending as a share of THE (Expenditures)</option>
+                <option value="29">Figure 6: Distribution of funding sources by domains of intervention (Budgets)</option>
+                <option value="30">Figure 6: Distribution of funding sources by domains of intervention (Expenditures)</option>
+                <option value="31">Figure 7: Distribution of funding sources by domains of intervention 5 years overview (Budgets)</option>
+                <option value="32">Figure 7: Distribution of funding sources by domains of intervention 5 years overview (Expenditures)</option>
+                <option value="33">Figure 8: Sources of funding by activity 5 years overview (Budgets)</option>
+                <option value="34">Figure 8: Sources of funding by activity 5 years overview(Expenditures)</option>
+               
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label>Fiscal Year</label>
+              <select data-placeholder="Choose a fiscal year" id="demo-chosen-select-year" style="width: 100%">
+                {{fiscal_year_choices | safe }}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div class="panel-control">
+              <button id="demo-reload" class="btn btn-default btn-active-primary" onclick="javascript:update()"><i class="demo-psi-repeat-2"></i></button>
+              <div class="dropdown">
+                  <button class="dropdown-toggle btn btn-default btn-active-primary" data-toggle="dropdown"><i class="demo-psi-dot-vertical"></i></button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                      <li><a href="javascript:ExportToExcel('xlsx')">Export</a></li>
+                  </ul>
+              </div>
+          </div>
+          <h3 class="panel-title">Table 8: Health Expenditures summary statistics ( 10 years)</h3>
+      </div>
+        <div class="panel-body">
+          <div class="table-responsive">
+            <table id="report-table" class="table table-bordered table-hover">
+              <thead style="background-color: #efefef">
+                <tr>
+                  <th>#</th>
+                  <th>Indicators&nbsp;</th>
+                  <th id="year_1">-</th>
+                  <th id="year_2">-</th>
+                  <th id="year_3">-</th>
+                  <th id="year_4">-</th>
+                  <th id="year_5">-</th>
+                  <th id="year_6">-</th>
+                  <th id="year_7">-</th>
+                  <th id="year_8">-</th>
+                  <th id="year_9">-</th>
+                  <th id="year_10">-</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Total Population*&nbsp;&nbsp;</td>
+                  <td id="year_1_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_1">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Total Government Budget</td>
+                  <td id="year_1_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_2">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Current GDP (in billion RWF) *</td>
+                  <td id="year_1_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_3">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Exchange rate (USD/RWF) **</td>
+                  <td id="year_1_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_4">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>OOP - Public HF (co-payment) rate of IGR in Public Facilities</td>
+                  <td id="year_1_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_5">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>Total Health Budget (in billion RWF)</td>
+                  <td id="year_1_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_6">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>7</td>
+                  <td>Total Health Budget (in million USD)</td>
+                  <td id="year_1_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_7">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>Total Health Budget as % of GDP</td>
+                  <td id="year_1_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_8">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>
+                    Government Budget on health as a share of total Government Budget
+                  </td>
+                  <td id="year_1_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_9">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>10</td>
+                  <td>Total Health Budget per capita (RWF)</td>
+                  <td id="year_1_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_10">
+                    <div class="load10">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_10">
+                    <div class="load10">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_10">
+                    <div class="load10">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_10">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>11</td>
+                  <td>Total Health Budget per capita (USD)</td>
+                  <td id="year_1_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_11">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td><b>Funding sources</b></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>Domestic Budget on Health</td>
+                  <td id="year_1_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_12">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.1</td>
+                  <td>- Public Budget on Health (Tax rev, etc.)</td>
+                  <td id="year_1_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_121">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2</td>
+                  <td>- Private Budget on Health - Total</td>
+                  <td id="year_1_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_122">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.1</td>
+                  <td>- - Private Budget on Health - Not OOP</td>
+                  <td id="year_1_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_1221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.1.1</td>
+                  <td>- - - Total Internally Generated Revenue (Public HF)</td>
+                  <td id="year_1_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_12211">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.1.2</td>
+                  <td>- - - Internally Generated Revenue (Public HF) (excluding OOP)</td>
+                  <td id="year_1_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_12212">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.1.3</td>
+                  <td>- - - Private Budget on Health (Private HF and Pharmacies)</td>
+                  <td id="year_1_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_12213">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.1.4</td>
+                  <td>- - - Private Budget (Non Health Facilities)</td>
+                  <td id="year_1_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_12214">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.2</td>
+                  <td>- - Out-of-pocket (OOP) - Total&nbsp;</td>
+                  <td id="year_1_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_1222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.2.1</td>
+                  <td>- - - OOP - Private HF and pharmacies (co-payment and OOP)</td>
+                  <td id="year_1_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_12221">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>12.2.2.2</td>
+                  <td>- - - OOP - Public HF (co-payment)</td>
+                  <td id="year_1_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_12222">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>13</td>
+                  <td>External (On &amp; Off Budget)</td>
+                  <td id="year_1_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_13">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>13.1</td>
+                  <td>- SBS - On Budget&nbsp;</td>
+                  <td id="year_1_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_131">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>13.2</td>
+                  <td>- External -On Budget</td>
+                  <td id="year_1_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_132">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>13.3</td>
+                  <td>- External -Off Budget</td>
+                  <td id="year_1_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_133">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td><b>Funding sources (% of THE)</b></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>14</td>
+                  <td>Domestic as % of THE&nbsp;</td>
+                  <td id="year_1_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_14">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>14.1</td>
+                  <td>- Public as a % of THE</td>
+                  <td id="year_1_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_141">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>14.2</td>
+                  <td>- Private as a % of THE</td>
+                  <td id="year_1_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_142">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>15</td>
+                  <td>External as % of THE&nbsp;</td>
+                  <td id="year_1_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_15">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>16</td>
+                  <td>- OOP as % of THE</td>
+                  <td id="year_1_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_2_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_3_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_4_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_5_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_6_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_7_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_8_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_9_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                  <td id="year_10_16">
+                    <div class="load1">
+                      <div class="loader" style="font-size: 3px; margin:0;"></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  let statistics = {}
+  $(document.body).on("change","#demo-chosen-select-report",function(){
+      let url = "{% url 'system_reports_index' pk='P1' %}"
+      url = url.replace('P1', this.value)
+      location.href = url;
+  });
+  function update(){
+    let yearS = $("#demo-chosen-select-year").val()
+      let year = yearS.substring(5);
+      let year10 = (year-1)+'-'+(year-0);
+      let year9 = (year-2)+'-'+(year-1);
+      let year8 = (year-3)+'-'+(year-2);
+      let year7 = (year-4)+'-'+(year-3);
+      let year6 = (year-5)+'-'+(year-4);
+      let year5 = (year-6)+'-'+(year-5);
+      let year4 = (year-7)+'-'+(year-6);
+      let year3 = (year-8)+'-'+(year-7);
+      let year2 = (year-9)+'-'+(year-8);
+      let year1 = (year-10)+'-'+(year-9);
+      $('#year_1').html(year1);
+      $('#year_2').html(year2);
+      $('#year_3').html(year3);
+      $('#year_4').html(year4);
+      $('#year_5').html(year5);
+      $('#year_6').html(year6);
+      $('#year_7').html(year7);
+      $('#year_8').html(year8);
+      $('#year_9').html(year9);
+      $('#year_10').html(year10);
+      reload(year1, year2, year3,year4, year5, year6,year7, year8, year9,year10);
+  }
+  $('#demo-reload').click(function() {
+        update()   
+  });
+  $(document.body).on("change","#demo-chosen-select-year",function(){
+      update()
+  });
+  $(document).ready(function() {
+    $('#demo-chosen-select-report').select2({
+      placeholder: '',
+      allowClear: false
+    });
+    $('#demo-chosen-select-year').select2({
+      placeholder: '',
+      allowClear: false
+    });
+
+    let year = (new Date()).getFullYear();
+    let year10 = (year-1)+'-'+(year-0);
+      let year9 = (year-2)+'-'+(year-1);
+      let year8 = (year-3)+'-'+(year-2);
+      let year7 = (year-4)+'-'+(year-3);
+      let year6 = (year-5)+'-'+(year-4);
+      let year5 = (year-6)+'-'+(year-5);
+      let year4 = (year-7)+'-'+(year-6);
+      let year3 = (year-8)+'-'+(year-7);
+      let year2 = (year-9)+'-'+(year-8);
+      let year1 = (year-10)+'-'+(year-9);
+
+      $('#year_1').html(year1);
+      $('#year_2').html(year2);
+      $('#year_3').html(year3);
+      $('#year_4').html(year4);
+      $('#year_5').html(year5);
+      $('#year_6').html(year6);
+      $('#year_7').html(year7);
+      $('#year_8').html(year8);
+      $('#year_9').html(year9);
+      $('#year_10').html(year10);
+    $('#demo-chosen-select-year').val(year10).trigger('change');
+  });
+
+  function reset(year_id){
+    $('#' + year_id + '1').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '2').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '3').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '4').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '5').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '6').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '7').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '8').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '9').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '10').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '11').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '12').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '121').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '122').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '1221').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '12211').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '12212').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '12213').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '12214').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '1222').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '12221').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '12222').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '13').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '131').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '132').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '133').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '14').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '141').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '142').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '15').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+    $('#' + year_id + '16').html('<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>')
+  }
+
+  function reload(year1, year2, year3,year4, year5, year6,year7, year8, year9,year10){
+
+    reset("year_1_")
+    reset("year_2_")
+    reset("year_3_")
+    reset("year_4_")
+    reset("year_5_")
+    reset("year_6_")
+    reset("year_7_")
+    reset("year_8_")
+    reset("year_9_")
+    reset("year_10_")
+
+    statistics[year1] = {}
+    statistics[year2] = {}
+    statistics[year3] = {}
+    statistics[year4] = {}
+    statistics[year5] = {}
+    statistics[year6] = {}
+    statistics[year7] = {}
+    statistics[year8] = {}
+    statistics[year9] = {}
+    statistics[year10] = {}
+
+    getGdp("year_1_", year1);
+    getGdp("year_2_", year2);
+    getGdp("year_3_", year3);
+    getGdp("year_4_", year4);
+    getGdp("year_5_", year5);
+    getGdp("year_6_", year6);
+    getGdp("year_7_", year7);
+    getGdp("year_8_", year8);
+    getGdp("year_9_", year9);
+    getGdp("year_10_", year10);
+
+  }
+
+  function getGdp(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_gdp' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '1']=data.population
+          statistics[year]['#' + year_id + '2']=data.expenditure 
+          statistics[year]['#' + year_id + '3']=data.gdp
+          statistics[year]['#' + year_id + '5']=data.payment_rate
+
+          getExchangeRate(year_id, year, 'USD');
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '1']=0
+          statistics[year]['#' + year_id + '2']=0
+          statistics[year]['#' + year_id + '3']=0
+          statistics[year]['#' + year_id + '5']=0
+
+          getExchangeRate(year_id, year, 'USD');
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function getExchangeRate(year_id, year, currency) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_exchange_rate' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          currency: currency,
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '4']=data.rate
+
+          get121(year_id, year);
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '4']=0
+
+          get121(year_id, year);
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function get121(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_1_121' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '121']=data.amount
+
+          get12211(year_id, year);
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '121']=0
+
+          get12211(year_id, year);
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function get12211(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_1_12211' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12211']=data.amount
+
+          get12222(year_id, year)
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '12211']=0
+
+          get12222(year_id, year)
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get12222(year_id, year) {
+    let v5 = parseFloat(statistics[year]['#' + year_id + '5'])
+    // v5 = Number(v5.replace(new RegExp(',', 'g'), ''));
+    // v5 = Number(v5.replace(new RegExp('%', 'g'), ''));
+    let v12211 = parseFloat(statistics[year]['#' + year_id + '12211'])
+    // v12211 = Number(v12211.replace(new RegExp(',', 'g'), ''));
+    let amount = 0
+    if(typeof v12211 == 'number'){
+      amount = v5/100 * v12211
+    }
+    statistics[year]['#' + year_id + '12222']=amount
+    
+    get12212(year_id, year);
+  }
+  function get12212(year_id, year) {
+    let v12211 = parseFloat(statistics[year]['#' + year_id + '12211'])
+    // v12211 = Number(v12211.replace(new RegExp(',', 'g'), ''));
+    let v12222 = parseFloat(statistics[year]['#' + year_id + '12222'])
+    // v12222 = Number(v12222.replace(new RegExp(',', 'g'), ''));
+    let amount = v12211 - v12222
+    statistics[year]['#' + year_id + '12212']=amount
+    
+    get12213(year_id, year);
+  }
+  function get12213(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_1_12213' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12213']=data.amount
+
+          get12214(year_id, year);
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '12213']=0
+
+          get12214(year_id, year);
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get12214(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_1_12214' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12214']=data.amount
+
+          get1221(year_id, year) 
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '12214']=data.amount
+
+          get1221(year_id, year) 
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get1221(year_id, year) {
+    let v12212 = parseFloat(statistics[year]['#' + year_id + '12212'])
+    // v12212 = Number(v12212.replace(new RegExp(',', 'g'), ''));
+    let v12213 = parseFloat(statistics[year]['#' + year_id + '12213'])
+    // v12213 = Number(v12213.replace(new RegExp(',', 'g'), ''));
+    let v12214 = parseFloat(statistics[year]['#' + year_id + '12214'])
+    // v12214 = Number(v12214.replace(new RegExp(',', 'g'), ''));
+    let amount = 0, amount12212 = 0, amount12213 = 0, amount12214 = 0
+    if(typeof v12212 == 'number'){
+      amount12212 = v12212
+    }
+    if(typeof v12213 == 'number'){
+      amount12213 = v12213
+    }
+    if(typeof v12214 == 'number'){
+      amount12214 = v12214
+    }
+    amount = amount12212 + amount12213 + amount12214
+
+    statistics[year]['#' + year_id + '1221']=amount
+    
+    get12221(year_id, year);
+  }
+  function get12221(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_1_12221' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12221']=data.amount
+
+          get1222(year_id, year);
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '12221']=0
+
+          get1222(year_id, year);
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get1222(year_id, year) {
+    let v12221 = parseFloat(statistics[year]['#' + year_id + '12221'])
+    // v12221 = Number(v12221.replace(new RegExp(',', 'g'), ''));
+    let v12222 = parseFloat(statistics[year]['#' + year_id + '12222'])
+    // v12222 = Number(v12222.replace(new RegExp(',', 'g'), ''));
+    let amount = 0, amount12221 = 0, amount12222 = 0
+    if(typeof v12221 == 'number'){
+      amount12221 = v12221
+    }
+    if(typeof v12222 == 'number'){
+      amount12222 = v12222
+    }
+    amount = amount12221 + amount12222
+    statistics[year]['#' + year_id + '1222']=amount
+    get122(year_id, year)
+  }
+
+  function get122(year_id, year) {
+    let v1221 = parseFloat(statistics[year]['#' + year_id + '1221'])
+    // v1221 = Number(v1221.replace(new RegExp(',', 'g'), ''));
+    let v1222 = parseFloat(statistics[year]['#' + year_id + '1222'])
+    // v1222 = Number(v1222.replace(new RegExp(',', 'g'), ''));
+    let amount = 0, amount1221 = 0, amount1222 = 0
+    if(typeof v1221 == 'number'){
+      amount1221 = v1221
+    }
+    if(typeof v1222 == 'number'){
+      amount1222 = v1222
+    }
+    amount = amount1221 + amount1222
+    statistics[year]['#' + year_id + '122']=amount
+    get12(year_id, year)
+  }
+
+  function get12(year_id, year) {
+    let v121 = parseFloat(statistics[year]['#' + year_id + '121'])
+    // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+    let v122 = parseFloat(statistics[year]['#' + year_id + '122'])
+    // v122 = Number(v122.replace(new RegExp(',', 'g'), ''));
+    let amount = 0, amount121 = 0, amount122 = 0
+    if(typeof v121 == 'number'){
+      amount121 = v121
+    }
+    if(typeof v122 == 'number'){
+      amount122 = v122
+    }
+    amount = amount121 + amount122
+
+    statistics[year]['#' + year_id + '12']=amount
+    
+    get13(year_id, year)
+  }
+
+  function get13(year_id, year) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'system_reports_get_table_1_13' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: 'expenditure',
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          let amount_1 = Number(Math.trunc(data.amount_1))
+          let amount_2 = Number(Math.trunc(data.amount_2))
+          let amount_3 = Number(Math.trunc(data.amount_3))
+          let amount = amount_1 + amount_2 + amount_3
+          statistics[year]['#' + year_id + '13']=amount
+          statistics[year]['#' + year_id + '131']=amount_1
+          statistics[year]['#' + year_id + '132']=amount_2
+          statistics[year]['#' + year_id + '133']=amount_3
+
+          get6(year_id, year) 
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          console.log(result)
+          statistics[year]['#' + year_id + '13']=0
+          statistics[year]['#' + year_id + '131']=0
+          statistics[year]['#' + year_id + '132']=0
+          statistics[year]['#' + year_id + '133']=0
+
+          get6(year_id, year) 
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function get6(year_id, year) {
+    let v12 = parseFloat(statistics[year]['#' + year_id + '12'])
+    // v12 = Number(v12.replace(new RegExp(',', 'g'), ''));
+    let v13 = parseFloat(statistics[year]['#' + year_id + '13'])
+    // v13 = Number(v13.replace(new RegExp(',', 'g'), ''));
+    let amount = 0, amount12 = 0, amount13 = 0
+    if(typeof v12 == 'number'){
+      amount12 = v12
+    }
+    if(typeof v13 == 'number'){
+      amount13 = v13
+    }
+    amount = amount12 + amount13
+
+    statistics[year]['#' + year_id + '6']=amount
+
+    get7(year_id, year)
+  }
+
+  function get7(year_id, year) {
+    let v4 = parseFloat(statistics[year]['#' + year_id + '4'])
+    // v4 = Number(v4.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = ((v6/v4)/1000000).toFixed(4);
+    statistics[year]['#' + year_id + '7']=amount
+    
+    get8(year_id, year)
+  }
+
+  function get8(year_id, year) {
+    let v3 =parseFloat(statistics[year]['#' + year_id + '3'])
+    // v3 = Number(v3.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v6*100/v3).toFixed(2);
+    statistics[year]['#' + year_id + '8']=amount
+    
+    get9(year_id, year)
+  }
+
+  function get9(year_id, year) {
+    let v2 =parseFloat(statistics[year]['#' + year_id + '2'])
+    // v2 = Number(v2.replace(new RegExp(',', 'g'), ''));
+    let v121 =parseFloat(statistics[year]['#' + year_id + '121'])
+    // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+    let amount = (v121*100/v2).toFixed(2);
+    statistics[year]['#' + year_id + '9']=amount
+    
+    get10(year_id, year)
+  }
+
+  function get10(year_id, year) {
+    let v1 =parseFloat(statistics[year]['#' + year_id + '1'])
+    // v1 = Number(v1.replace(new RegExp(',', 'g'), ''));
+    let v6 =parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v6/v1).toFixed(4);
+    statistics[year]['#' + year_id + '10']=amount
+    
+    get11(year_id, year)
+  }
+
+  function get11(year_id, year) {
+    let v1 =parseFloat(statistics[year]['#' + year_id + '1'])
+    // v1 = Number(v1.replace(new RegExp(',', 'g'), ''));
+    let v4 = parseFloat(statistics[year]['#' + year_id + '4'])
+    // v4 = Number(v4.replace(new RegExp(',', 'g'), ''));
+    let v6 =parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = ((v6/v4)/v1).toFixed(4);
+    statistics[year]['#' + year_id + '11']=amount
+    
+    get14(year_id, year)
+  }
+
+  function get14(year_id, year) {
+    let v12 =parseFloat(statistics[year]['#' + year_id + '12'])
+    // v12 = Number(v12.replace(new RegExp(',', 'g'), ''));
+    let v6 =parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v12*100/v6).toFixed(2);
+    statistics[year]['#' + year_id + '14']=amount
+    
+    get141(year_id, year)
+  }
+  function get141(year_id, year) {
+    let v121 =parseFloat(statistics[year]['#' + year_id + '121'])
+    // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+    let v6 =parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v121*100/v6).toFixed(2);
+    statistics[year]['#' + year_id + '141']=amount
+    
+    get142(year_id, year)
+  }
+  function get142(year_id, year) {
+    let v122 =parseFloat(statistics[year]['#' + year_id + '122'])
+    // v122 = Number(v122.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v122*100/v6).toFixed(2);
+    statistics[year]['#' + year_id + '142']=amount
+    
+    get15(year_id, year)
+  }
+  function get15(year_id, year) {
+    let v13 =parseFloat(statistics[year]['#' + year_id + '13'])
+    // v13 = Number(v13.replace(new RegExp(',', 'g'), ''));
+    let v6 =parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v13*100/v6).toFixed(2);
+    statistics[year]['#' + year_id + '15']=amount
+    
+    get16(year_id, year)
+  }
+  function get16(year_id, year) {
+    let v1222 =parseFloat(statistics[year]['#' + year_id + '1222'])
+    // v1222 = Number(v1222.replace(new RegExp(',', 'g'), ''));
+    let v6 =parseFloat(statistics[year]['#' + year_id + '6'])
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v1222*100/v6).toFixed(2);
+    statistics[year]['#' + year_id + '16']=amount
+
+    updateUI(year_id, year)
+  }
+  
+  function updateUI(year_id, year){
+    $('#' + year_id + '1').html((Number(statistics[year]['#' + year_id + '1'])).toLocaleString())
+    $('#' + year_id + '2').html((Number(statistics[year]['#' + year_id + '2'])).toLocaleString())
+    $('#' + year_id + '3').html((Number(statistics[year]['#' + year_id + '3'])).toLocaleString())
+    $('#' + year_id + '4').html((Number(statistics[year]['#' + year_id + '4'])).toLocaleString())
+    $('#' + year_id + '5').html((Number(statistics[year]['#' + year_id + '5'])).toLocaleString()+' %')
+    $('#' + year_id + '6').html((Number(statistics[year]['#' + year_id + '6'])).toLocaleString())
+    $('#' + year_id + '7').html((Number(statistics[year]['#' + year_id + '7'])).toLocaleString())
+    $('#' + year_id + '8').html((Number(statistics[year]['#' + year_id + '8'])).toLocaleString())
+    $('#' + year_id + '9').html((Number(statistics[year]['#' + year_id + '9'])).toLocaleString())
+    $('#' + year_id + '10').html((Number(statistics[year]['#' + year_id + '10'])).toLocaleString())
+    $('#' + year_id + '11').html((Number(statistics[year]['#' + year_id + '11'])).toLocaleString())
+    $('#' + year_id + '12').html((Number(statistics[year]['#' + year_id + '12'])).toLocaleString())
+    $('#' + year_id + '121').html((Number(statistics[year]['#' + year_id + '121'])).toLocaleString())
+    $('#' + year_id + '122').html((Number(statistics[year]['#' + year_id + '122'])).toLocaleString())
+    $('#' + year_id + '1221').html((Number(statistics[year]['#' + year_id + '1221'])).toLocaleString())
+    $('#' + year_id + '12211').html((Number(statistics[year]['#' + year_id + '12211'])).toLocaleString())
+    $('#' + year_id + '12212').html((Number(statistics[year]['#' + year_id + '12212'])).toLocaleString())
+    $('#' + year_id + '12213').html((Number(statistics[year]['#' + year_id + '12213'])).toLocaleString())
+    $('#' + year_id + '12214').html((Number(statistics[year]['#' + year_id + '12214'])).toLocaleString())
+    $('#' + year_id + '1222').html((Number(statistics[year]['#' + year_id + '1222'])).toLocaleString())
+    $('#' + year_id + '12221').html((Number(statistics[year]['#' + year_id + '12221'])).toLocaleString())
+    $('#' + year_id + '12222').html((Number(statistics[year]['#' + year_id + '12222'])).toLocaleString())
+    $('#' + year_id + '13').html((Number(statistics[year]['#' + year_id + '13'])).toLocaleString())
+    $('#' + year_id + '131').html((Number(statistics[year]['#' + year_id + '131'])).toLocaleString())
+    $('#' + year_id + '132').html((Number(statistics[year]['#' + year_id + '132'])).toLocaleString())
+    $('#' + year_id + '133').html((Number(statistics[year]['#' + year_id + '133'])).toLocaleString())
+    $('#' + year_id + '14').html((Number(statistics[year]['#' + year_id + '14'])).toLocaleString()+' %')
+    $('#' + year_id + '141').html((Number(statistics[year]['#' + year_id + '141'])).toLocaleString()+' %')
+    $('#' + year_id + '142').html((Number(statistics[year]['#' + year_id + '142'])).toLocaleString()+' %')
+    $('#' + year_id + '15').html((Number(statistics[year]['#' + year_id + '15'])).toLocaleString()+' %')
+    $('#' + year_id + '16').html((Number(statistics[year]['#' + year_id + '16'])).toLocaleString()+' %')
+  }
+
+  function ExportToExcel(type, fn, dl) {
+       var elt = document.getElementById('report-table');
+       var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+       XLSX.writeFile(wb, fn || ('HRTT Report Health Expenditures summary statistics (10 years)' + (type ? '.' + type : '.xlsx')));
+  }
+</script>
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

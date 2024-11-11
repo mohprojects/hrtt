@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "name": "HRTT",
+  "launch_path": "/index.php",
+  "description": "HRTT developed by QT Software Ltd.",
+  "icons": {
+    "128": "static/app/android-icon-144x144.png"
+  },
+  "developer": {
+    "name": "QT Software Ltd",
+    "url": "https://qtsoftwareltd.com"
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "en",
+  "permissions": {
+  },
+  "locales": {
+    "en": {
+      "name": "HRTT",
+      "description": "HRTT developed by QT Software Ltd."
+    }
+  }
+}

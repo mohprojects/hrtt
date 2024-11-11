@@ -1,0 +1,38 @@
+{% load static %}
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr style="background-color: #efefef">
+          <th style="width: 100%">
+            Accept/Reject
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <td>
+          <form id="id_form_comments">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  {{ form_comments.message }} {{ form_comments.message.errors }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <button id="" type="button" class="btn btn-block btn-warning"
+                  onClick="javascript:onUpdateStatus('expenses accept');">Accept Expenditure </button>
+              </div>
+              <div class="col-sm-6">
+                <button id="" type="button" class="btn btn-block btn-danger"
+                  onClick="javascript:onUpdateStatus('expenses reject');">Reject Expenditure</button>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tbody>
+    </table>
+  </div>
+</div>

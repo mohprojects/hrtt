@@ -1,0 +1,31 @@
+{% load static %}
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr style="background-color: #efefef">
+          <th style="width: 100%">
+            Add Implementer Name
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <td>
+          <form id="id_form_implementer" method="POST" action="{% url 'implementers_create' %}">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-sm-8">
+                <div class="form-group">
+                  {{ form_implementers.name }} {{ form_implementers.name.errors }}
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <button id="" type="submit" class="btn btn-block btn-success">Submit</button>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tbody>
+    </table>
+  </div>
+</div>

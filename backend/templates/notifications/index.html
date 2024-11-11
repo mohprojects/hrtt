@@ -1,0 +1,77 @@
+{% extends '_include/base-index.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% block head %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+    var ajax_url_notifications = {
+        "url": "{% url 'notifications_user_datatable' %}",
+        "type": "GET",
+        "data": {
+            "csrfmiddlewaretoken": "{{ csrf_token }}"
+        },
+    };
+</script>
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li class="active">{{ title }}</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="panel panel-info panel-bordered" id='div-search'>
+                        <div class="panel-heading">
+                            <div class="panel-control">
+                                <button class="btn btn-default" data-panel="minmax" data-target="#search-panel-collapse"
+                                    data-toggle="collapse"><i class='demo-pli-arrow-down'></i></button>
+                            </div>
+                            <h3 class="panel-title">Advanced Search</h3>
+                        </div>
+                        <div id='search-panel-collapse' class='collapse in'>
+                            <div class="panel-body">
+                                <form method="post" action="">{% csrf_token %}
+                                    <div class="row">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary"> Submit</button>
+                                    <a class="btn btn-default" href="{{ index_url }}">Reset</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dt-buttons" style="margin-right:3px;">
+                        <div class="btn-group">
+                            <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"
+                                aria-expanded="false">
+                                Multiple Action &nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+                            <ul class="dropdown-menu">
+                                <div class="dt-button-collection">
+                                    <!-- {% if ACCESS_PERMISSION_LOGS_DELETE in auth_permissions.values %}
+                                    <a class="btn btn-default btn-block" href="#"
+                                        onclick="multipleSelect('{{ select_multiple_url }}', 'delete');">
+                                        Delete Selected
+                                    </a>
+                                    {% endif %} -->
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                    {% render_table table %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include '_include/table.html' %}
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

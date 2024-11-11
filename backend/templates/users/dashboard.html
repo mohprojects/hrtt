@@ -1,0 +1,1999 @@
+{% extends '_include/base-dashboard.html' %} {% block head %} {% load static %}
+<title>{{ APP_CONSTANT_APP_NAME }} : Dashboard</title>
+{% endblock %} {% block body %} {% load static %} {% load humanize %} {% csrf_token %}
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">{{ title }}</h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li class="active">Dashboard</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel">
+        <div class="panel-body">
+
+          {% if ACCESS_PERMISSION_ORGANIZATIONS_VIEW in auth_permissions.values %} 
+          {%if user.user_role == 'activity-manager'%}
+          <div class="col-md-6">
+            <a href="{% url 'organizations_view' pk=user.organization_id %}">
+              <div class="panel panel-warning panel-colorful media middle pad-all">
+                <div class="media-left">
+                  <div class="pad-hor">
+                    <i class="fa fa-university icon-3x"></i>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <p class="text-2x mar-no text-semibold">{{count_organizations}}</p>
+                  <p class="mar-no">Organization</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          {% else %}
+          <div class="col-md-6">
+            <a href="{% url 'organizations_index' %}">
+              <div class="panel panel-warning panel-colorful media middle pad-all">
+                <div class="media-left">
+                  <div class="pad-hor">
+                    <i class="fa fa-university icon-3x"></i>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <p class="text-2x mar-no text-semibold">{{count_organizations}}</p>
+                  <p class="mar-no">Total Organizations</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          {% endif %} 
+          {% endif %} 
+          {% if ACCESS_PERMISSION_PROJECTS_VIEW in auth_permissions.values %}
+          <div class="col-md-6">
+            <a href="{% url 'projects_index' %}">
+              <div class="panel panel-purple panel-colorful media middle pad-all">
+                <div class="media-left">
+                  <div class="pad-hor">
+                    <i class="fa fa-cube icon-3x"></i>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <p class="text-2x mar-no text-semibold">{{count_projects}}</p>
+                  <p class="mar-no">Total Projects</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          {%if user.user_role == 'data-reporter' %}
+          <div class="col-md-6">
+            <a href="#">
+              <div class="panel panel-warning panel-colorful media middle pad-all">
+                <div class="media-left">
+                  <div class="pad-hor">
+                    <i class="fa fa-cube icon-3x"></i>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <p class="text-2x mar-no text-semibold">{{count_activities}}</p>
+                  <p class="mar-no">Total Activities</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          {% endif %} 
+          {% endif %}
+          {% if ACCESS_PERMISSION_USER_VIEW in auth_permissions.values %}
+          <div class="col-md-6">
+            <a href="{% url 'users_index' %}">
+              <div class="panel panel-primary panel-colorful">
+                <div class="pad-all media">
+                  <div class="media-left">
+                    <i class="fa fa-user icon-3x icon-fw"></i>
+                  </div>
+                  <div class="media-body">
+                    <p class="text-2x mar-no media-heading">{{ count_users|intcomma }}</p>
+                    <span>Users</span>
+                  </div>
+                </div>
+                <div class="progress progress-xs progress-dark-base mar-no">
+                  <div
+                    role="progressbar"
+                    aria-valuenow="100"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    class="progress-bar progress-bar-light"
+                    style="width: 100%"
+                  ></div>
+                </div>
+                {%if user.user_role == 'super-admin'%}
+                <p class="list-group-item" style="color: white">
+                  <span class="label label-danger pull-right"
+                    >{{ count_users_activity_manager|intcomma }}</span
+                  >
+                  <i class="fa fa-user icon-lg icon-fw"></i> Activity Managers
+                </p>
+                {%if user.user_role == 'super-admin'%}
+                <p class="list-group-item" style="color: white">
+                  <span class="label label-danger pull-right"
+                    >{{ count_users_data_reporters|intcomma }}</span
+                  >
+                  <i class="fa fa-user icon-lg icon-fw"></i> Data Reporters
+                </p>
+                {%endif%} 
+                {%endif%} 
+                {%if user.user_role == 'activity-manager'%}
+                <p class="list-group-item" style="color: white">
+                  <span class="label label-danger pull-right">{{ count_users_data_reporters|intcomma }}</span>
+                  <i class="fa fa-user icon-lg icon-fw"></i> Data Reporters
+                </p>
+                {%endif%}
+                <p class="list-group-item" style="color: white">
+                  <span class="label label-danger pull-right"
+                    >{{ count_other_users|intcomma }}</span
+                  >
+                  <i class="fa fa-user icon-lg icon-fw"></i> Other
+                </p>
+              </div>
+            </a>
+          </div>
+          {% endif %} {%if user.user_role == 'super-admin'%}
+          <div class="col-md-6">
+            <div class="panel panel-primary panel-colorful">
+              <div class="pad-all media">
+                <div class="media-left">
+                  <i class="fa fa-university icon-3x icon-fw"></i>
+                </div>
+                <div class="media-body">
+                  <p class="text-2x mar-no media-heading">Reported Organizations</p>
+                  <span>Current Year - {{current_year}}</span>
+                </div>
+              </div>
+              <div class="progress progress-xs progress-dark-base mar-no">
+                <div
+                  role="progressbar"
+                  aria-valuenow="100"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  class="progress-bar progress-bar-light"
+                  style="width: 100%"
+                ></div>
+              </div>
+              <p class="list-group-item" style="color: white">
+                <span class="label label-danger pull-right"
+                  >{{count_reported_organizations_budget |intcomma }}</span
+                >
+                <i class="fa fa-university icon-lg icon-fw"></i> Reported Organizations (Budget)
+              </p>
+              <p class="list-group-item" style="color: white">
+                <span class="label label-danger pull-right"
+                  >{{ count_reported_organizations_expenditure|intcomma }}</span
+                >
+                <i class="fa fa-university icon-lg icon-fw"></i> Reported Organizations
+                (Expenditure)
+              </p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%if user.user_role == 'super-admin'%}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="tab-base">
+        <!--Nav Tabs-->
+        <ul class="nav nav-tabs">
+          <li class="active tab" data-label="budget">
+            <a data-toggle="tab" href="#demo-lft-tab-1">Budget</a>
+          </li>
+          <li class="tab" data-label="expenditure">
+            <a data-toggle="tab" href="#demo-lft-tab-2">Expenditure</a>
+          </li>
+        </ul>
+        <br />
+
+        <div class="panel">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <label>Fiscal Year</label>
+                <select
+                  data-placeholder="Choose a fiscal year"
+                  id="demo-chosen-select-year"
+                  style="width: 100%"
+                >
+                {{fiscal_year_choices | safe }}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Tabs Content-->
+        <div class="tab-content">
+          <div id="demo-lft-tab-1" class="tab-pane fade active in">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead style="background-color: #efefef">
+                      <tr>
+                        <th>Indicators&nbsp;</th>
+                        <th id="year_1">-</th>
+                        <th id="year_2">-</th>
+                        <th id="year_3">-</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total Health Budget (in billion RWF)</td>
+                        <td id="year_1_6">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_2_6">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_3_6">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Government budget on health as a share of total Government budget</td>
+                        <td id="year_1_9">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_2_9">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_3_9">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Total Health budget as % of GDP</td>
+                        <td id="year_1_8">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_2_8">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_3_8">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Domestic as % of THE</td>
+                        <td id="year_1_14">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_2_14">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_3_14">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>External as % of THE</td>
+                        <td id="year_1_15">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_2_15">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_3_15">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>OOP as % of THE</td>
+                        <td id="year_1_16">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_2_16">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="year_3_16">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="" id="id_chart_budget_1">
+                  <div class="preloader-wrapper">
+                    <div class="loader"></div>
+                    <h4 class="preloader-text">Loading chart...</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="" id="id_chart_budget_2">
+                  <div class="preloader-wrapper">
+                    <div class="loader"></div>
+                    <h4 class="preloader-text">Loading chart...</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="demo-lft-tab-2" class="tab-pane fade">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead style="background-color: #efefef">
+                      <tr>
+                        <th>Indicators&nbsp;</th>
+                        <th id="exp_year_1">-</th>
+                        <th id="exp_year_2">-</th>
+                        <th id="exp_year_3">-</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total Health Expenditures (in billion RWF)</td>
+                        <td id="exp_year_1_6">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_2_6">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_3_6">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          Government expenditures on health as a share of total Government
+                          expenditures
+                        </td>
+                        <td id="exp_year_1_9">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_2_9">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_3_9">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Total Health Expenditures as % of GDP</td>
+                        <td id="exp_year_1_8">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_2_8">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_3_8">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Domestic as % of THE</td>
+                        <td id="exp_year_1_14">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_2_14">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_3_14">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>External as % of THE</td>
+                        <td id="exp_year_1_15">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_2_15">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_3_15">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <!-- <td id="exp_year_1">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td> -->
+                      </tr>
+                      <tr>
+                        <td>OOP as % of THE</td>
+                        <td id="exp_year_1_16">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_2_16">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                        <td id="exp_year_3_16">
+                          <div class="load1">
+                            <div class="loader" style="font-size: 3px; margin: 0"></div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="" id="id_chart_expenditure_1">
+                  <div class="preloader-wrapper">
+                    <div class="loader"></div>
+                    <h4 class="preloader-text">Loading chart...</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="" id="id_chart_expenditure_2">
+                  <div class="preloader-wrapper">
+                    <div class="loader"></div>
+                    <h4 class="preloader-text">Loading chart...</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+<script type="text/javascript" charset="utf-8">
+  let currentYear = (new Date()).getFullYear();
+  let chartyear10 =(currentYear-1)+'-'+(currentYear-0);
+  let chartyear9 = (currentYear-2)+'-'+(currentYear-1);
+  let chartyear8 = (currentYear-3)+'-'+(currentYear-2);
+  let chartyear7 = (currentYear-4)+'-'+(currentYear-3);
+  let chartyear6 = (currentYear-5)+'-'+(currentYear-4);
+  let chartyear5 = (currentYear-6)+'-'+(currentYear-5);
+  let chartyear4 = (currentYear-7)+'-'+(currentYear-6);
+  let chartyear3 = (currentYear-8)+'-'+(currentYear-7);
+  let chartyear2 = (currentYear-9)+'-'+(currentYear-8);
+  let chartyear1 = (currentYear-10)+'-'+(currentYear-9)
+
+  $(document).ready(function () {
+    $('#demo-chosen-select-year').select2({
+      placeholder: '',
+      allowClear: false,
+    });
+
+    $(document).ready(function () {
+      let year = new Date().getFullYear();
+      let year3 = year - 1 + '-' + (year - 0);
+      let year2 = year - 2 + '-' + (year - 1);
+      let year1 = year - 3 + '-' + (year - 2);
+
+      $('#year_1').html(year1);
+      $('#year_2').html(year2);
+      $('#year_3').html(year3);
+
+      $('#exp_year_1').html(year1);
+      $('#exp_year_2').html(year2);
+      $('#exp_year_3').html(year3);
+
+      $('#demo-chosen-select-year').val(year3).trigger('change');
+    });
+    //const labels = ["2010-2011", "2011-2012", "2012-2013", "2013-2014", "2014-2015", "2015-2016", "2015-2017", "2016-2018", "2018-2019", "2019-2020"];
+    
+    chartReload(chartyear1, chartyear2, chartyear3,chartyear4,chartyear5,chartyear6,chartyear7,chartyear8,chartyear9,chartyear10,tabSelected);
+  });
+</script>
+<script>
+  let tabSelected = 'budget';
+  let statistics = {};
+  let chartstatistics = {};
+  function chartreset(){
+    chartstatistics = {}
+  }
+
+
+  $(document.body).on('change', '#demo-chosen-select-year', function () {
+    let yearS = $('#demo-chosen-select-year').val();
+    let year = yearS.substring(5);
+    let year3 = year - 1 + '-' + (year - 0);
+    let year2 = year - 2 + '-' + (year - 1);
+    let year1 = year - 3 + '-' + (year - 2);
+    $('#year_1').html(year1);
+    $('#year_2').html(year2);
+    $('#year_3').html(year3);
+
+    $('#exp_year_1').html(year1);
+    $('#exp_year_2').html(year2);
+    $('#exp_year_3').html(year3);
+    reload(year1, year2, year3, tabSelected);
+  });
+
+  $('.nav-tabs li').on('click', function () {
+    tabSelected = $(this).data('label');
+    let yearS = $('#demo-chosen-select-year').val();
+    let year = yearS.substring(5);
+    let year3 = year - 1 + '-' + (year - 0);
+    let year2 = year - 2 + '-' + (year - 1);
+    let year1 = year - 3 + '-' + (year - 2);
+    $('#year_1').html(year1);
+    $('#year_2').html(year2);
+    $('#year_3').html(year3);
+
+    $('#exp_year_1').html(year1);
+    $('#exp_year_2').html(year2);
+    $('#exp_year_3').html(year3);
+    reload(year1, year2, year3, tabSelected);
+    chartReload(chartyear1, chartyear2, chartyear3,chartyear4,chartyear5,chartyear6,chartyear7,chartyear8,chartyear9,chartyear10,tabSelected);
+  });
+
+  function reset(year_id) {
+    $('#' + year_id + '6').html(
+      '<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>',
+    );
+    $('#' + year_id + '8').html(
+      '<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>',
+    );
+    $('#' + year_id + '9').html(
+      '<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>',
+    );
+    $('#' + year_id + '14').html(
+      '<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>',
+    );
+    $('#' + year_id + '15').html(
+      '<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>',
+    );
+    $('#' + year_id + '16').html(
+      '<div class="load1"><div class="loader" style="font-size: 3px; margin:0;"></div></div>',
+    );
+  }
+
+  function reload(year1, year2, year3, type = 'budget') {
+    reset('year_1_');
+    reset('year_2_');
+    reset('year_3_');
+
+    reset('exp_year_1_');
+    reset('exp_year_2_');
+    reset('exp_year_3_');
+
+    statistics[year1] = {};
+    statistics[year2] = {};
+    statistics[year3] = {};
+
+    getGdp('year_1_', year1, type);
+    getGdp('year_2_', year2, type);
+    getGdp('year_3_', year3, type);
+
+    getGdp('exp_year_1_', year1, type);
+    getGdp('exp_year_2_', year2, type);
+    getGdp('exp_year_3_', year3, type);
+  }
+
+
+    function chartReload(year1, year2, year3,year4,year5,year6,year7,year8,year9,year10,type = 'budget'){
+        // chartreset()
+        $('#id_chart_expenditure_1').html(
+          '<div class="preloader-wrapper" style="display: flex; align-items: center;"><h4 class="preloader-text">Loading chart:</h4>'+
+            '<div class="loader"></div><div class="load1"><div class="loader" style="font-size: 3px; margin-left: 10px;"></div></div></div>');
+
+        $('#id_chart_expenditure_2').html(
+          '<div class="preloader-wrapper" style="display: flex; align-items: center;"><h4 class="preloader-text">Loading chart:</h4>'+
+            '<div class="loader"></div><div class="load1"><div class="loader" style="font-size: 3px; margin-left: 10px;"></div></div></div>');
+
+        $('#id_chart_budget_1').html(
+          '<div class="preloader-wrapper" style="display: flex; align-items: center;"><h4 class="preloader-text">Loading chart:</h4>'+
+            '<div class="loader"></div><div class="load1"><div class="loader" style="font-size: 3px; margin-left: 10px;"></div></div></div>');
+
+        $('#id_chart_budget_2').html('<div class="preloader-wrapper" style="display: flex; align-items: center;"><h4 class="preloader-text">Loading chart:</h4>'+
+            '<div class="loader"></div><div class="load1"><div class="loader" style="font-size: 3px; margin-left: 10px;"></div></div></div>');
+
+        chartstatistics[year1] = {}
+        chartstatistics[year2] = {}
+        chartstatistics[year3] = {}
+        chartstatistics[year4] = {}
+        chartstatistics[year5] = {}
+        chartstatistics[year6] = {}
+        chartstatistics[year7] = {}
+        chartstatistics[year8] = {}
+        chartstatistics[year9] = {}
+        chartstatistics[year10] = {}
+
+        getChartGdp("year_1_", year1,type);
+        getChartGdp("year_2_", year2,type);
+        getChartGdp("year_3_", year3,type);
+        getChartGdp("year_4_", year4,type);
+        getChartGdp("year_5_", year5,type);
+        getChartGdp("year_6_", year6,type);
+        getChartGdp("year_7_", year7,type);
+        getChartGdp("year_8_", year8,type);
+        getChartGdp("year_9_", year9,type);
+        getChartGdp("year_10_", year10,type);
+
+        if(type == 'expenditure'){
+              setTimeout(function() {
+              const labels = [year1, year2, year3, year4, year5, year6, year7, year8, year9, year10];
+              const data_expenditure_1 = {
+              labels: labels,
+              datasets: [
+                  {
+                      label: 'Total Health Expenditure (Billions of RWF)',
+                      data: [
+                      chartstatistics[year1]['#year_1_2'],
+                      chartstatistics[year2]['#year_2_2'],
+                      chartstatistics[year3]['#year_3_2'],
+                      chartstatistics[year4]['#year_4_2'],
+                      chartstatistics[year5]['#year_5_2'],
+                      chartstatistics[year6]['#year_6_2'],
+                      chartstatistics[year7]['#year_7_2'],
+                      chartstatistics[year8]['#year_8_2'],
+                      chartstatistics[year9]['#year_9_2'],
+                      chartstatistics[year10]['#year_10_2'],
+                      ],
+                      borderColor: "rgb(54, 162, 235)",
+                      backgroundColor: "rgba(54, 162, 235, 0.5)",
+                      order: 0,
+                      yAxisID: 'y-axis-1' // Assigning the left y-axis
+                  },
+                  {
+                      label: 'Total Health Expenditure as Share of GDP (%)',
+                      data: [
+                          chartstatistics[year1]['#year_1_8'],
+                          chartstatistics[year2]['#year_2_8'],
+                          chartstatistics[year3]['#year_3_8'],
+                          chartstatistics[year4]['#year_4_8'],
+                          chartstatistics[year5]['#year_5_8'],
+                          chartstatistics[year6]['#year_6_8'],
+                          chartstatistics[year7]['#year_7_8'],
+                          chartstatistics[year8]['#year_8_8'],
+                          chartstatistics[year9]['#year_9_8'],
+                          chartstatistics[year10]['#year_10_8']
+                      ],
+                      borderColor: "rgb(255, 99, 132)",
+                      // backgroundColor: "rgba(255, 99, 132, 0.5)",
+                      type: 'line',
+                      tension: 0 ,
+                      fill: false,
+                      order: 1,
+                      yAxisID: 'y-axis-2' // Assigning the right y-axis
+                  }
+              ]
+          };
+          $('#id_chart_expenditure_1').html(
+              '<canvas id="canvas_chart_expenditure_1" style="width:100%;max-width:600px"></canvas>',
+          );
+          new Chart($('#canvas_chart_expenditure_1'), {
+              type: 'bar',
+              data: data_expenditure_1,
+              options: {
+                  legend: {
+                      position: 'top',
+                  },
+                  title: {
+                      display: true,
+                      text: 'Total Health Expenditure versus Total Health Expenditure as a share of GDP'
+                  },
+                  scales: {
+                          yAxes: [{
+                              id: 'y-axis-1', // Assigning an ID to the left y-axis
+                              position: 'left', // Positioning the left y-axis
+                              ticks: {
+                                  beginAtZero: true,
+                                  callback: function(value, index, values) {
+                                                  return (value / 1000000000).toLocaleString() + ' B'; // Divide by a Billion and format as Billions
+                                              }
+                              },
+                              scaleLabel: {
+                                  display: false,
+                                  labelString: 'Total Health Expenditure (Billions of RWF)'
+                              }
+                          }, {
+                              id: 'y-axis-2', // Assigning an ID to the right y-axis
+                              position: 'right', // Positioning the right y-axis
+                              ticks: {
+                                  beginAtZero: true,
+                                  callback: function(value, index, values) {
+                                      return value.toFixed(1) + '%'; // Format the tick value to display as percentage with one decimal place
+                                  }
+                              },
+                              scaleLabel: {
+                                  display: false,
+                                  labelString: 'THE as % of GDP'
+                              }
+                          }]
+                      }
+              },
+          });
+
+          const data_expenditure_2 = {
+              labels: labels,
+              datasets: [
+                  {
+                      label: 'Trends in domestic',
+                      data: [
+                      chartstatistics[year1]['#year_1_14'],
+                      chartstatistics[year2]['#year_2_14'],
+                      chartstatistics[year3]['#year_3_14'],
+                      chartstatistics[year4]['#year_4_14'],
+                      chartstatistics[year5]['#year_5_14'],
+                      chartstatistics[year6]['#year_6_14'],
+                      chartstatistics[year7]['#year_7_14'],
+                      chartstatistics[year8]['#year_8_14'],
+                      chartstatistics[year9]['#year_9_14'],
+                      chartstatistics[year10]['#year_10_14'],
+                      ],
+                      borderColor: "rgb(54, 162, 235)",
+                      // backgroundColor: "rgba(54, 162, 235, 0.5)",
+                      type: 'line',
+                      tension: 0 ,
+                      fill: false,
+                      order: 0
+                  },
+                  {
+                      label: 'Trend in external sources',
+                      data: [
+                      chartstatistics[year1]['#year_1_15'],
+                      chartstatistics[year2]['#year_2_15'],
+                      chartstatistics[year3]['#year_3_15'],
+                      chartstatistics[year4]['#year_4_15'],
+                      chartstatistics[year5]['#year_5_15'],
+                      chartstatistics[year6]['#year_6_15'],
+                      chartstatistics[year7]['#year_7_15'],
+                      chartstatistics[year8]['#year_8_15'],
+                      chartstatistics[year9]['#year_9_15'],
+                      chartstatistics[year10]['#year_10_15'],
+                      ],
+                      borderColor: "rgb(255, 99, 132)",
+                      // backgroundColor: "rgba(255, 99, 132, 0.5)",
+                      type: 'line',
+                      tension: 0 ,
+                      fill: false,
+                      order: 1
+                  }
+              ]
+          };
+          $('#id_chart_expenditure_2').html(
+              '<canvas id="canvas_chart_expenditure_2" style="width:100%;max-width:600px"></canvas>',
+          );
+          new Chart($('#canvas_chart_expenditure_2'), {
+              type: 'bar',
+              data: data_expenditure_2,
+              options: {
+                  legend: {
+                      position: 'top',
+                  },
+                  title: {
+                      display: true,
+                      text: 'Trends in domestic versus external sources'
+                  }
+              },
+          });
+
+        },9000)
+              return
+      }
+      else
+      {
+              setTimeout(function() {
+                    const labels = [year1, year2, year3, year4, year5, year6, year7, year8, year9, year10];
+                      // chart budget 1
+                      const data_budget_1 = {
+                          labels: labels,
+                          datasets: [
+                              {
+                                  label: 'Total Health Budget (Billions of RWF)',
+                                  data: [
+                                  chartstatistics[year1]['#year_1_2'],
+                                  chartstatistics[year2]['#year_2_2'],
+                                  chartstatistics[year3]['#year_3_2'],
+                                  chartstatistics[year4]['#year_4_2'],
+                                  chartstatistics[year5]['#year_5_2'],
+                                  chartstatistics[year6]['#year_6_2'],
+                                  chartstatistics[year7]['#year_7_2'],
+                                  chartstatistics[year8]['#year_8_2'],
+                                  chartstatistics[year9]['#year_9_2'],
+                                  chartstatistics[year10]['#year_10_2'],
+                                  ],
+                                  borderColor: "rgb(54, 162, 235)",
+                                  backgroundColor: "rgba(54, 162, 235, 0.5)",
+                                  order: 0,
+                                  yAxisID: 'y-axis-3'
+                                  
+                              },
+                              {
+                                  label: 'Total Health Budget as Share of GDP (%)',
+                                  data: [
+                                  chartstatistics[year1]['#year_1_8'],
+                                  chartstatistics[year2]['#year_2_8'],
+                                  chartstatistics[year3]['#year_3_8'],
+                                  chartstatistics[year4]['#year_4_8'],
+                                  chartstatistics[year5]['#year_5_8'],
+                                  chartstatistics[year6]['#year_6_8'],
+                                  chartstatistics[year7]['#year_7_8'],
+                                  chartstatistics[year8]['#year_8_8'],
+                                  chartstatistics[year9]['#year_9_8'],
+                                  chartstatistics[year10]['#year_10_8']
+                                  ],
+                                  borderColor: "rgb(255, 99, 132)",
+                                  // backgroundColor: "rgba(255, 99, 132, 0.5)",
+                                  type: 'line',
+                                  tension: 0 ,
+                                  fill: false,
+                                  order: 1,
+                                  yAxisID: 'y-axis-4'
+                                  
+                              }
+                          ]
+                      };
+                      $('#id_chart_budget_1').html(
+                          '<canvas id="canvas_chart_budget_1" style="width:100%;max-width:600px"></canvas>',
+                      );
+                      new Chart($('#canvas_chart_budget_1'), {
+                          type: 'bar',
+                          data: data_budget_1,
+                          options: {
+                              legend: {
+                                  position: 'top',
+                              },
+                              title: {
+                                  display: true,
+                                  text: 'Total Health Budget versus Total Health Budget as a share of GDP'
+                              },
+                            scales: {
+                          yAxes: [{
+                              id: 'y-axis-3', // Assigning an ID to the left y-axis
+                              position: 'left', // Positioning the left y-axis
+                              ticks: {
+                                  beginAtZero: true,
+                                  callback: function(value, index, values) {
+                                                  return (value / 1000000000).toLocaleString() + ' B'; // Divide by a Billion and format as Billions
+                                              }
+                              },
+                              scaleLabel: {
+                                  display: false,
+                                  labelString: 'Total Health Budget(Billions of RWF)'
+                              }
+                          }, {
+                              id: 'y-axis-4', // Assigning an ID to the right y-axis
+                              position: 'right', // Positioning the right y-axis
+                              ticks: {
+                                  beginAtZero: true,
+                                  callback: function(value, index, values) {
+                                      return value.toFixed(1) + '%'; // Format the tick value to display as percentage with one decimal place
+                                  }
+                              },
+                              scaleLabel: {
+                                  display: false,
+                                  labelString: 'THE as % of GDP'
+                              }
+                          }]
+                      }
+                          },
+                      });
+                      // chart budget 2
+                      const data_budget_2 = {
+                          labels: labels,
+                          datasets: [
+                              {
+                                  label: 'Trends in domestic',
+                                  data: [
+                                  chartstatistics[year1]['#year_1_14'],
+                                  chartstatistics[year2]['#year_2_14'],
+                                  chartstatistics[year3]['#year_3_14'],
+                                  chartstatistics[year4]['#year_4_14'],
+                                  chartstatistics[year5]['#year_5_14'],
+                                  chartstatistics[year6]['#year_6_14'],
+                                  chartstatistics[year7]['#year_7_14'],
+                                  chartstatistics[year8]['#year_8_14'],
+                                  chartstatistics[year9]['#year_9_14'],
+                                  chartstatistics[year10]['#year_10_14'],
+                                  ],
+                                  borderColor: "rgb(54, 162, 235)",
+                                  // backgroundColor: "rgba(54, 162, 235, 0.5)",
+                                  type: 'line',
+                                  tension: 0 ,
+                                  fill: false,
+                                  order: 0
+                              },
+                              {
+                                  label: 'Trend in external sources',
+                                  data: [
+                                  chartstatistics[year1]['#year_1_15'],
+                                  chartstatistics[year2]['#year_2_15'],
+                                  chartstatistics[year3]['#year_3_15'],
+                                  chartstatistics[year4]['#year_4_15'],
+                                  chartstatistics[year5]['#year_5_15'],
+                                  chartstatistics[year6]['#year_6_15'],
+                                  chartstatistics[year7]['#year_7_15'],
+                                  chartstatistics[year8]['#year_8_15'],
+                                  chartstatistics[year9]['#year_9_15'],
+                                  chartstatistics[year10]['#year_10_15'],
+                                  ],
+                                  borderColor: "rgb(255, 99, 132)",
+                                  // backgroundColor: "rgba(255, 99, 132, 0.5)",
+                                  type: 'line',
+                                  tension: 0 ,
+                                  fill: false,
+                                  order: 1
+                              }
+                          ]
+                      };
+                      $('#id_chart_budget_2').html(
+                          '<canvas id="canvas_chart_budget_2" style="width:100%;max-width:600px"></canvas>',
+                      );
+                      new Chart($('#canvas_chart_budget_2'), {
+                          type: 'bar',
+                          data: data_budget_2,
+                          options: {
+                              legend: {
+                                  position: 'top',
+                              },
+                              title: {
+                                  display: true,
+                                  text: 'Trends in domestic versus external sources'
+                              }
+                          },
+                      });
+
+                },9000)
+            }
+
+  }
+
+  function getGdp(year_id, year, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_gdp' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '1'] = data.population;
+          statistics[year]['#' + year_id + '3'] = data.gdp;
+          statistics[year]['#' + year_id + '5'] = data.payment_rate;
+          if (label == 'budget') {
+            statistics[year]['#' + year_id + '2'] = data.budget;
+            statistics[year]['#' + year_id + '20']=data.budget_health
+          }
+          if (label == 'expenditure') {
+            statistics[year]['#' + year_id + '2'] = data.expenditure;
+            statistics[year]['#' + year_id + '20']=data.expenditure_health
+          }
+
+          getExchangeRate(year_id, year, 'USD', label);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          statistics[year]['#' + year_id + '1'] = 0;
+          statistics[year]['#' + year_id + '2'] = 0;
+          statistics[year]['#' + year_id + '3'] = 0;
+          statistics[year]['#' + year_id + '5'] = 0;
+          statistics[year]['#' + year_id + '20']=0;
+          getExchangeRate(year_id, year, 'USD', label);
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+
+
+  function getExchangeRate(year_id, year, currency, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_exchange_rate' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          currency: currency,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '4'] = data.rate;
+
+          get121(year_id, year, label);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          statistics[year]['#' + year_id + '4'] = 0;
+
+          get121(year_id, year, label);
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function get121(year_id, year, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_table_1_121' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: label,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '121'] = data.amount;
+
+          get12211(year_id, year, label);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          console.log(result);
+          statistics[year]['#' + year_id + '121'] = 0;
+
+          get12211(year_id, year, label);
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function get12211(year_id, year, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_table_1_12211' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: label,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12211'] = data.amount;
+
+          get12222(year_id, year, label);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          console.log(result);
+          statistics[year]['#' + year_id + '12211'] = 0;
+
+          get12222(year_id, year, label);
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get12222(year_id, year, label) {
+    let v5 = parseFloat(statistics[year]['#' + year_id + '5']);
+    let v12211 = parseFloat(statistics[year]['#' + year_id + '12211']);
+    let amount = 0;
+    if (typeof v12211 == 'number') {
+      amount = (v5 / 100) * v12211;
+    }
+    statistics[year]['#' + year_id + '12222'] = amount;
+
+    get12212(year_id, year, label);
+  }
+  function get12212(year_id, year, label) {
+    let v12211 = parseFloat(statistics[year]['#' + year_id + '12211']);
+    let v12222 = parseFloat(statistics[year]['#' + year_id + '12222']);
+    let amount = v12211 - v12222;
+    statistics[year]['#' + year_id + '12212'] = amount;
+
+    get12213(year_id, year, label);
+  }
+  function get12213(year_id, year, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_table_1_12213' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: label,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12213'] = data.amount;
+
+          get12214(year_id, year, label);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          console.log(result);
+          statistics[year]['#' + year_id + '12213'] = 0;
+
+          get12214(year_id, year, label);
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get12214(year_id, year, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_table_1_12214' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: label,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12214'] = data.amount;
+
+          get1221(year_id, year, label);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          console.log(result);
+          statistics[year]['#' + year_id + '12214'] = data.amount;
+
+          get1221(year_id, year, label);
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get1221(year_id, year, label) {
+    let v12212 = parseFloat(statistics[year]['#' + year_id + '12212']);
+    let v12213 = parseFloat(statistics[year]['#' + year_id + '12213']);
+    let v12214 = parseFloat(statistics[year]['#' + year_id + '12214']);
+    let amount = 0,
+      amount12212 = 0,
+      amount12213 = 0,
+      amount12214 = 0;
+    if (typeof v12212 == 'number') {
+      amount12212 = v12212;
+    }
+    if (typeof v12213 == 'number') {
+      amount12213 = v12213;
+    }
+    if (typeof v12214 == 'number') {
+      amount12214 = v12214;
+    }
+    amount = amount12212 + amount12213 + amount12214;
+
+    statistics[year]['#' + year_id + '1221'] = amount;
+
+    get12221(year_id, year, label);
+  }
+  function get12221(year_id, year, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_table_1_12221' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: label,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          statistics[year]['#' + year_id + '12221'] = data.amount;
+
+          get1222(year_id, year, label);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          console.log(result);
+          statistics[year]['#' + year_id + '12221'] = 0;
+
+          get1222(year_id, year, label);
+        },
+      });
+      return;
+    });
+    return;
+  }
+  function get1222(year_id, year, label) {
+    let v12221 = parseFloat(statistics[year]['#' + year_id + '12221']);
+    let v12222 = parseFloat(statistics[year]['#' + year_id + '12222']);
+    let amount = 0,
+      amount12221 = 0,
+      amount12222 = 0;
+    if (typeof v12221 == 'number') {
+      amount12221 = v12221;
+    }
+    if (typeof v12222 == 'number') {
+      amount12222 = v12222;
+    }
+    amount = amount12221 + amount12222;
+    statistics[year]['#' + year_id + '1222'] = amount;
+
+    get122(year_id, year, label);
+  }
+
+  function get122(year_id, year, label) {
+    let v1221 = parseFloat(statistics[year]['#' + year_id + '1221']);
+    let v1222 = parseFloat(statistics[year]['#' + year_id + '1222']);
+  
+    let amount = 0,
+      amount1221 = 0,
+      amount1222 = 0;
+    if (typeof v1221 == 'number') {
+      amount1221 = v1221;
+    }
+    if (typeof v1222 == 'number') {
+      amount1222 = v1222;
+    }
+    amount = amount1221 + amount1222;
+    statistics[year]['#' + year_id + '122'] = amount;
+    get12(year_id, year, label);
+  }
+
+  function get12(year_id, year, label) {
+    let v121 = parseFloat(statistics[year]['#' + year_id + '121']);
+    let v122 = parseFloat(statistics[year]['#' + year_id + '122']);
+    let amount = 0,
+      amount121 = 0,
+      amount122 = 0;
+    if (typeof v121 == 'number') {
+      amount121 = v121;
+    }
+    if (typeof v122 == 'number') {
+      amount122 = v122;
+    }
+    amount = amount121 + amount122;
+
+    statistics[year]['#' + year_id + '12'] = amount;
+
+    get13(year_id, year, label);
+  }
+
+  function get13(year_id, year, label) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function ($) {
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'system_reports_get_table_1_13' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          year: year,
+          type: label,
+        },
+        success: function (result) {
+          bootbox.hideAll();
+          var data = JSON.parse(JSON.stringify(result));
+          let amount_1 = Number(Math.trunc(data.amount_1));
+          let amount_2 = Number(Math.trunc(data.amount_2));
+          let amount_3 = Number(Math.trunc(data.amount_3));
+          let amount = amount_1 + amount_2 + amount_3;
+          statistics[year]['#' + year_id + '13'] = amount;
+          statistics[year]['#' + year_id + '131'] = amount_1;
+          statistics[year]['#' + year_id + '132'] = amount_2;
+          statistics[year]['#' + year_id + '133'] = amount_3;
+
+          get6(year_id, year);
+        },
+        error: function (result) {
+          bootbox.hideAll();
+          console.log(result);
+          statistics[year]['#' + year_id + '13'] = 0;
+          statistics[year]['#' + year_id + '131'] = 0;
+          statistics[year]['#' + year_id + '132'] = 0;
+          statistics[year]['#' + year_id + '133'] = 0;
+
+          get6(year_id, year);
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function get6(year_id, year) {
+    let v12 = parseFloat(statistics[year]['#' + year_id + '12']);
+    let v13 = parseFloat(statistics[year]['#' + year_id + '13']);
+    let amount = 0,
+      amount12 = 0,
+      amount13 = 0;
+    if (typeof v12 == 'number') {
+      amount12 = v12;
+    }
+    if (typeof v13 == 'number') {
+      amount13 = v13;
+    }
+    amount = amount12 + amount13;
+
+    statistics[year]['#' + year_id + '6'] = amount;
+
+    get7(year_id, year);
+  }
+
+  function get7(year_id, year) {
+    let v4 = parseFloat(statistics[year]['#' + year_id + '4']);
+    let v6 = statistics[year]['#' + year_id + '6'];
+    let amount = (v6 / v4 / 1000000).toFixed(4);
+    statistics[year]['#' + year_id + '7'] = amount;
+
+    get8(year_id, year);
+  }
+
+  function get8(year_id, year) {
+    let v3 = parseFloat(statistics[year]['#' + year_id + '3']);
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6']);
+    let amount = ((v6 * 100) / v3).toFixed(2);
+    statistics[year]['#' + year_id + '8'] = amount;
+
+    get9(year_id, year);
+  }
+
+  function get9(year_id, year) {
+    // let v2 = parseFloat(statistics[year]['#' + year_id + '2']);
+    // let v121 = parseFloat(statistics[year]['#' + year_id + '121']);
+    // let amount = ((v121 * 100) / v2).toFixed(2);
+    let v2 =parseFloat(statistics[year]['#' + year_id + '2'])
+    // v2 = Number(v2.replace(new RegExp(',', 'g'), ''));
+    let v6 =parseFloat(statistics[year]['#' + year_id + '20'])
+    // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+    let amount = (v6*100/v2).toFixed(1);
+    statistics[year]['#' + year_id + '9'] = amount;
+
+    get10(year_id, year);
+  }
+
+  function get10(year_id, year) {
+    let v1 = parseFloat(statistics[year]['#' + year_id + '1']);
+    // v1 = Number(v1.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6']);
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v6 / v1).toFixed(4);
+    statistics[year]['#' + year_id + '10'] = amount;
+
+    get11(year_id, year);
+  }
+
+  function get11(year_id, year) {
+    let v1 = parseFloat(statistics[year]['#' + year_id + '1']);
+    // v1 = Number(v1.replace(new RegExp(',', 'g'), ''));
+    let v4 = parseFloat(statistics[year]['#' + year_id + '4']);
+    // v4 = Number(v4.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6']);
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = (v6 / v4 / v1).toFixed(4);
+    statistics[year]['#' + year_id + '11'] = amount;
+
+    get14(year_id, year);
+  }
+
+  function get14(year_id, year) {
+    let v12 = parseFloat(statistics[year]['#' + year_id + '12']);
+    // v12 = Number(v12.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6']);
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = ((v12 * 100) / v6).toFixed(2);
+    statistics[year]['#' + year_id + '14'] = amount;
+
+    get141(year_id, year);
+  }
+  function get141(year_id, year) {
+    let v121 = parseFloat(statistics[year]['#' + year_id + '121']);
+    // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6']);
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = ((v121 * 100) / v6).toFixed(2);
+    statistics[year]['#' + year_id + '141'] = amount;
+
+    get142(year_id, year);
+  }
+  function get142(year_id, year) {
+    let v122 = statistics[year]['#' + year_id + '122'];
+    // v122 = Number(v122.replace(new RegExp(',', 'g'), ''));
+    let v6 = statistics[year]['#' + year_id + '6'];
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = ((v122 * 100) / v6).toFixed(2);
+    statistics[year]['#' + year_id + '142'] = amount;
+
+    get15(year_id, year);
+  }
+  function get15(year_id, year) {
+    let v13 = parseFloat(statistics[year]['#' + year_id + '13']);
+    // v13 = Number(v13.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6']);
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = ((v13 * 100) / v6).toFixed(2);
+    statistics[year]['#' + year_id + '15'] = amount;
+
+    get16(year_id, year);
+  }
+  function get16(year_id, year) {
+    let v1222 = parseFloat(statistics[year]['#' + year_id + '1222']);
+    // v1222 = Number(v1222.replace(new RegExp(',', 'g'), ''));
+    let v6 = parseFloat(statistics[year]['#' + year_id + '6']);
+    // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+    let amount = ((v1222 * 100) / v6).toFixed(2);
+    statistics[year]['#' + year_id + '16'] = amount;
+    updateUI(year_id, year);
+  }
+  function updateUI(year_id, year) {
+    $('#' + year_id + '6').html(Number(statistics[year]['#' + year_id + '6']).toLocaleString());
+    $('#' + year_id + '8').html(Number(statistics[year]['#' + year_id + '8']).toLocaleString());
+    $('#' + year_id + '9').html(Number(statistics[year]['#' + year_id + '9']).toLocaleString());
+    $('#' + year_id + '14').html(Number(statistics[year]['#' + year_id + '14']).toLocaleString() + ' %',);
+    $('#' + year_id + '15').html(Number(statistics[year]['#' + year_id + '15']).toLocaleString() + ' %',);
+    $('#' + year_id + '16').html(Number(statistics[year]['#' + year_id + '16']).toLocaleString() + ' %',);
+  }
+
+
+    function getChartExchangeRate(year_id, year, currency, label) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_exchange_rate' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+            currency: currency,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            chartstatistics[year]['#' + year_id + '4']=data.rate
+
+            chartget121(year_id, year,label);
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            chartstatistics[year]['#' + year_id + '4']=0
+
+            chartget121(year_id, year, label);
+          },
+        });
+        return;
+      });
+      return;
+    }
+
+    function getChartGdp(year_id, year, label) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_gdp' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            chartstatistics[year]['#' + year_id + '1']=data.population
+            chartstatistics[year]['#' + year_id + '3']=data.gdp
+            chartstatistics[year]['#' + year_id + '5']=data.payment_rate
+            if (label == 'budget'){ chartstatistics[year]['#' + year_id + '2']=data.budget}
+            if(label == 'expenditure'){ chartstatistics[year]['#' + year_id + '2']=data.expenditure}
+
+            getChartExchangeRate(year_id, year, 'USD', label);
+          },
+          error: function(result) {
+            bootbox.hideAll();
+
+            chartstatistics[year]['#' + year_id + '1']=0
+            chartstatistics[year]['#' + year_id + '2']=0
+            chartstatistics[year]['#' + year_id + '3']=0
+            chartstatistics[year]['#' + year_id + '5']=0
+
+            getChartExchangeRate(year_id, year, 'USD', label);
+          },
+        });
+        return;
+      });
+      return;
+    }
+
+    function chartget121(year_id, year,label ) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_table_1_121' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+            type: label,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            chartstatistics[year]['#' + year_id + '121']=data.amount
+
+            chartget12211(year_id, year,label);
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            console.log(result)
+            chartstatistics[year]['#' + year_id + '121']=0
+
+            chartget12211(year_id, year,label);
+          },
+        });
+        return;
+      });
+      return;
+    }
+
+    function chartget12211(year_id, year,label) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_table_1_12211' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+            type: label,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            chartstatistics[year]['#' + year_id + '12211']=data.amount
+
+            chartget12222(year_id, year,label)
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            console.log(result)
+            chartstatistics[year]['#' + year_id + '12211']=0
+
+            chartget12222(year_id, year,label)
+          },
+        });
+        return;
+      });
+      return;
+    }
+
+    function chartget12222(year_id, year,label) {
+      let v5 = parseFloat(chartstatistics[year]['#' + year_id + '5'])
+      // v5 = Number(v5.replace(new RegExp(',', 'g'), ''));
+      // v5 = Number(v5.replace(new RegExp('%', 'g'), ''));
+      let v12211 = parseFloat(chartstatistics[year]['#' + year_id + '12211'])
+      // v12211 = Number(v12211.replace(new RegExp(',', 'g'), ''));
+      let amount = 0
+      if(typeof v12211 == 'number'){
+        amount = v5/100 * v12211
+      }
+      chartstatistics[year]['#' + year_id + '12222']=amount
+
+      chartget12212(year_id, year,label);
+    }
+    function chartget12212(year_id, year,label) {
+      let v12211 = parseFloat(chartstatistics[year]['#' + year_id + '12211'])
+      // v12211 = Number(v12211.replace(new RegExp(',', 'g'), ''));
+      let v12222 = parseFloat(chartstatistics[year]['#' + year_id + '12222'])
+      // v12222 = Number(v12222.replace(new RegExp(',', 'g'), ''));
+      let amount = v12211 - v12222
+      chartstatistics[year]['#' + year_id + '12212']=amount
+
+      chartget12213(year_id, year,label);
+    }
+    function chartget12213(year_id, year,label) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_table_1_12213' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+            type: label,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            chartstatistics[year]['#' + year_id + '12213']=data.amount
+
+            chartget12214(year_id, year,label);
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            console.log(result)
+            chartstatistics[year]['#' + year_id + '12213']=0
+
+            chartget12214(year_id, year,label);
+          },
+        });
+        return;
+      });
+      return;
+    }
+    function chartget12214(year_id, year,label) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_table_1_12214' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+            type: label,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            chartstatistics[year]['#' + year_id + '12214']=data.amount
+
+            chartget1221(year_id, year,label)
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            console.log(result)
+            chartstatistics[year]['#' + year_id + '12214']=data.amount
+
+            chartget1221(year_id, year,label)
+          },
+        });
+        return;
+      });
+      return;
+    }
+    function chartget1221(year_id, year,label) {
+      let v12212 = parseFloat(chartstatistics[year]['#' + year_id + '12212'])
+      // v12212 = Number(v12212.replace(new RegExp(',', 'g'), ''));
+      let v12213 = parseFloat(chartstatistics[year]['#' + year_id + '12213'])
+      // v12213 = Number(v12213.replace(new RegExp(',', 'g'), ''));
+      let v12214 = parseFloat(chartstatistics[year]['#' + year_id + '12214'])
+      // v12214 = Number(v12214.replace(new RegExp(',', 'g'), ''));
+      let amount = 0, amount12212 = 0, amount12213 = 0, amount12214 = 0
+      if(typeof v12212 == 'number'){
+        amount12212 = v12212
+      }
+      if(typeof v12213 == 'number'){
+        amount12213 = v12213
+      }
+      if(typeof v12214 == 'number'){
+        amount12214 = v12214
+      }
+      amount = amount12212 + amount12213 + amount12214
+
+      chartstatistics[year]['#' + year_id + '1221']=amount
+
+      chartget12221(year_id, year,label);
+    }
+    function chartget12221(year_id, year,label) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_table_1_12221' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+            type: label,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            chartstatistics[year]['#' + year_id + '12221']=data.amount
+
+            chartget1222(year_id, year,label);
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            console.log(result)
+            chartstatistics[year]['#' + year_id + '12221']=0
+
+            chartget1222(year_id, year,label);
+          },
+        });
+        return;
+      });
+      return;
+    }
+    function chartget1222(year_id, year,label) {
+      let v12221 = parseFloat(chartstatistics[year]['#' + year_id + '12221'])
+      // v12221 = Number(v12221.replace(new RegExp(',', 'g'), ''));
+      let v12222 = parseFloat(chartstatistics[year]['#' + year_id + '12222'])
+      // v12222 = Number(v12222.replace(new RegExp(',', 'g'), ''));
+      let amount = 0, amount12221 = 0, amount12222 = 0
+      if(typeof v12221 == 'number'){
+        amount12221 = v12221
+      }
+      if(typeof v12222 == 'number'){
+        amount12222 = v12222
+      }
+      amount = amount12221 + amount12222
+      chartstatistics[year]['#' + year_id + '1222']=amount
+
+      chartget122(year_id, year,label)
+    }
+
+    function chartget122(year_id, year,label) {
+      let v1221 = parseFloat(chartstatistics[year]['#' + year_id + '1221'])
+      // v1221 = Number(v1221.replace(new RegExp(',', 'g'), ''));
+      let v1222 = parseFloat(chartstatistics[year]['#' + year_id + '1222'])
+      // v1222 = Number(v1222.replace(new RegExp(',', 'g'), ''));
+      let amount = 0, amount1221 = 0, amount1222 = 0
+      if(typeof v1221 == 'number'){
+        amount1221 = v1221
+      }
+      if(typeof v1222 == 'number'){
+        amount1222 = v1222
+      }
+      amount = amount1221 + amount1222
+      chartstatistics[year]['#' + year_id + '122']=amount
+      chartget12(year_id, year,label)
+    }
+
+    function chartget12(year_id, year,label) {
+      let v121 = parseFloat(chartstatistics[year]['#' + year_id + '121'])
+      // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+      let v122 = parseFloat(chartstatistics[year]['#' + year_id + '122'])
+      // v122 = Number(v122.replace(new RegExp(',', 'g'), ''));
+      let amount = 0, amount121 = 0, amount122 = 0
+      if(typeof v121 == 'number'){
+        amount121 = v121
+      }
+      if(typeof v122 == 'number'){
+        amount122 = v122
+      }
+      amount = amount121 + amount122
+
+      chartstatistics[year]['#' + year_id + '12']=amount
+
+      chartget13(year_id, year,label)
+    }
+
+    function chartget13(year_id, year,label) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function($) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'system_reports_get_table_1_13' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            year: year,
+            type: label,
+          },
+          success: function(result) {
+            bootbox.hideAll();
+            var data = JSON.parse(JSON.stringify(result));
+            let amount_1 = Number(Math.trunc(data.amount_1))
+            let amount_2 = Number(Math.trunc(data.amount_2))
+            let amount_3 = Number(Math.trunc(data.amount_3))
+            let amount = amount_1 + amount_2 + amount_3
+            chartstatistics[year]['#' + year_id + '13']=amount
+            chartstatistics[year]['#' + year_id + '131']=amount_1
+            chartstatistics[year]['#' + year_id + '132']=amount_2
+            chartstatistics[year]['#' + year_id + '133']=amount_3
+
+            chartget6(year_id, year)
+          },
+          error: function(result) {
+            bootbox.hideAll();
+            console.log(result)
+            chartstatistics[year]['#' + year_id + '13']=0
+            chartstatistics[year]['#' + year_id + '131']=0
+            chartstatistics[year]['#' + year_id + '132']=0
+            chartstatistics[year]['#' + year_id + '133']=0
+
+            chartget6(year_id, year)
+          },
+        });
+        return;
+      });
+      return;
+    }
+
+    function chartget6(year_id, year) {
+      let v12 = parseFloat(chartstatistics[year]['#' + year_id + '12'])
+      // v12 = Number(v12.replace(new RegExp(',', 'g'), ''));
+      let v13 = parseFloat(chartstatistics[year]['#' + year_id + '13'])
+      // v13 = Number(v13.replace(new RegExp(',', 'g'), ''));
+      let amount = 0, amount12 = 0, amount13 = 0
+      if(typeof v12 == 'number'){
+        amount12 = v12
+      }
+      if(typeof v13 == 'number'){
+        amount13 = v13
+      }
+      amount = amount12 + amount13
+
+      chartstatistics[year]['#' + year_id + '6']=amount
+
+      chartget7(year_id, year)
+    }
+
+    function chartget7(year_id, year) {
+      let v4 = parseFloat(chartstatistics[year]['#' + year_id + '4'])
+      // v4 = Number(v4.replace(new RegExp(',', 'g'), ''));
+      let v6 = chartstatistics[year]['#' + year_id + '6']
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = ((v6/v4)/1000000).toFixed(4);
+      chartstatistics[year]['#' + year_id + '7']=amount
+
+      chartget8(year_id, year)
+    }
+
+    function chartget8(year_id, year) {
+      let v3 =parseFloat(chartstatistics[year]['#' + year_id + '3'])
+      // v3 = Number(v3.replace(new RegExp(',', 'g'), ''));
+      let v6 = parseFloat(chartstatistics[year]['#' + year_id + '6'])
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = (v6*100/v3).toFixed(2);
+      chartstatistics[year]['#' + year_id + '8']=amount
+
+      chartget9(year_id, year)
+    }
+
+    function chartget9(year_id, year) {
+      let v2 = parseFloat(chartstatistics[year]['#' + year_id + '2'])
+      // v2 = Number(v2.replace(new RegExp(',', 'g'), ''));
+      let v121 = parseFloat(chartstatistics[year]['#' + year_id + '121'])
+      // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+      let amount = (v121*100/v2).toFixed(2);
+      chartstatistics[year]['#' + year_id + '9']=amount
+
+      chartget10(year_id, year)
+    }
+
+    function chartget10(year_id, year) {
+      let v1 = parseFloat(chartstatistics[year]['#' + year_id + '1'])
+      // v1 = Number(v1.replace(new RegExp(',', 'g'), ''));
+      let v6 = parseFloat(chartstatistics[year]['#' + year_id + '6'])
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = (v6/v1).toFixed(4);
+      chartstatistics[year]['#' + year_id + '10']=amount
+
+      chartget11(year_id, year)
+    }
+
+    function chartget11(year_id, year) {
+      let v1 = parseFloat(chartstatistics[year]['#' + year_id + '1'])
+      // v1 = Number(v1.replace(new RegExp(',', 'g'), ''));
+      let v4 = parseFloat(chartstatistics[year]['#' + year_id + '4'])
+      // v4 = Number(v4.replace(new RegExp(',', 'g'), ''));
+      let v6 =parseFloat(chartstatistics[year]['#' + year_id + '6'])
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = ((v6/v4)/v1).toFixed(4);
+      chartstatistics[year]['#' + year_id + '11']=amount
+
+      chartget14(year_id, year)
+    }
+
+    function chartget14(year_id, year) {
+      let v12 = parseFloat(chartstatistics[year]['#' + year_id + '12'])
+      // v12 = Number(v12.replace(new RegExp(',', 'g'), ''));
+      let v6 = parseFloat(chartstatistics[year]['#' + year_id + '6'])
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = (v12*100/v6).toFixed(2);
+      chartstatistics[year]['#' + year_id + '14']=amount
+
+      chartget141(year_id, year)
+    }
+    function chartget141(year_id, year) {
+      let v121 = parseFloat(chartstatistics[year]['#' + year_id + '121'])
+      // v121 = Number(v121.replace(new RegExp(',', 'g'), ''));
+      let v6 = parseFloat(chartstatistics[year]['#' + year_id + '6'])
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = (v121*100/v6).toFixed(2);
+      chartstatistics[year]['#' + year_id + '141']=amount
+
+      chartget142(year_id, year)
+    }
+    function chartget142(year_id, year) {
+      let v122 = chartstatistics[year]['#' + year_id + '122']
+      // v122 = Number(v122.replace(new RegExp(',', 'g'), ''));
+      let v6 = chartstatistics[year]['#' + year_id + '6']
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = (v122*100/v6).toFixed(2);
+      chartstatistics[year]['#' + year_id + '142']=amount
+
+      chartget15(year_id, year)
+    }
+    function chartget15(year_id, year) {
+      let v13 = parseFloat(chartstatistics[year]['#' + year_id + '13'])
+      // v13 = Number(v13.replace(new RegExp(',', 'g'), ''));
+      let v6 = parseFloat(chartstatistics[year]['#' + year_id + '6'])
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = (v13*100/v6).toFixed(2);
+      chartstatistics[year]['#' + year_id + '15']=amount
+
+      chartget16(year_id, year)
+    }
+    function chartget16(year_id, year) {
+      let v1222 = parseFloat(chartstatistics[year]['#' + year_id + '1222'])
+      // v1222 = Number(v1222.replace(new RegExp(',', 'g'), ''));
+      let v6 = parseFloat(chartstatistics[year]['#' + year_id + '6'])
+      // v6 = Number(v6.replace(new RegExp(',', 'g'), ''));
+      let amount = (v1222*100/v6).toFixed(2);
+      chartstatistics[year]['#' + year_id + '16']=amount
+    }
+</script>
+{% endblock %}

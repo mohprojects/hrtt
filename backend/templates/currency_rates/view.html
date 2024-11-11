@@ -1,0 +1,131 @@
+{% extends '_include/base-index.html' %}
+{% block head %}
+{% load static %}
+{% load render_table from django_tables2 %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %}
+{% block body %}
+{% load humanize %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+  var ajax_url = {
+    "url": "{% url 'logs_datatable_view' %}",
+    "type": "GET",
+    "data": {
+      "csrfmiddlewaretoken": "{{ csrf_token }}",
+      "model": "currency_rates",
+      "modelId": "{{  model.rate_id }}"
+    },
+  };
+</script>
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li><a href="{% url 'currency_rates_index' %}">
+        {{ title }}</a></li>
+    <li><a href="{% url 'currency_rates_view' pk=model.rate_id %}">
+        {{ model.rate_id}}</a></li>
+    <li class="active">Details</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="tab-base">
+        <!--Nav Tabs-->
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a data-toggle="tab" href="#demo-lft-tab-1">Details</a>
+          </li>
+        </ul>
+        <!--Tabs Content-->
+        <div class="tab-content">
+          <div id="demo-lft-tab-1" class="tab-pane fade active in">
+            <div>
+              {% if ACCESS_PERMISSION_LEVELS_UPDATE in auth_permissions.values %}
+              <a href="{% url 'currency_rates_update' pk=model.rate_id %}" class="btn btn-info">Update</a>
+              {% endif %}
+
+              {% if ACCESS_PERMISSION_LEVELS_DELETE in auth_permissions.values %}
+              <a href="#" onclick="singleSelect('{{ select_single_url }}', 'delete', '{{ model.rate_id }}', '{{ index_url }}');" class="btn btn-danger">Delete</a>
+              {% endif %}
+              
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-12">
+                <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                  <thead>
+                    <tr style="background-color: #efefef;">
+                      <th style="width:30%;">Key</th>
+                      <th style="width:70%;">Value</th>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.fiscal_year.label }}
+                      </td>
+                      <td>
+                        {{ model.rate_fiscal_year }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.currency.label }}
+                      </td>
+                      <td>
+                        {{ model.rate_currency|intcomma }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.rate.label }}
+                      </td>
+                      <td>
+                        {{ model.rate_rate |intcomma}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Created At</td>
+                      <td>
+                        {{ model.rate_created_at }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Created By</td>
+                      <td>
+                        {{ model.rate_created_by }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Updated At</td>
+                      <td>
+                        {{ model.rate_updated_at }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Updated By</td>
+                      <td>
+                        {{ model.rate_updated_by }}
+                      </td>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include '_include/single_select.html' %}
+{% endblock %}

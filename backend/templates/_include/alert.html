@@ -1,0 +1,6 @@
+{% for message in messages %}
+    <div class="alert {{ message.tags }}" style="margin-top: 0px; margin-bottom: 10px;">
+        <button class="close" data-dismiss="alert"><i class="pci-cross pci-circle"></i></button>
+        {{ message|safe }}
+    </div>
+{% endfor %}

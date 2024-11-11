@@ -1,0 +1,628 @@
+{% extends '_include/base-index.html' %}
+{% block head %}
+{% load static %}
+{% load render_table from django_tables2 %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+    var ajax_url = {
+        "url": "{% url 'logs_datatable_view' %}",
+        "type": "GET",
+        "data": {
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+            "model": "reports",
+            "modelId": "{{  model.report_id}}"
+        },
+    };
+</script>
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{{ index_url }}">Projects</a></li>
+        <li><a href="{% url 'projects_view' pk=project.project_id %}">{{ project.project_name }}</a></li>
+        <li class="active">{{ model.report_asset_name}}</li>
+        <li class="active">Details</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tab-base">
+                <!--Nav Tabs-->
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#demo-lft-tab-1">Details</a>
+                    </li>
+                    <li class="">
+                        <a data-toggle="tab" href="#demo-lft-tab-2">Logs
+                            <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+                        </a>
+                    </li>
+                </ul>
+                <!--Tabs Content-->
+                <div class="tab-content">
+                    <div id="demo-lft-tab-1" class="tab-pane fade active in">
+                        {% if model.report_status == model.STATUS_DRAFT  or model.report_status == model.STATUS_REJECTED %}
+                        <div>
+                            {% if ACCESS_PERMISSION_REPORTS_UPDATE in auth_permissions.values %}
+                            <a href="{% url 'reports_update' pk=model.report_id %}" class="btn btn-info">Update</a>
+                            {% endif %}
+                            <!-- {% if ACCESS_PERMISSION_REPORTS_UPDATE in auth_permissions.values %}
+                            {% if model.report_status == user.STATUS_ACTIVE %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'block', '{{ model.report_id }}');"
+                                class="btn btn-danger">Block</a>
+                            {% endif %}
+                            {% endif %} -->
+                            <!-- {% if ACCESS_PERMISSION_REPORTS_UPDATE in auth_permissions.values %}
+                            {% if model.report_status == user.STATUS_BLOCKED %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'unblock', '{{ model.report_id }}');"
+                                class="btn btn-warning">Unblock</a>
+                            {% endif %}
+                            {% endif %} -->
+                            {% if ACCESS_PERMISSION_REPORTS_DELETE in auth_permissions.values %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'delete', '{{ model.report_id }}', '{{ index_url }}');"
+                                class="btn btn-danger">Delete</a>
+                            {% endif %}
+
+                            {% if ACCESS_PERMISSION_REPORTS_SUBMIT in auth_permissions.values %}
+                            <a id="report_submit" class="btn btn-success" href="#" onclick="singleSelect('{{ select_single_url }}', 'submit', '{{ model.report_id }}');">
+                                <i class="fa fa-check" aria-hidden="true"></i> Submit
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        <br>  
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr style="background-color: #efefef;">
+                                            <th style="width:30%;">Key</th>
+                                            <th style="width:70%;">Value</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.asset_name.label }}</td>
+                                            <td>{{ model.report_asset_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.capital_class.label }}</td>
+                                            <td>{{ model.report_capital_class }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.capital_sub_class.label }}</td>
+                                            <td>{{ model.report_capital_sub_class }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.purchase_value.label }}</td>
+                                            <td>{{ model.report_purchase_value }} {{model.report_purchase_currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.book_value.label }}</td>
+                                            <td>{{ model.report_book_value}} {{model.report_book_currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.year_purchased.label }}</td>
+                                            <td>{{ model.report_year_purchased }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.funding_source.label }}</td>
+                                            <td>{{ model.report_funding_source }}</td>
+                                        </tr>
+                                       
+                                        <tr>
+                                            <td class="text-bold">{{ form.fiscal_year.label }}</td>
+                                            <td>{{ model.report_fiscal_year }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="text-bold">Funds Transfer</td>
+                                            <td>
+                                                <div class="panel-body">
+                                                    <div id="id_funds_transfer_class"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="text-bold">Created At</td>
+                                            <td>{{ model.report_created_at }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Created By</td>
+                                            <td>{{ model.report_created_by }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Updated At</td>
+                                            <td>{{ model.report_updated_at }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Updated By</td>
+                                            <td>{{ model.report_updated_by }}</td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Approved At</td>
+                                          <td>
+                                            {{ model.report_approved_at }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Approved By</td>
+                                          <td>
+                                            {{ model.report_approved_by }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Denied At</td>
+                                          <td>
+                                            {{ model.report_denied_at }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Denied By</td>
+                                          <td>
+                                            {{ model.report_denied_by }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Status</td>
+                                            <td>
+                                                {% if model.report_status == model.STATUS_DRAFT %}
+                                                <div style="width:100px;">{{model.HTML_TAG_STATUS_DRAFT_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.report_status == model.STATUS_SUBMITTED %}
+                                                <div style="width:100px;">{{ model.HTML_TAG_STATUS_SUBMITTED_COLOR | safe}}</div>
+                                                {% endif %}
+                                                {% if model.report_status == model.STATUS_ACCEPTED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_ACCEPTED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.report_status == model.STATUS_REJECTED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_REJECTED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.report_status == model.STATUS_APPROVED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_APPROVED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.report_status == model.STATUS_DENIED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_DENIED_COLOR | safe }}</div>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                          
+                          
+                            <div class="col-sm-4">
+                                {% if ACCESS_PERMISSION_COMMENTS_VIEW in auth_permissions.values %}
+                                <div class="panel">
+                                  <div class="panel-heading">
+                                    <h3 class="panel-title">Comments</h3>
+                                  </div>
+                                  <div class="collapse in" id="panel-collapse-comments">
+                                    <div class="panel-body">
+                                      <ul id="id_comments_list" class="sortable-list tasklist list-unstyled ui-sortable">
+                          
+                                      </ul>
+                                      
+                                    </div>
+                                  </div>
+                                </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                       
+                        {% if user.user_role == user.TYPE_ACTIVITY_MANAGER%}
+                        {% if model.report_status == model.STATUS_SUBMITTED or model.report_status == model.STATUS_DENIED  %}
+                        {% if ACCESS_PERMISSION_REPORTS_ACCEPT in auth_permissions.values %}
+                        {% include './_accept_reject.html' %}
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+
+                        {% if user.user_role == user.TYPE_SUPER_ADMIN%}
+                        {% if model.report_status == model.STATUS_ACCEPTED %}
+                        {% if ACCESS_PERMISSION_REPORTS_APPROVE in auth_permissions.values %}
+                        {% include './_approve_deny.html' %}
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        <script type="text/javascript" charset="utf-8">
+                            $(document).ready(function () {
+                            });
+                        </script>
+                    </div>
+                    <div id="demo-lft-tab-2" class="tab-pane fade">
+                        <!-- {% if ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values %} -->
+                        <div id="id_logs_list"></div>
+                        <!-- {% endif %} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    var logs = [];
+    var drawLogs = 1;
+    var startLogs = 0;
+    var lengthLogs = 10;
+    function fetchLogs(draw, start, length) {
+        var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        jQuery(function ($) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'logs_datatable_view' %}",
+                data: {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    model: "reports",
+                    model_id: "{{ model.report_id }}",
+                    draw: draw,
+                    start: start,
+                    length: length,
+                },
+                success: function (result) {
+                    bootbox.hideAll();
+                    var items = JSON.parse(JSON.stringify(result)).data;
+                    var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+                    if (start == 0) {
+                        logs.length = 0;
+                    }
+                    items.forEach(function (item) {
+                        logs.push(item);
+                    });
+                    var showMore = null;
+                    if (recordsTotal > logs.length) {
+                        drawLogs = drawLogs++;
+                        startLogs = logs.length;
+                        showMore = '<button class="btn btn-xs btn-default mar-top" onClick="javascript:fetchLogs(' + drawLogs + ', ' + startLogs + ', ' + lengthLogs + ');">Show more</button>'
+                    }
+                    updateUiLogs(showMore);
+                },
+                error: function (result) {
+                    bootbox.hideAll();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong!!! Please try again.',
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    });
+                },
+            });
+            return;
+        });
+        return;
+    }
+    function updateUiLogs(showMore) {
+        div_logs = '';
+        logs.forEach(function (log) {
+            div_logs += '<div class="comment-content media"><div class="media-body"><div class="comment-header"><span class="text-main text-semibold">' + log.log_message + '</span><br><small class="text-muted"> - ' + log.log_updated_at + ' by ' + log.log_updated_by + '</small></div>';
+        });
+        if (showMore != null) {
+            div_logs += showMore;
+        }
+        if (div_logs) {
+            document.getElementById("id_logs_list").innerHTML = div_logs;
+        }
+    }
+    fetchLogs(drawLogs, startLogs, lengthLogs);
+</script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+      let url;
+      url = "{% url 'dropdown_tree_view' key='financing-source-type' model='reports' model_id=model.report_id %}";
+      $.get(url, function (data) {
+        $('#id_funds_transfer_class').html(data);
+        var tree2 = $('#id_funds_transfer_class').jstree({
+          core: {
+            check_callback: true,
+          },
+          plugins: ['checkbox', 'types'],
+          types: {
+            default: {
+              icon: 'fa fa-file',
+            },
+          },
+        });
+        $('li[data-checkstate="checked"]').each(function () {
+          $('#id_funds_transfer_class').jstree('check_node', $(this));
+        });
+        var selectedNodes = $('#id_funds_transfer_class').jstree('get_selected', false);
+        var selectedAndUndetermined = [];
+        for (i = 0; i < selectedNodes.length; i++) {
+          selectedAndUndetermined = selectedAndUndetermined.concat(
+            $('#id_funds_transfer_class').jstree('get_path', selectedNodes[i], false, true),
+          );
+        }
+        selectedAndUndetermined = Array.from(new Set(selectedAndUndetermined));
+        $('#id_funds_transfer_class')
+          .jstree('get_json', '#', {
+            flat: true,
+          })
+          .forEach(function (node) {
+            if (node.data.checkstate == 'hidden') {
+              $('#id_funds_transfer_class').jstree('get_node', node).state.hidden = true;
+            }
+            if (!selectedAndUndetermined.includes(node.id)) {
+              $('#id_funds_transfer_class').jstree('get_node', node).state.hidden = true;
+            }
+          });
+        $('#id_funds_transfer_class').jstree('redraw', true);
+        $('#id_funds_transfer_class li').each( function() {
+            $("#id_funds_transfer_class").jstree().disable_node(this.id);
+        })
+      });
+    });
+  </script>
+  <script type="text/javascript" charset="utf-8">
+    $("#id_form_comments").submit(function (event) {
+      createComment($("#id_message_comments").val());
+      event.preventDefault();
+    });
+    var comments = [];
+    var drawComments = 1;
+    var startComments = 0;
+    var lengthComments = 3;
+    var createComment;
+    createComment = function createComment(message) {
+      if (message !== "") {
+        var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        bootbox.dialog({
+          closeButton: false,
+          title: "Message",
+          message:
+            "" +
+            "<p>Please wait while loading ...</p>" +
+            '<div class="active progress progress-lg progress-striped"><div style="width: 100%;" class="progress-bar progress-bar-primary"></div></div>' +
+            "",
+        });
+        jQuery(function ($) {
+          $.ajax({
+            type: "POST",
+            url: "{% url 'comments_create' %}",
+            data: {
+              csrfmiddlewaretoken: csrfmiddlewaretoken,
+              model: "Reports",
+              model_id: "{{ model.report_id }}",
+              parent_id: "0",
+              message: message,
+              section: "",
+              attachment: 0,
+            },
+            success: function (result) {
+              bootbox.hideAll();
+              if (result === "signin") {
+                window.location.replace("{% url 'users_signout' %}");
+                return;
+              }
+              if (result === "success") {
+                drawComments = 1;
+                startComments = 0;
+                fetchComments(drawComments, startComments, lengthComments);
+                return;
+              }
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong!!! Please try again.',
+                customClass: {
+                  confirmButton: 'btn btn-danger',
+                },
+                buttonsStyling: false
+              });
+            },
+            error: function (result) {
+              bootbox.hideAll();
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong!!! Please try again.',
+                customClass: {
+                  confirmButton: 'btn btn-danger',
+                },
+                buttonsStyling: false
+              });
+            },
+          });
+          return;
+        });
+      }
+      return;
+    };
+  
+    function fetchComments(draw, start, length) {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      jQuery(function ($) {
+        $.ajax({
+          type: "GET",
+          url: "{% url 'comments_datatable_view' %}",
+          data: {
+            csrfmiddlewaretoken: csrfmiddlewaretoken,
+            model: "Reports",
+            model_id: "{{ model.report_id }}",
+            section: "",
+            user_id: "{{ user.user_id }}",
+            draw: draw,
+            start: start,
+            length: length,
+          },
+          success: function (result) {
+            bootbox.hideAll();
+            var items = JSON.parse(JSON.stringify(result)).data;
+            var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+            if (start == 0) {
+              comments.length = 0;
+            }
+            items.forEach(function (item) {
+              comments.push(item);
+            });
+            var showMore = null;
+            if (recordsTotal > comments.length) {
+              drawComments = drawComments++;
+              startComments = comments.length;
+              showMore = '<button class="btn btn-xs btn-default" onClick="javascript:fetchComments(' + drawComments + ', ' + startComments + ', ' + lengthComments + ');">Show more</button>'
+            }
+            updateUiComments(showMore);
+          },
+          error: function (result) {
+            bootbox.hideAll();
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Something went wrong!!! Please try again.',
+              customClass: {
+                confirmButton: 'btn btn-danger',
+              },
+              buttonsStyling: false
+            });
+          },
+        });
+        return;
+      });
+      return;
+    }
+  
+    function updateUiComments(showMore) {
+      div_comments = '';
+      comments.forEach(function (comment) {
+        let status
+        if (comment.comment_parent_id == "{{ model.STATUS_SUBMITTED }}") {
+          status = '<span class="label label-warning">Submitted</span>';
+        }
+        if (comment.comment_parent_id == "{{ model.STATUS_ACCEPTED }}") {
+          status = '<span class="label label-success">Accepted</span>';
+        }
+        if (comment.comment_parent_id == "{{ model.STATUS_REJECTED }}") {
+          status = '<span class="label label-danger">Rejected</span>';
+        }
+        if (comment.comment_parent_id == "{{ model.STATUS_APPROVED }}") {
+        status = '<span class="label label-success">Approved</span>';
+        }
+        if (comment.comment_parent_id == "{{ model.STATUS_DENIED }}") {
+        status = '<span class="label label-danger">Denied</span>';
+        }
+        div_comments += '<li class="task-warning ui-sortable-handle"><p class="text-bold text-main text-sm">' + comment.comment_updated_by + '</p><p>' + status + '</p><p class="pad-btm bord-btm">' + comment.comment_message + '</p><span class="task-footer"><span class="box-inline"><span class="pad-rgt">' + comment.comment_updated_at + '</span></span><span class="text-sm"></span></span></li>';
+      });
+      if (showMore != null) {
+        div_comments += showMore;
+      }
+      if (div_comments) {
+        document.getElementById("id_comments_list").innerHTML = div_comments;
+      }
+    }
+  
+    fetchComments(drawComments, startComments, lengthComments);
+  </script>
+
+  <script type="text/javascript" charset="utf-8">
+    function onUpdateStatus(action) {
+      var confirmMessage;
+      if (action === 'accept') {
+        confirmMessage = "Are you sure you want to accept this item?";
+      }
+      if (action === 'reject') {
+        confirmMessage = "Are you sure you want to reject this item?";
+      }
+      if (action === 'approve') {
+      confirmMessage = "Are you sure you want to approve this item?";
+      }
+      if (action === 'deny') {
+       confirmMessage = "Are you sure you want to deny this item?";
+      }
+      if (action !== '') {
+        var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        bootbox.confirm({
+          title: "Confirm?",
+          message: confirmMessage,
+          buttons: {
+            cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+            confirm: { label: '<i class="fa fa-check"></i> Ok' }
+          },
+          callback: function (confirmed) {
+            if (confirmed) {
+              bootbox.dialog({
+                closeButton: false,
+                title: "Message",
+                message: '' + '<p>Please wait while loading ...</p>' + '<div class="active progress progress-lg progress-striped"><div style="width: 100%;" class="progress-bar progress-bar-primary"></div></div>' + ''
+              });
+              jQuery(function ($) {
+                let url = "{{ select_single_url }}";
+                let comments = $("#id_message_comments").val();
+    
+                if (comments == null || comments == undefined || comments == '') {
+                  bootbox.hideAll();
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please enter comments.',
+                    customClass: {
+                      confirmButton: 'btn btn-danger',
+                    },
+                    buttonsStyling: false
+                  });
+                  return;
+                }
+                $.ajax({
+                  type: 'POST',
+                  url: url,
+                  data: {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    action: action,
+                    id: "{{ model.report_id }}",
+                    comments: comments,
+                   
+                  },
+                  success: function (result) {
+                    bootbox.hideAll();
+                    if (result === 'signin') {
+                      window.location.replace("{% url 'users_signout' %}");
+                      return;
+                    }
+                    if (result === 'success') {
+                      location.reload();
+                      return;
+                    }
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Error',
+                      text: 'Something went wrong!!! Please try again.',
+                      customClass: {
+                        confirmButton: 'btn btn-danger',
+                      },
+                      buttonsStyling: false
+                    });
+                  },
+                  error: function (result) {
+                    bootbox.hideAll();
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Error',
+                      text: 'Something went wrong!!! Please try again.',
+                      customClass: {
+                        confirmButton: 'btn btn-danger',
+                      },
+                      buttonsStyling: false
+                    });
+                  }
+                });
+                return false;
+              });
+            }
+          }
+        });
+      }
+    }
+  </script>
+ 
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

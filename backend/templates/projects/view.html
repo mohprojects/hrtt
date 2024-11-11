@@ -1,0 +1,499 @@
+{% extends '_include/base-index.html' %}
+{% block head %}
+{% load static %}
+{% load render_table from django_tables2 %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+    var ajax_url = {
+        url: "{% url 'logs_datatable_view' %}",
+        type: "GET",
+        data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+            model: "projects",
+            modelId: "{{  model.project_id }}"
+        },
+    };
+</script> 
+</script>
+<script type="text/javascript" charset="utf-8">
+    var ajax_url = {
+        url: "{% url 'fundings_datatable_view' %}",
+        type: "GET",
+        data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+            model: "projects",
+            project_id:"{{ model.project_id }}",
+            project_organization :"{{organization_id}}"
+        },
+    };
+</script>
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{{ index_url }}">{{ title }}</a></li>
+        <li class="active">{{ model.project_name }}</li>
+        <li class="active">Project Info</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tab-base">
+                <!--Nav Tabs-->
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#demo-lft-tab-1">Project Info</a>
+                    </li>
+                    {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                    <li class="">
+                        <a data-toggle="tab" href="#demo-lft-tab-2">Project Activities
+                            <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+                        </a>
+                    </li>
+                    <li class="">
+                        <a data-toggle="tab" href="#demo-lft-tab-3">Capital Formation
+                            <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+                        </a>
+                    </li>
+                    <li class="">
+                        <a data-toggle="tab" href="#demo-lft-tab-4">Logs
+                            <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+              
+                <!--Tabs Content-->
+                <div class="tab-content">
+                      <div id="demo-lft-tab-1" class="tab-pane fade active in">
+                        {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                          <div>
+                              {% if ACCESS_PERMISSION_PROJECTS_UPDATE in auth_permissions.values %}
+                              <a href="{% url 'projects_update' pk=model.project_id %}" class="btn btn-info">Update</a>
+                              {% endif %}
+                              {% if ACCESS_PERMISSION_PROJECTS_UPDATE in auth_permissions.values %}
+                              {% if model.project_status == user.STATUS_ACTIVE %}
+                              <a href="#"
+                                  onclick="singleSelect('{{ select_single_url }}', 'block', '{{ model.project_id }}');"
+                                  class="btn btn-danger">Block</a>
+                              {% endif %}
+                              {% endif %}
+                              {% if ACCESS_PERMISSION_PROJECTS_UPDATE in auth_permissions.values %}
+                              {% if model.project_status == user.STATUS_BLOCKED %}
+                              <a href="#"
+                                  onclick="singleSelect('{{ select_single_url }}', 'unblock', '{{ model.project_id }}');"
+                                  class="btn btn-warning">Unblock</a>
+                              {% endif %}
+                              {% endif %}
+                              {% if ACCESS_PERMISSION_PROJECTS_DELETE in auth_permissions.values %}
+                              <a href="#"
+                                  onclick="singleSelect('{{ select_single_url }}', 'delete', '{{ model.project_id }}', '{{ index_url }}');"
+                                  class="btn btn-danger">Delete</a>
+                              {% endif %}
+                              {% if user.user_role == user.TYPE_SUPER_ADMIN %}
+                              <div id ="id_notification" class="btn btn-success" data-bs-toggle="popover" data-bs-placement="top" title="">Notify</div>
+                              <div id="popover_notification" style="display: none;">
+                              {% include './_notify.html' %}
+                              </div>
+                              {% endif %}
+                          </div>
+                          {% endif %}
+                          <br>
+                          <div class="row">
+                              <div class="col-sm-12">
+                                  <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                      <thead>
+                                          <tr style="background-color: #efefef;">
+                                              <th style="width:30%;">Key</th>
+                                              <th style="width:70%;">Value</th>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">{{ form.name.label }}</td>
+                                              <td>{{ model.project_name}}</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">{{ form.financing_agent.label }}</td>
+                                              <td>{{model.project_financing_agent }}</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">{{ form.implementer.label }}</td>
+                                              <td>{{model.project_implementer }}</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">{{ form.organization_id.label }}</td>
+                                              <td>{{  model.organization_id}}</td>
+                                          </tr>
+            
+                                          <tr>
+                                              <td class="text-bold">{{ form.start_time.label }}</td>
+                                              <td>{{ model.project_start_date }}</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">{{ form.deadline.label }}</td>
+                                              <td>{{ model.project_deadline }}</td>
+                                          </tr>
+                                          
+                                          <tr>
+                                              <td class="text-bold">Created At</td>
+                                              <td>{{ model.project_created_at }}</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">Created By</td>
+                                              <td>{{ model.project_created_by }}</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">Updated At</td>
+                                              <td>{{ model.project_updated_at }}</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">Updated By</td>
+                                              <td>{{ model.project_updated_by }}</td>
+                                          </tr>
+                                          <tr>
+                                            <td class="text-bold">Assigned At</td>
+                                            <td>
+                                              {{ model.project_assigned_at }}
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="text-bold">Assigned By</td>
+                                            <td>
+                                              {{ model.project_assigned_by }}
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="text-bold">Assigned To</td>
+                                            <td>
+                                              {{ model.project_assigned_to }}
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                              <td class="text-bold">Status</td>
+                                              <td>
+                                                {% if model.project_status == model.STATUS_DRAFT %}
+                                                <div style="width:100px;">{{ model.HTML_TAG_STATUS_DRAFT_COLOR | safe }}</div>
+                                                {% endif %}
+                                                  {% if model.project_status == model.STATUS_ACTIVE %}
+                                                  <div style="width:100px;">{{ model.HTML_TAG_STATUS_ACTIVE_COLOR | safe }}</div>
+                                                  {% endif %}
+                                                  {% if model.project_status ==  model.STATUS_BLOCKED %}
+                                                  <div style="width:100px;">{{  model.HTML_TAG_STATUS_BLOCKED_COLOR | safe }}</div>
+                                                  {% endif %}
+                                                  {% if model.project_status == model.STATUS_ASSIGNED %}
+                                                  <div style="width: 100px">
+                                                    {{ model.HTML_TAG_STATUS_ASSIGNED_COLOR | safe }}
+                                                  </div>
+                                                  {% endif %}
+                                              </td>
+                                          </tr>
+                                      </thead>
+                                  </table>
+                              </div>
+                          </div>
+                              <br />
+                            <div class="row">
+                              <div class="col-sm-12">
+                          {% if user.user_role == user.TYPE_SUPER_ADMIN %}
+                          <h3>Funding Sources</h3>
+                            <br />
+                            {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                                <div class="dt-buttons" style="margin-right:3px;">
+                                    {% if ACCESS_PERMISSION_PROJECTS_CREATE in auth_permissions.values %}
+                                    <a id="add_funding" class="btn btn-success" href="{% url 'fundings_create' project_id=model.project_id  %}"> 
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Add
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                                {% render_table table_fundings %}
+                          {% endif %}
+                          
+                          {% if user.user_role == user.TYPE_ACTIVITY_MANAGER %}
+                            <h3>Funding Sources</h3>
+                            <br />
+                            {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                                <div class="dt-buttons" style="margin-right:3px;">
+                                    {% if ACCESS_PERMISSION_PROJECTS_CREATE in auth_permissions.values %}
+                                    <a id="add_funding" class="btn btn-success" href="{% url 'fundings_create' project_id=model.project_id  %}"> 
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Add
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                                {% render_table table_fundings %}
+                                {% endif %}
+
+                              </div>
+                            </div>
+                                  <br />
+                                  {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                                  
+                                  {% if model.project_status == model.STATUS_DRAFT and user.user_role == user.TYPE_ACTIVITY_MANAGER %}
+                                  {% if ACCESS_PERMISSION_PROJECTS_ASSIGN in auth_permissions.values %}
+                                  {% include './_assign.html' %}
+                                  {% endif %}
+                                  {% endif %}
+
+                                  {% endif%}
+                      </div>
+                      
+                      {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                      <div id="demo-lft-tab-2" class="tab-pane fade">
+                          <iframe id="Iframe1" src="{% url 'activities_index' project_id=model.project_id %}" width="100%"
+                            style="border:none;"></iframe>
+                      </div>
+                      {% endif %}
+                      {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                      <div id="demo-lft-tab-3" class="tab-pane fade">
+                        <iframe id="Iframe2" src="{% url 'reports_index' project_id=model.project_id %}" width="100%"
+                            style="border:none;"></iframe>
+                      </div>
+                      {% endif %}
+
+                      {% if  user.organization_id == organization_id or user.organization_id == 0 %}
+                      <div id="demo-lft-tab-4" class="tab-pane fade">
+                          {% if ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values %}
+                          <div id="id_logs_list"></div>
+                          {% endif %}
+                      </div>
+                      {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function () {
+      $("#search-input-select-organization-id").select2({ placeholder: "--select--", allowClear: true });
+      $("#search-input-select-division-id").select2({ placeholder: "--select--", allowClear: true, data: [] });
+  });
+</script>
+<script>
+     // Initialize the popover
+    $('#id_notification').popover({
+    content: $('#popover_notification').html(),
+    html: true
+  });
+  
+  $('#id_notify').submit(function(e) {
+    e.preventDefault();
+    notif =$(this).serialize()
+    $.ajax({
+      url: $(this).attr('action'),
+      type: 'POST',
+      data: {project_id:"{{ model.project_id }}"},
+      success: function(response) {
+        return;
+      },
+      error: function(xhr) {
+        // Handle error response
+        console.log(xhr.responseText);
+      }
+    });
+})
+</script>
+<script type="text/javascript" charset="utf-8">
+    var logs = [];
+    var drawLogs = 1;
+    var startLogs = 0;
+    var lengthLogs = 10;
+    function fetchLogs(draw, start, length) {
+        var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        jQuery(function ($) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'logs_datatable_view' %}",
+                data: {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    model: "projects",
+                    model_id: "{{ model.project_id }}",
+                    draw: draw,
+                    start: start,
+                    length: length,
+                },
+                success: function (result) {
+                    bootbox.hideAll();
+                    var items = JSON.parse(JSON.stringify(result)).data;
+                    var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+                    if (start == 0) {
+                        logs.length = 0;
+                    }
+                    items.forEach(function (item) {
+                        logs.push(item);
+                    });
+                    var showMore = null;
+                    if (recordsTotal > logs.length) {
+                        drawLogs = drawLogs++;
+                        startLogs = logs.length;
+                        showMore = '<button class="btn btn-xs btn-default mar-top" onClick="javascript:fetchLogs(' + drawLogs + ', ' + startLogs + ', ' + lengthLogs + ');">Show more</button>'
+                    }
+                    updateUiLogs(showMore);
+                },
+                error: function (result) {
+                    bootbox.hideAll();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong!!! Please try again.',
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    });
+                },
+            });
+            return;
+        });
+        return;
+    }
+    function updateUiLogs(showMore) {
+        div_logs = '';
+        logs.forEach(function (log) {
+            div_logs += '<div class="comment-content media"><div class="media-body"><div class="comment-header"><span class="text-main text-semibold">' + log.log_message + '</span><br><small class="text-muted"> - ' + log.log_updated_at + ' by ' + log.log_updated_by + '</small></div>';
+        });
+        if (showMore != null) {
+            div_logs += showMore;
+        }
+        if (div_logs) {
+            document.getElementById("id_logs_list").innerHTML = div_logs;
+        }
+    }
+    fetchLogs(drawLogs, startLogs, lengthLogs);
+</script>
+<script type="text/javascript" charset="utf-8">
+  function onUpdateStatus(action) {
+    var confirmMessage;
+    if (action === 'accept') {
+      confirmMessage = "Are you sure you want to accept this item?";
+    }
+    if (action === 'reject') {
+      confirmMessage = "Are you sure you want to reject this item?";
+    }
+    if (action === 'assign') {
+      confirmMessage = "Are you sure you want to assign this item?";
+    }
+    if (action === 'review') {
+      confirmMessage = "Are you sure you want to review this item?";
+    }
+    if (action === 'approve') {
+      confirmMessage = "Are you sure you want to approve this item?";
+    }
+    if (action === 'deny') {
+      confirmMessage = "Are you sure you want to deny this item?";
+    }
+    if (action === 'publish') {
+      confirmMessage = "Are you sure you want to publish this item?";
+    }
+    if (action === 'block') {
+      confirmMessage = "Are you sure you want to block this item?";
+    }
+    if (action !== '') {
+      var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      bootbox.confirm({
+        title: "Confirm?",
+        message: confirmMessage,
+        buttons: {
+          cancel: {
+            label: '<i class="fa fa-times"></i> Cancel'
+          },
+          confirm: {
+            label: '<i class="fa fa-check"></i> Ok'
+          }
+        },
+        callback: function(confirmed) {
+          if (confirmed) {
+            bootbox.dialog({
+              closeButton: false,
+              title: "Message",
+              message: '' + '<p>Please wait while loading ...</p>' + '<div class="active progress progress-lg progress-striped"><div style="width: 100%;" class="progress-bar progress-bar-primary"></div></div>' + ''
+            });
+            jQuery(function($) {
+              let to = 0;
+              let url = "{{ select_single_url }}";
+              let comments = $("#id_message_comments").val();
+              if (action == 'assign') {
+                to = $("#search-input-select-assign-to").val();
+              }
+              if (action == 'assign' && (to == null || to == undefined || to == '' || to == '0' || to == 0)) {
+                bootbox.hideAll();
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Please select assign to.',
+                  customClass: {
+                    confirmButton: 'btn btn-danger',
+                  },
+                  buttonsStyling: false
+                });
+                return;
+              }
+              $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                  csrfmiddlewaretoken: csrfmiddlewaretoken,
+                  action: action,
+                  id: "{{ model.project_id }}",
+                  to: to,
+                },
+                success: function(result) {
+                  bootbox.hideAll();
+                  if (result === 'signin') {
+                    window.location.replace("{% url 'users_signout' %}");
+                    return;
+                  }
+                  if (result === 'success') {
+                    location.reload();
+                    return;
+                  }
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong!!! Please try again.',
+                    customClass: {
+                      confirmButton: 'btn btn-danger',
+                    },
+                    buttonsStyling: false
+                  });
+                },
+                error: function(result) {
+                  bootbox.hideAll();
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong!!! Please try again.',
+                    customClass: {
+                      confirmButton: 'btn btn-danger',
+                    },
+                    buttonsStyling: false
+                  });
+                }
+              });
+              return false;
+            });
+          }
+        }
+      });
+    }
+  }
+</script> 
+<script>
+  jQuery(document).ready(function () {
+      var height = $(window).height();
+      $('#Iframe1').css('height', height - 260);
+      $('#Iframe2').css('height', height - 260);
+      $('#Iframe3').css('height', height - 260);
+  });
+</script>
+{% include '_include/table.html' %}
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

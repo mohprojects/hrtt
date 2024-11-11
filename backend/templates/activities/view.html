@@ -1,0 +1,330 @@
+{% extends '_include/base-index.html' %}
+{% block head %}
+{% load static %}
+{% load render_table from django_tables2 %}
+<title>{{ APP_CONSTANT_APP_NAME }} : {{ title }}</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+    var ajax_url = {
+        "url": "{% url 'logs_datatable_view' %}",
+        "type": "GET",
+        "data": {
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+            "model": "activities",
+            "modelId": "{{  model.activity_id}}",
+        },
+    };
+</script>
+<script type="text/javascript" charset="utf-8">
+    var ajax_url= {
+        url: "{% url 'activities_inputs_datatable' %}",
+        type: "GET",
+        data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+            model: "Activities",
+            activity_id:"{{ model.activity_id }}",
+            // table: "{{table_activities_inputs}}",
+        },
+    };
+</script>
+<div id="page-head">
+    <div id="page-title">
+        <h1 class="page-header text-overflow">{{ title }}</h1>
+    </div>
+    <ul class="breadcrumb">
+        <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+        <li><a href="{{ index_url }}">Projects</a></li>
+        <li><a href="{% url 'projects_view' pk=project.project_id %}">{{ project.project_name }}</a></li>
+        <li class="active">{{ model.activity_name }}</li>
+        <li class="active">Details</li>
+    </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tab-base">
+                <!--Nav Tabs-->
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#demo-lft-tab-1">Details</a>
+                    </li>
+                    <li class="">
+                        <a data-toggle="tab" href="#demo-lft-tab-3">Logs
+                            <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+                        </a>
+                    </li>
+                </ul>
+                <!--Tabs Content-->
+                <div class="tab-content">
+                    <div id="demo-lft-tab-1" class="tab-pane fade active in">
+                        {% if model.activity_status == model.STATUS_DRAFT  or model.activity_status == model.STATUS_REJECTED %}
+                        <div>
+                            {% if ACCESS_PERMISSION_ACTIVITIES_UPDATE in auth_permissions.values %}
+                            <a href="{% url 'activities_update' pk=model.activity_id %}" class="btn btn-info">Update</a>
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_ACTIVITIES_UPDATE in auth_permissions.values %}
+                            {% if model.activity_status == user.STATUS_BLOCKED %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'unblock', '{{ model.activity_id }}');"
+                                class="btn btn-warning">Unblock</a>
+                            {% endif %}
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_ACTIVITIES_DELETE in auth_permissions.values %}
+                            <a href="#"
+                                onclick="singleSelect('{{ select_single_url }}', 'delete', '{{ model.activity_id }}', '{{ index_url }}');"
+                                class="btn btn-danger">Delete </a>
+                            {% endif %}
+                            {% if ACCESS_PERMISSION_ACTIVITIES_SUBMIT in auth_permissions.values %}
+                            <a id="activity_submit" class="btn btn-success" href="#" onclick="singleSelect('{{ select_single_url }}', 'submit', '{{ model.activity_id }}');">
+                                <i class="fa fa-check" aria-hidden="true"></i> Submit
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr style="background-color: #efefef;">
+                                            <th style="width:30%;">Key</th>
+                                            <th style="width:70%;">Value</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.name.label }}</td>
+                                            <td>{{ model.activity_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.location.label }}</td>
+                                            <td>{{ model.activity_location }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.domain.label }}</td>
+                                            <td>{{ model.activity_domain}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.sub_domain.label }}</td>
+                                            <td>{{ model.activity_sub_domain}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.functions.label }}</td>
+                                            <td>{{ model.activity_functions}}</td>
+                                        </tr>
+                                         <tr>
+                                            <td class="text-bold">{{ form.sub_functions.label }}</td>
+                                            <td>{{ model.activity_sub_functions}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">{{ form.fiscal_year.label }}</td>
+                                            <td>{{ form.fiscal_year.value }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Created At</td>
+                                            <td>{{ model.activity_created_at }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Created By</td>
+                                            <td>{{ model.activity_created_by }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Updated At</td>
+                                            <td>{{ model.activity_updated_at }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Updated By</td>
+                                            <td>{{ model.activity_updated_by }}</td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Approved At</td>
+                                          <td>
+                                            {{ model.activity_approved_at }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Approved By</td>
+                                          <td>
+                                            {{ model.activity_approved_by }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Denied At</td>
+                                          <td>
+                                            {{ model.activity_denied_at }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="text-bold">Denied By</td>
+                                          <td>
+                                            {{ model.activity_denied_by }}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-bold">Status</td>
+                                            <td>
+                                                {% if model.activity_status == model.STATUS_DRAFT %}
+                                                <div style="width:100px;">{{model.HTML_TAG_STATUS_DRAFT_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_SUBMITTED %}
+                                                <div style="width:100px;">{{ model.HTML_TAG_STATUS_SUBMITTED_COLOR | safe}}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_BUDGET_ACCEPTED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_BUDGET_ACCEPTED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_BUDGET_REJECTED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_BUDGET_REJECTED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_BUDGET_APPROVED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_BUDGET_APPROVED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_BUDGET_DENIED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_BUDGET_DENIED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_EXPENSES_ACCEPTED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_EXPENSES_ACCEPTED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_EXPENSES_REJECTED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_EXPENSES_REJECTED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_EXPENSES_APPROVED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_EXPENSES_APPROVED_COLOR | safe }}</div>
+                                                {% endif %}
+                                                {% if model.activity_status == model.STATUS_EXPENSES_DENIED %}
+                                                <div style="width: 100px">{{ model.HTML_TAG_STATUS_EXPENSES_DENIED_COLOR | safe }}</div>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <br />
+                        <h3>Inputs</h3>
+                        <br />
+                        <div class="dt-buttons" style="margin-right:3px;">
+                            <div class="btn-group">
+                                <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false">
+                                    Multiple Action &nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+                                {% if model.activity_status != model.STATUS_SUBMITTED %}
+                                <ul class="dropdown-menu">
+                                    <div class="dt-button-collection">
+                                        {% if ACCESS_PERMISSION_ACTIVITIES_UPDATE in auth_permissions.values %}
+                                        <a class="btn btn-default btn-block" href="#"
+                                            onclick="multipleSelect('{{select_multiple_url }}', 'double_count_yes');">
+                                            Double Count Yes
+                                        </a>
+                                        {% endif %}
+                                        {% if ACCESS_PERMISSION_ACTIVITIES_UPDATE in auth_permissions.values %}
+                                        <a class="btn btn-default btn-block" href="#"
+                                            onclick="multipleSelect('{{select_multiple_url}}', 'double_count_no');">
+                                            Double Count No
+                                        </a>
+                                        {% endif %}
+                                        {% if ACCESS_PERMISSION_ACTIVITIES_DELETE in auth_permissions.values %}
+                                        <a class="btn btn-default btn-block" href="#"
+                                            onclick="multipleSelect('{{select_multiple_url}}', 'delete');">
+                                            Delete Selected
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </ul>
+                                {% endif%}
+                            </div>
+                           </div>
+                            <div class="dt-buttons" style="margin-right:3px;">
+                                {% if model.activity_status == model.STATUS_DRAFT or model.activity_status == model.STATUS_REJECTED %}
+                                {% if ACCESS_PERMISSION_ACTIVITIES_CREATE in auth_permissions.values %}
+                                <a id="add_activity" class="btn btn-success" href="{% url 'activities_inputs_create' activity_id=model.activity_id %}">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add
+                                </a>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                            {% render_table table %}
+                            <br>
+                            <br>
+                    </div>
+                    <div id="demo-lft-tab-3" class="tab-pane fade">
+                        <!-- {% if ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values %} -->
+                        <div id="id_logs_list"></div>
+                        <!-- {% endif %} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    var logs = [];
+    var drawLogs = 1;
+    var startLogs = 0;
+    var lengthLogs = 10;
+    function fetchLogs(draw, start, length) {
+        var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        jQuery(function ($) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'logs_datatable_view' %}",
+                data: {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    model: "activities",
+                    model_id: "{{ model.activity_id }}",
+                    draw: draw,
+                    start: start,
+                    length: length,
+                },
+                success: function (result) {
+                    bootbox.hideAll();
+                    var items = JSON.parse(JSON.stringify(result)).data;
+                    var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+                    if (start == 0) {
+                        logs.length = 0;
+                    }
+                    items.forEach(function (item) {
+                        logs.push(item);
+                    });
+                    var showMore = null;
+                    if (recordsTotal > logs.length) {
+                        drawLogs = drawLogs++;
+                        startLogs = logs.length;
+                        showMore = '<button class="btn btn-xs btn-default mar-top" onClick="javascript:fetchLogs(' + drawLogs + ', ' + startLogs + ', ' + lengthLogs + ');">Show more</button>'
+                    }
+                    updateUiLogs(showMore);
+                },
+                error: function (result) {
+                    bootbox.hideAll();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong!!! Please try again.',
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    });
+                },
+            });
+            return;
+        });
+        return;
+    }
+    function updateUiLogs(showMore) {
+        div_logs = '';
+        logs.forEach(function (log) {
+            div_logs += '<div class="comment-content media"><div class="media-body"><div class="comment-header"><span class="text-main text-semibold">' + log.log_message + '</span><br><small class="text-muted"> - ' + log.log_updated_at + ' by ' + log.log_updated_by + '</small></div>';
+        });
+        if (showMore != null) {
+            div_logs += showMore;
+        }
+        if (div_logs) {
+            document.getElementById("id_logs_list").innerHTML = div_logs;
+        }
+    }
+    fetchLogs(drawLogs, startLogs, lengthLogs);
+</script>
+{% include '_include/table.html' %}
+{% include '_include/single_select.html' %}
+{% include '_include/multiple_select.html' %}
+{% endblock %}

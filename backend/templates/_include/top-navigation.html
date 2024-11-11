@@ -1,0 +1,155 @@
+{% load static %}
+{% csrf_token %}
+<header id="navbar">
+    <div id="navbar-container" class="boxed">
+        <div class="navbar-header">
+            <a href="{% url 'users_dashboard' %}" class="navbar-brand">
+                <img src="{% static 'img/app/Arms_Rwanda.png' %}" alt="" class="brand-icon"
+                    style="width:40px; height:40px; margin-top:10px; margin-left:10px;">
+                <div class="brand-title">
+                    <span class="brand-text" style="font-size:18px;">
+                        HRTT
+                    </span>
+                </div>
+            </a>
+        </div>
+        <div class="navbar-content">
+            <ul class="nav navbar-top-links pull-left">
+                <li class="tgl-menu-btn">
+                    <a class="mainnav-toggle" href="#">
+                        <i class="demo-pli-list-view"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-top-links pull-right">
+                <li class="dropdown">
+                    <a href="#" class="aside-toggle">
+                        <i class="demo-pli-bell"></i>
+                        <span class="badge badge-header badge-danger"></span>
+                    </a>
+                </li>
+                <li id="dropdown-user" class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+                        <div class="username hidden-xs">{{ user.user_name }}</div>
+                        <span class="ic-user pull-right">
+                            <i class="fa fa-user"></i>&nbsp;&nbsp;
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right panel-default">
+                        <ul class="head-list">
+                            <li>
+                                <a href="{% url 'users_profile_view' %}"><i class="demo-pli-male icon-lg icon-fw"></i>
+                                 Profile</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'users_signout' %}"><i class="demo-pli-unlock icon-lg icon-fw"></i>
+                                    Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            </ul>
+        </div>
+    </div>
+</header>
+<aside id="aside-container">
+    <div id="aside">
+        <div class="nano">
+            <div class="nano-content">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active">
+                        <a href="#demo-asd-tab-1" data-toggle="tab">
+                            <i class="demo-pli-bell icon-lg icon-fw"></i> Notifications
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="demo-asd-tab-1">
+                        <div class="list-group bg-trans">
+                            <div id="id_notifications_list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+<script type="text/javascript" charset="utf-8">
+    var notifications = [];
+    var drawNotifications = 1;
+    var startNotifications = 0;
+    var lengthNotifications = 10;
+
+    function fetchNotifications(draw, start, length) {
+        var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        jQuery(function ($) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'notifications_datatable_view' %}",
+                data: {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    draw: draw,
+                    start: start,
+                    length: length,
+                },
+                success: function (result) {
+                    bootbox.hideAll();
+                    var items = JSON.parse(JSON.stringify(result)).data;
+                    var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+                    if (start == 0) {
+                        notifications.length = 0;
+                    }
+                    items.forEach(function (item) {
+                        notifications.push(item);
+                    });
+                    var showMore = null;
+                    if (recordsTotal > notifications.length) {
+                        drawNotifications = drawNotifications++;
+                        startNotifications = notifications.length;
+                        showMore = '<p style="text-align:center;"><button class="btn btn-xs btn-default mar-top" onClick="javascript:fetchNotifications(' + drawNotifications + ', ' + startNotifications + ', ' + lengthNotifications + ');">Show more</button></p>'
+                    }
+                    updateUiNotifications(showMore);
+                },
+                error: function (result) {
+                    bootbox.hideAll();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong!!! Please try again.',
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    });
+                },
+            });
+            return;
+        });
+        return;
+    }
+
+    function updateUiNotifications(showMore) {
+        div_notifications = '';
+        notifications.forEach(function (notification) {
+            item = ''
+            item += '<a href="' + notification.notification_url + '" class="list-group-item">'
+            // item += '<div class="media-left pos-rel"><img class="img-circle img-xs" src="img/profile-photos/2.png" alt="Profile Picture"></div>'
+            item += '<div class="media-body">'
+            item += '<p class="mar-no text-main">&#9679; ' + notification.notification_updated_by + '</p>'
+            item += '<small class="text-success">' + notification.notification_updated_at + '</small>'
+            item += '<p style="margin-top:5px">' + notification.notification_message + '</p>'
+            item += '</div>'
+            item += ' </a>'
+            div_notifications += item;
+        });
+        if (showMore != null) {
+            div_notifications += showMore;
+        }
+        if (div_notifications) {
+            document.getElementById("id_notifications_list").innerHTML = div_notifications;
+        }
+    }
+
+    fetchNotifications(drawNotifications, startNotifications, lengthNotifications);
+</script>

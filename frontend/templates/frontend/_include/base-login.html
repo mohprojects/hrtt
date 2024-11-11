@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include '_include/header.html' %}{% load static %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" type='text/css'>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap-3.3.7.min.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/css/nifty.min.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/css/themes/type-e/theme-ocean.min.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/css/demo/nifty-demo-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'templates/nifty/plugins/pace/pace.min.css' %}">
+    <script type="text/javascript" charset="utf-8"
+        src="{% static 'templates/nifty/plugins/pace/pace.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'app/css/app-site.css' %}">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <div id="container" class="cls-container" style="background-color: #068ECE;">
+        {% block body %}{% endblock %}
+    </div>
+    {% load static %}
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8"
+        src="{% static 'plugins/bootstrap/js/bootstrap-3.3.7.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8"
+        src="{% static 'app/service-worker/service-worker-registration.js' %}"></script>
+    <script type="text/javascript" charset="utf-8"
+        src="{% static 'plugins/scroll-passive/js/scroll-passive.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/js/nifty.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'templates/nifty/js/demo/bg-images.js' %}"></script>
+</body>
+
+</html>

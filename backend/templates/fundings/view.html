@@ -1,0 +1,221 @@
+{% extends '_include/base-index.html' %}
+{% block head %}
+{% load static %}
+{% load render_table from django_tables2 %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+  var ajax_url = {
+    "url": "{% url 'logs_datatable_view' %}",
+    "type": "GET",
+    "data": {
+      "csrfmiddlewaretoken": "{{ csrf_token }}",
+      "model": "fundings",
+      "modelId": "{{  model.funding_id }}"
+    },
+  };
+</script>
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li><a href="{% url 'users_dashboard' %}">Home</a></li>
+    <li><a href="{{ index_url }}">{{ model.project_id }}</a></li>
+    <li><a href="{% url 'fundings_view' pk=model.funding_id %}">
+        {{ model.funder_id }}</a></li>
+    <li class="active">Details</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="tab-base">
+        <!--Nav Tabs-->
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a data-toggle="tab" href="#demo-lft-tab-1">Details</a>
+          </li>
+          <li class="">
+            <a data-toggle="tab" href="#demo-lft-tab-3">Logs
+              <!-- <span class="badge badge-danger">{{ count_logs }}</span> -->
+            </a>
+          </li>
+        </ul>
+        <!--Tabs Content-->
+        <div class="tab-content">
+          <div id="demo-lft-tab-1" class="tab-pane fade active in">
+            <div>
+              {% if ACCESS_PERMISSION_PROJECTS_UPDATE in auth_permissions.values %}
+              <a href="{% url 'fundings_update' pk=model.funding_id %}" class="btn btn-info">Update</a>
+              {% endif %}
+              {% if ACCESS_PERMISSION_PROJECTS_DELETE in auth_permissions.values %}
+              <a href="#" onclick="singleSelect('{{ select_single_url }}', 'delete', '{{ model.funding_id }}', '{{ index_url }}');" class="btn btn-danger">Delete</a>
+              {% endif %}
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-12">
+                <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                  <thead>
+                    <tr style="background-color: #efefef;">
+                      <th style="width:30%;">Key</th>
+                      <th style="width:70%;">Value</th>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.organization.label }}
+                      </td>
+                      <td>
+                        {{ form.organization.value }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.amount.label }}
+                      </td>
+                      <td>
+                        {{ form.amount.value }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.currency.label }}
+                      </td>
+                      <td>
+                        {{ form.currency.value }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Created At</td>
+                      <td>
+                        {{ model.funding_created_at }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Created By</td>
+                      <td>
+                        {{ model.funding_created_by }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Updated At</td>
+                      <td>
+                        {{ model.funding_updated_at }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Updated By</td>
+                      <td>
+                        {{ model.funding_updated_by }}
+                      </td>
+                    </tr>
+                    <!-- <tr>
+                      <td class="text-bold">Status</td>
+                      <td>
+                        {% if model.funding_status == user.STATUS_ACTIVE %}
+                        <div style="width:100px;">
+                          {{ user.HTML_TAG_STATUS_ACTIVE_COLOR | safe }}
+                        </div>
+                        {% endif %}
+                        {% if model.funding_status == user.STATUS_BLOCKED %}
+                        <div style="width:100px;">
+                          {{ user.HTML_TAG_STATUS_BLOCKED_COLOR | safe }}
+                        </div>
+                        {% endif %}
+                      </td>
+                    </tr> -->
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div id="demo-lft-tab-3" class="tab-pane fade">
+            <!-- {% if ACCESS_PERMISSION_LOG_VIEW in auth_permissions.values %} -->
+            <div id="id_logs_list"></div>
+            <!-- {% endif %} -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  var logs = [];
+  var drawLogs = 1;
+  var startLogs = 0;
+  var lengthLogs = 10;
+
+  function fetchLogs(draw, start, length) {
+    var csrfmiddlewaretoken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    jQuery(function($) {
+      $.ajax({
+        type: "GET",
+        url: "{% url 'logs_datatable_view' %}",
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          model: "fundings",
+          model_id: "{{ model.funding_id }}",
+          draw: draw,
+          start: start,
+          length: length,
+        },
+        success: function(result) {
+          bootbox.hideAll();
+          var items = JSON.parse(JSON.stringify(result)).data;
+          var recordsTotal = JSON.parse(JSON.stringify(result)).recordsTotal;
+          if (start == 0) {
+            logs.length = 0;
+          }
+          items.forEach(function(item) {
+            logs.push(item);
+          });
+          var showMore = null;
+          if (recordsTotal > logs.length) {
+            drawLogs = drawLogs++;
+            startLogs = logs.length;
+            showMore = '<button class="btn btn-xs btn-default mar-top" onClick="javascript:fetchLogs(' + drawLogs + ', ' + startLogs + ', ' + lengthLogs + ');">Show more</button>'
+          }
+          updateUiLogs(showMore);
+        },
+        error: function(result) {
+          bootbox.hideAll();
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong!!! Please try again.',
+            customClass: {
+              confirmButton: 'btn btn-danger',
+            },
+            buttonsStyling: false
+          });
+        },
+      });
+      return;
+    });
+    return;
+  }
+
+  function updateUiLogs(showMore) {
+    div_logs = '';
+    logs.forEach(function(log) {
+      div_logs += '<div class="comment-content media"><div class="media-body"><div class="comment-header"><span class="text-main text-semibold">' + log.log_message + '</span><br><small class="text-muted"> - ' + log.log_updated_at + ' by ' + log.log_updated_by + '</small></div>';
+    });
+    if (showMore != null) {
+      div_logs += showMore;
+    }
+    if (div_logs) {
+      document.getElementById("id_logs_list").innerHTML = div_logs;
+    }
+  }
+  fetchLogs(drawLogs, startLogs, lengthLogs);
+</script>
+{% include '_include/single_select.html' %}
+{% endblock %}

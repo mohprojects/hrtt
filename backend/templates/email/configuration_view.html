@@ -1,0 +1,108 @@
+{% extends '_include/base-index.html' %}
+{% block head %}
+{% load static %}
+{% load render_table from django_tables2 %}
+<title>
+  {{ APP_CONSTANT_APP_NAME }} :
+  {{ title }}
+</title>
+{% endblock %}
+{% block body %}
+{% load static %}{% csrf_token %}
+<script type="text/javascript" charset="utf-8">
+</script>
+<div id="page-head">
+  <div id="page-title">
+    <h1 class="page-header text-overflow">
+      {{ title }}
+    </h1>
+  </div>
+  <ul class="breadcrumb">
+    <li class="active">Details</li>
+  </ul>
+</div>
+<div id="page-content" style="padding-top:0px;">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="tab-base">
+        <!--Nav Tabs-->
+        <ul class="nav nav-tabs">
+         <li><a href="{%url 'settings_index'%}">Settings</a></li>
+          <li class="active">
+            <a data-toggle="tab" href="#demo-lft-tab-1">Details</a>
+          </li>
+        </ul>
+        <!--Tabs Content-->
+        <div class="tab-content">
+          <div id="demo-lft-tab-1" class="tab-pane fade active in">
+           
+            <br>
+            <div class="row">
+              <div class="col-sm-12">
+                <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                  <thead>
+                    <tr style="background-color: #efefef;">
+                      <th style="width:30%;">Key</th>
+                      <th style="width:70%;">Value</th>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.host.label }}
+                      </td>
+                      <td>
+                        {{ model.host }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.port.label }}
+                      </td>
+                      <td>
+                        {{ model.port }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">
+                        {{ form.username.label }}
+                      </td>
+                      <td>
+                        {{ model.username }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Created At</td>
+                      <td>
+                        {{ model.created_at }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Created By</td>
+                      <td>
+                        {{ model.created_by }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Updated At</td>
+                      <td>
+                        {{ model.updated_at }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-bold">Updated By</td>
+                      <td>
+                        {{ model.updated_by }}
+                      </td>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include '_include/single_select.html' %}
+{% endblock %}

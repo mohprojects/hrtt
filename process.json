@@ -1,0 +1,16 @@
+{
+    "name": "koswift-incity-apis",
+    "script": "yarn start",
+    "watch": true,
+    "ignore_watch": [
+        "node_modules",
+        "build",
+        ".data",
+        ".temp",
+        "files",
+        "public"
+    ],
+    "watch_options": {
+        "followSymlinks": false
+    }
+}
